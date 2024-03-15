@@ -1,0 +1,11 @@
+# DB_HOST=localhost
+# DB_PORT=5432
+# DB_PASS=Technosport@2024
+# DB_USER=postgres.mjmfiwrmndhoitdltbud 
+# DB_NAME=orcl
+
+# user=postgres.mjmfiwrmndhoitdltbud 
+# password=[YOUR-PASSWORD] 
+# host=aws-0-ap-southeast-1.pooler.supabase.com 
+# port=5432 
+# dbname=postgres
