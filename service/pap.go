@@ -22,21 +22,21 @@ func NewPAPService(db *gorm.DB) *papService {
 	return &papService{db}
 }
 
-func (as *papService) Store(pap *model.PAP) error {
-	return as.db.Create(pap).Error
+func (ps *papService) Store(pap *model.PAP) error {
+	return ps.db.Create(pap).Error
 }
 
-func (as *papService) Update(id int, pap model.PAP) error {
-	return as.db.Where(id).Updates(pap).Error
+func (ps *papService) Update(id int, pap model.PAP) error {
+	return ps.db.Where(id).Updates(pap).Error
 }
 
-func (as *papService) Delete(id int) error {	
-	return as.db.Where(id).Delete(&model.PAP{}).Error 
+func (ps *papService) Delete(id int) error {	
+	return ps.db.Where(id).Delete(&model.PAP{}).Error 
 }
 
-func (as *papService) GetByID(id int) (*model.PAP, error) {
+func (ps *papService) GetByID(id int) (*model.PAP, error) {
 	var PAP model.PAP
-	err := as.db.
+	err := ps.db.
 	Preload(clause.Associations).
 	Preload("MiniPAP.monthly").
 	Where("id = ?", id).First(&PAP).Error
@@ -46,9 +46,9 @@ func (as *papService) GetByID(id int) (*model.PAP, error) {
 	return &PAP, nil
 }
 
-func (as *papService) GetList() ([]model.PAP, error) {
+func (ps *papService) GetList() ([]model.PAP, error) {
 	var result []model.PAP
-	err := as.db.
+	err := ps.db.
 	Preload(clause.Associations).
 	Preload("MiniPAP.monthly").
 	Find(&result).Error

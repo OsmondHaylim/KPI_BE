@@ -22,21 +22,21 @@ func NewFactorService(db *gorm.DB) *factorService {
 	return &factorService{db}
 }
 
-func (ks *factorService) Store(factor *model.Factor) error {
-	return ks.db.Create(factor).Error
+func (fs *factorService) Store(factor *model.Factor) error {
+	return fs.db.Create(factor).Error
 }
 
-func (ks *factorService) Update(id int, factor model.Factor) error {
-	return ks.db.Where(id).Updates(factor).Error
+func (fs *factorService) Update(id int, factor model.Factor) error {
+	return fs.db.Where(id).Updates(factor).Error
 }
 
-func (ks *factorService) Delete(id int) error {	
-	return ks.db.Where(id).Delete(&model.Factor{}).Error 
+func (fs *factorService) Delete(id int) error {	
+	return fs.db.Where(id).Delete(&model.Factor{}).Error 
 }
 
-func (ks *factorService) GetByID(id int) (*model.Factor, error) {
+func (fs *factorService) GetByID(id int) (*model.Factor, error) {
 	var Factor model.Factor
-	err := ks.db.
+	err := fs.db.
 	Preload(clause.Associations).
 	Preload("PAP.MiniPAP").
 	Preload("PAP.MiniPAP.Monthly").
@@ -47,9 +47,9 @@ func (ks *factorService) GetByID(id int) (*model.Factor, error) {
 	return &Factor, nil
 }
 
-func (ks *factorService) GetList() ([]model.Factor, error) {
+func (fs *factorService) GetList() ([]model.Factor, error) {
 	var result []model.Factor
-	err := ks.db.
+	err := fs.db.
 	Preload(clause.Associations).
 	Preload("PAP.MiniPAP").
 	Preload("PAP.MiniPAP.Monthly").
