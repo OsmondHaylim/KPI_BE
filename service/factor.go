@@ -40,7 +40,7 @@ func (fs *factorService) GetByID(id int) (*model.Factor, error) {
 	Preload(clause.Associations).
 	Preload("PAP.MiniPAP").
 	Preload("PAP.MiniPAP.Monthly").
-	Where("id = ?", id).First(&Factor).Error
+	Where("factor_id = ?", id).First(&Factor).Error
 	if err != nil {
 		return nil, err
 	}

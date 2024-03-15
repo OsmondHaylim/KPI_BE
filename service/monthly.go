@@ -35,7 +35,7 @@ func (ms *monthlyService) Delete(id int) error {
 
 func (ms *monthlyService) GetByID(id int) (*model.Monthly, error) {
 	var Monthly model.Monthly
-	err := ms.db.Where("id = ?", id).First(&Monthly).Error
+	err := ms.db.Where("monthly_id = ?", id).First(&Monthly).Error
 	if err != nil {
 		return nil, err
 	}

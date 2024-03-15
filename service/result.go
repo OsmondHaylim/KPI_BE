@@ -41,7 +41,7 @@ func (rs *resultService) GetByID(id int) (*model.Result, error) {
 	Preload("Factor.PAP").
 	Preload("Factor.PAP.MiniPAP").
 	Preload("Factor.PAP.MiniPAP.Monthly").
-	Where("id = ?", id).
+	Where("result_id = ?", id).
 	First(&Result).Error
 	if err != nil {
 		return nil, err

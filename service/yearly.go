@@ -43,7 +43,7 @@ func (ys *yearlyService) GetByID(id int) (*model.Yearly, error) {
 	Preload("Item.Result.Factor.PAP").
 	Preload("Item.Result.Factor.PAP.MiniPAP").
 	Preload("Item.Result.Factor.PAP.MiniPAP.Monthly").
-	Where("id = ?", id).
+	Where("year = ?", id).
 	First(&Yearly).Error
 	if err != nil {
 		return nil, err

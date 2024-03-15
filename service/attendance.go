@@ -38,7 +38,7 @@ func (as *attendanceService) GetByID(id int) (*model.Attendance, error) {
 	var Attendance model.Attendance
 	err := as.db.
 	Preload(clause.Associations).
-	Where("id = ?", id).First(&Attendance).Error
+	Where("year = ?", id).First(&Attendance).Error
 	if err != nil {
 		return nil, err
 	}

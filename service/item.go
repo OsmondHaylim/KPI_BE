@@ -42,7 +42,7 @@ func (is *itemService) GetByID(id int) (*model.Item, error) {
 	Preload("Result.Factor.PAP").
 	Preload("Result.Factor.PAP.MiniPAP").
 	Preload("Result.Factor.PAP.MiniPAP.Monthly").
-	Where("id = ?", id).
+	Where("item_id = ?", id).
 	First(&Item).Error
 	if err != nil {
 		return nil, err

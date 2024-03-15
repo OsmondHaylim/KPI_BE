@@ -39,7 +39,7 @@ func (ps *papService) GetByID(id int) (*model.PAP, error) {
 	err := ps.db.
 	Preload(clause.Associations).
 	Preload("MiniPAP.monthly").
-	Where("id = ?", id).First(&PAP).Error
+	Where("pap_id = ?", id).First(&PAP).Error
 	if err != nil {
 		return nil, err
 	}
