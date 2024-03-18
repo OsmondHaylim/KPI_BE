@@ -1,7 +1,7 @@
 package api
 
 import (
-	"fmt"
+	// "fmt"
 	"goreact/model"
 	"goreact/service"
 	"net/http"
@@ -442,20 +442,12 @@ func (ka *kpiAPI) DeleteMonthly(k *gin.Context) {
 			default:
 			}
 			newAtt := *Attendance
-			// err2 = ka.attendanceService.Saves(newAtt)
-			err2 = ka.attendanceService.Delete(Attendance.Year)
+			err2 = ka.attendanceService.Saves(newAtt)
 			if err2 != nil {
 				year := strconv.Itoa(Attendance.Year)
 				k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error() + ", Attendance " + year + "'s " + were + " Deleted"})
 				return
 			}
-			err2 = ka.attendanceService.Store(&newAtt)
-			if err2 != nil {
-				year := strconv.Itoa(Attendance.Year)
-				k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error() + ", Attendance " + year + "'s " + were + " Created"})
-				return
-			}
-			fmt.Println("Attendance Updated")
 			err = ka.monthlyService.Delete(KpiID)
 			if err != nil {
 				year := strconv.Itoa(Attendance.Year)
