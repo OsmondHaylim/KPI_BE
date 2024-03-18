@@ -5,6 +5,7 @@ import (
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 type Postgres struct{}
@@ -21,7 +22,7 @@ type Config struct{
 func (p *Postgres) Connect(creds *Config) (*gorm.DB, error) {
 	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Asia/Jakarta", creds.Host, creds.User, creds.Password, creds.DBName, creds.Port)
 
-	dbConn, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	dbConn, err := gorm.Open(postgres.Open(dsn), &gorm.Config{Logger: logger.Default.LogMode(logger.Error)})
 	if err != nil {
 		return nil, err
 	}
