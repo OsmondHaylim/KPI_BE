@@ -2,7 +2,7 @@ package model
 
 type Monthly struct{
 	Monthly_ID 		int			`gorm:"primaryKey;autoIncrement" json:"Monthly_ID"`	
-	MiniPAP			*MiniPAP	`gorm:"foreignKey:MinipapID"`
+	MiniPAP			*MiniPAP	`gorm:"foreignKey:MinipapID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 	Jan 			float64		`gorm:"notNull" json:"January"`
 	Feb 			float64		`gorm:"notNull" json:"February"`
 	Mar 			float64		`gorm:"notNull" json:"March"`
@@ -23,30 +23,28 @@ type Monthly struct{
 type Attendance struct{
 	Year 		int			`gorm:"primaryKey" json:"Year"`
 	PlanID 		*int		`json:"plan_id"`
-	Plan 		*Monthly	`gorm:"foreignKey:plan_id" json:"Planned"`
+	Plan 		*Monthly	`gorm:"foreignKey:plan_id;constraint:OnUpdate:CASCADE,OnDelete:CASCADE" json:"Planned"`
 	ActualID 	*int		`json:"actual_id"`
-	Actual 		*Monthly	`gorm:"foreignKey:actual_id" json:"Actual"`
+	Actual 		*Monthly	`gorm:"foreignKey:actual_id;constraint:OnUpdate:CASCADE,OnDelete:CASCADE" json:"Actual"`
 	CutiID 		*int		`json:"cuti_id"`
-	Cuti 		*Monthly	`gorm:"foreignKey:cuti_id" json:"Cuti"`
+	Cuti 		*Monthly	`gorm:"foreignKey:cuti_id;constraint:OnUpdate:CASCADE,OnDelete:CASCADE" json:"Cuti"`
 	IzinID 		*int		`json:"izin_id"`
-	Izin 		*Monthly	`gorm:"foreignKey:izin_id" json:"Izin"`
+	Izin 		*Monthly	`gorm:"foreignKey:izin_id;constraint:OnUpdate:CASCADE,OnDelete:CASCADE" json:"Izin"`
 	LainID 		*int		`json:"lain_id"`
-	Lain 		*Monthly	`gorm:"foreignKey:lain_id" json:"Lain"`
+	Lain 		*Monthly	`gorm:"foreignKey:lain_id;constraint:OnUpdate:CASCADE,OnDelete:CASCADE" json:"Lain"`
 }
 
 type MiniPAP struct{
 	MiniPAP_ID	int			`gorm:"primaryKey;autoIncrement" json:"Minipap_ID"`
-	Monthly		[]Monthly	`gorm:"foreignKey:MinipapID" json:"Monthly"`
+	Monthly		[]Monthly	`gorm:"foreignKey:MinipapID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE" json:"Monthly"`
 }
 
 type PAP struct{
 	Pap_ID		int				`gorm:"primaryKey;autoIncrement" json:"Pap_ID"`
 	PlanID		*int			`json:"plan_id"`
-	Plan 		*MiniPAP		`gorm:"foreignKey:plan_id" json:"Planned"`
+	Plan 		*MiniPAP		`gorm:"foreignKey:plan_id;constraint:OnUpdate:CASCADE,OnDelete:CASCADE" json:"Planned"`
 	ActualID	*int			`json:"actual_id"`
-	Actual 		*MiniPAP		`gorm:"foreignKey:actual_id" json:"Actual"`
-	PercentID	*int			`json:"percent_id"`
-	Percentage	*MiniPAP		`gorm:"foreignKey:percent_id" json:"Percentage"`
+	Actual 		*MiniPAP		`gorm:"foreignKey:actual_id;constraint:OnUpdate:CASCADE,OnDelete:CASCADE" json:"Actual"`
 }
 
 type Factor struct{
@@ -55,32 +53,32 @@ type Factor struct{
 	Unit 		string		`gorm:"notNull" json:"Unit"`
 	Target 		string		`gorm:"notNull" json:"Target"`
 	StatID		*int     	`json:"stat_id"`
-	Statistic 	*PAP		`gorm:"foreignKey:stat_id" json:"Statistic"`
+	Statistic 	*PAP		`gorm:"foreignKey:stat_id;constraint:OnUpdate:CASCADE,OnDelete:CASCADE" json:"Statistic"`
 	ResultID 	*int		`json:"result_id"`
-	Result		*Result		`gorm:"foreignKey:ResultID"`
+	Result		*Result		`gorm:"foreignKey:ResultID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 }
 
 type Result struct{
 	Result_ID	int				`gorm:"primaryKey;autoIncrement" json:"Result_ID"`
 	Name		string			`gorm:"notNull" json:"Name"`
-	Factors 	[]Factor		`gorm:"notNull;foreignKey:ResultID" json:"Factors"`
+	Factors 	[]Factor		`gorm:"notNull;foreignKey:ResultID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE" json:"Factors"`
 	ItemID		*int			`json:"item_id"`
-	Item		*Item			`gorm:"foreignKey:ItemID"`
+	Item		*Item			`gorm:"foreignKey:ItemID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 }
 
 type Item struct{
 	Item_ID		int				`gorm:"primaryKey;autoIncrement" json:"Item_ID"`
 	Name		string			`gorm:"notNull" json:"Name"`
-	Results		[]Result		`gorm:"notNull;foreignKey:ItemID" json:"Results"`
+	Results		[]Result		`gorm:"notNull;foreignKey:ItemID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE" json:"Results"`
 	YearID 		*int			`json:"year_id"`
-	Yearly 		*Yearly			`gorm:"foreignKey:YearID" json:"Yearly"`
+	Yearly 		*Yearly			`gorm:"foreignKey:YearID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE" json:"Yearly"`
 }
 
 type Yearly struct{
 	Year			int				`gorm:"primaryKey" json:"Year"`
-	Items			[]Item			`gorm:"notNull;foreignKey:YearID" json:"Items"`
+	Items			[]Item			`gorm:"notNull;foreignKey:YearID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE" json:"Items"`
 	AttendanceID	*int			`json:"attendance_id"`
-	Attendance 		*Attendance		`gorm:"foreignKey:AttendanceID" json:"Attendance"`
+	Attendance 		*Attendance		`gorm:"foreignKey:AttendanceID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE" json:"Attendance"`
 }
 
 

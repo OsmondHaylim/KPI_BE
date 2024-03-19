@@ -6,7 +6,7 @@ import (
 	"goreact/service"
 	"net/http"
 	"strconv"
-	"strings"
+	// "strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -174,6 +174,7 @@ func (ka *kpiAPI) AddPap(k *gin.Context) {
 		k.JSON(http.StatusBadRequest, model.ErrorResponse{Error: err.Error()})
 		return
 	}
+	// model.ToPercentage(newPap)
 	err := ka.papService.Store(&newPap)
 	if err != nil {
 		k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
@@ -215,13 +216,13 @@ func (ka *kpiAPI) UpdateAttendance(k *gin.Context) {
 		k.JSON(http.StatusBadRequest, model.ErrorResponse{Error: err.Error()})
 		return
 	}
-	// KpiID, err := strconv.Atoi(k.Param("id"))
-	// if err != nil {
-	// 	k.JSON(http.StatusBadRequest, model.ErrorResponse{Error: "invalid Attendance ID"})
-	// 	return
-	// }
-	err := ka.attendanceService.Saves(newAttendance)
-	// err = ka.attendanceService.Update(KpiID, newAttendance)
+	KpiID, err := strconv.Atoi(k.Param("id"))
+	if err != nil {
+		k.JSON(http.StatusBadRequest, model.ErrorResponse{Error: "invalid Attendance ID"})
+		return
+	}
+	// err := ka.attendanceService.Saves(newAttendance)
+	err = ka.attendanceService.Update(KpiID, newAttendance)
 	if err != nil {
 		k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
 		return
@@ -293,7 +294,9 @@ func (ka *kpiAPI) UpdateMonthly(k *gin.Context) {
 		k.JSON(http.StatusBadRequest, model.ErrorResponse{Error: "invalid Monthly ID"})
 		return
 	}
-	err = ka.monthlyService.Update(KpiID, newMonthly)
+	// err = ka.monthlyService.Update(KpiID, newMonthly)
+	newMonthly.Monthly_ID = KpiID
+	err = ka.monthlyService.Saves(newMonthly)
 	if err != nil {
 		k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
 		return
@@ -416,47 +419,47 @@ func (ka *kpiAPI) DeleteMonthly(k *gin.Context) {
 	}
 	err = ka.monthlyService.Delete(KpiID)
 	if err != nil {
-		if strings.Contains(err.Error(), "foreign key constraint") {
-			Attendance, where, err2 := ka.attendanceService.GetAttendanceFromMonthly(KpiID)
-			if err2 != nil {
-				k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
-				return
-			}
-			were := *where
-			switch were{
-			case "plan_id":
-				Attendance.PlanID = nil
-				Attendance.Plan = nil
-			case "actual_id":
-				Attendance.ActualID = nil
-				Attendance.Actual = nil
-			case "cuti_id":
-				Attendance.CutiID = nil
-				Attendance.Cuti = nil
-			case "izin_id":	
-				Attendance.IzinID = nil
-				Attendance.Izin = nil				
-			case "lain_id":	
-				Attendance.LainID = nil
-				Attendance.Lain = nil
-			default:
-			}
-			newAtt := *Attendance
-			err2 = ka.attendanceService.Saves(newAtt)
-			if err2 != nil {
-				year := strconv.Itoa(Attendance.Year)
-				k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error() + ", Attendance " + year + "'s " + were + " Deleted"})
-				return
-			}
-			err = ka.monthlyService.Delete(KpiID)
-			if err != nil {
-				year := strconv.Itoa(Attendance.Year)
-				k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error() + ", Attendance " + year + "'s " + were + " Updated"})
-				return
-			}
-			k.JSON(http.StatusOK, model.SuccessResponse{Message: "Monthly delete success"})
-			return
-		}
+		// if strings.Contains(err.Error(), "foreign key constraint") {
+		// 	Attendance, where, err2 := ka.attendanceService.GetAttendanceFromMonthly(KpiID)
+		// 	if err2 != nil {
+		// 		k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
+		// 		return
+		// 	}
+		// 	were := *where
+		// 	switch were{
+		// 	case "plan_id":
+		// 		Attendance.PlanID = nil
+		// 		Attendance.Plan = nil
+		// 	case "actual_id":
+		// 		Attendance.ActualID = nil
+		// 		Attendance.Actual = nil
+		// 	case "cuti_id":
+		// 		Attendance.CutiID = nil
+		// 		Attendance.Cuti = nil
+		// 	case "izin_id":	
+		// 		Attendance.IzinID = nil
+		// 		Attendance.Izin = nil				
+		// 	case "lain_id":	
+		// 		Attendance.LainID = nil
+		// 		Attendance.Lain = nil
+		// 	default:
+		// 	}
+		// 	newAtt := *Attendance
+		// 	err2 = ka.attendanceService.Saves(newAtt)
+		// 	if err2 != nil {
+		// 		year := strconv.Itoa(Attendance.Year)
+		// 		k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error() + ", Attendance " + year + "'s " + were + " Deleted"})
+		// 		return
+		// 	}
+		// 	err = ka.monthlyService.Delete(KpiID)
+		// 	if err != nil {
+		// 		year := strconv.Itoa(Attendance.Year)
+		// 		k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error() + ", Attendance " + year + "'s " + were + " Updated"})
+		// 		return
+		// 	}
+		// 	k.JSON(http.StatusOK, model.SuccessResponse{Message: "Monthly delete success"})
+		// 	return
+		// }
 		k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
 		return
 	}
@@ -579,7 +582,13 @@ func (ka *kpiAPI) GetPapByID(k *gin.Context) {
 		k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
 		return
 	}
-	k.JSON(http.StatusOK, Pap)
+	PR := model.PAPResponse{
+		Pap_ID: Pap.Pap_ID,
+		Plan: Pap.Plan,
+		Actual: Pap.Actual,
+		Percentage: Pap.ToPercentage(),
+	}
+	k.JSON(http.StatusOK, PR)
 }
 func (ka *kpiAPI) GetResultByID(k *gin.Context) {
 	KpiID, err := strconv.Atoi(k.Param("id"))

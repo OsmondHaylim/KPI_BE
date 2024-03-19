@@ -8,6 +8,7 @@ import (
 type MonthlyService interface {
 	Store(Monthly *model.Monthly) error
 	Update(id int, monthly model.Monthly) error
+	Saves(monthly model.Monthly) error
 	Delete(id int) error
 	GetByID(id int) (*model.Monthly, error)
 	GetList() ([]model.Monthly, error)
@@ -27,6 +28,10 @@ func (ms *monthlyService) Store(monthly *model.Monthly) error {
 
 func (ms *monthlyService) Update(id int, monthly model.Monthly) error {
 	return ms.db.Where(id).Updates(monthly).Error
+}
+
+func (ms *monthlyService) Saves(monthly model.Monthly) error{
+	return ms.db.Save(monthly).Error
 }
 
 func (ms *monthlyService) Delete(id int) error {	

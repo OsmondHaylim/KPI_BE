@@ -22,12 +22,10 @@ type CompactPAP1 struct{
 	Pap_ID		int				`gorm:"primaryKey;autoIncrement" json:"Pap_ID"`
 	Plan 		*MiniPAP		`gorm:"foreignKey:plan_id" json:"Planned"`
 	Actual 		*MiniPAP		`gorm:"foreignKey:actual_id" json:"Actual"`
-	Percentage	*MiniPAP		`gorm:"foreignKey:percent_id" json:"Percentage"`
 }
 
 type CompactPAP2 struct{
 	Pap_ID		int				`gorm:"primaryKey;autoIncrement" json:"Pap_ID"`
 	PlanID		*int			`json:"plan_id"`
 	ActualID	*int			`json:"actual_id"`
-	PercentID	*int			`json:"percent_id"`
 }
