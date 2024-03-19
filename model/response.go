@@ -57,36 +57,28 @@ type AttendanceResponse struct{
 	Lain 		*Monthly	`json:"Lain"`
 }
 
-// type Factor struct{
-// 	Factor_ID	int			`gorm:"primaryKey;autoIncrement" json:"Factor_ID"`
-// 	Title 		string		`gorm:"notNull" json:"Title"`
-// 	Unit 		string		`gorm:"notNull" json:"Unit"`
-// 	Target 		string		`gorm:"notNull" json:"Target"`
-// 	StatID		*int     	`json:"stat_id"`
-// 	Statistic 	*PAP		`gorm:"foreignKey:stat_id;constraint:OnUpdate:CASCADE,OnDelete:CASCADE" json:"Statistic"`
-// 	ResultID 	*int		`json:"result_id"`
-// 	Result		*Result		`gorm:"foreignKey:ResultID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
-// }
+type FactorResponse struct{
+	Factor_ID	int			`json:"Factor_ID"`
+	Title 		string		`json:"Title"`
+	Unit 		string		`json:"Unit"`
+	Target 		string		`json:"Target"`
+	Statistic 	*PAP		`json:"Statistic"`
+}
 
-// type Result struct{
-// 	Result_ID	int				`gorm:"primaryKey;autoIncrement" json:"Result_ID"`
-// 	Name		string			`gorm:"notNull" json:"Name"`
-// 	Factors 	[]Factor		`gorm:"notNull;foreignKey:ResultID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE" json:"Factors"`
-// 	ItemID		*int			`json:"item_id"`
-// 	Item		*Item			`gorm:"foreignKey:ItemID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
-// }
+type ResultResponse struct{
+	Result_ID	int				`json:"Result_ID"`
+	Name		string			`json:"Name"`
+	Factors 	[]Factor		`json:"Factors"`
+}
 
-// type Item struct{
-// 	Item_ID		int				`gorm:"primaryKey;autoIncrement" json:"Item_ID"`
-// 	Name		string			`gorm:"notNull" json:"Name"`
-// 	Results		[]Result		`gorm:"notNull;foreignKey:ItemID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE" json:"Results"`
-// 	YearID 		*int			`json:"year_id"`
-// 	Yearly 		*Yearly			`gorm:"foreignKey:YearID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE" json:"Yearly"`
-// }
+type ItemResponse struct{
+	Item_ID		int				`json:"Item_ID"`
+	Name		string			`json:"Name"`
+	Results		[]Result		`json:"Results"`
+}
 
-// type Yearly struct{
-// 	Year			int				`gorm:"primaryKey" json:"Year"`
-// 	Items			[]Item			`gorm:"notNull;foreignKey:YearID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE" json:"Items"`
-// 	AttendanceID	*int			`json:"attendance_id"`
-// 	Attendance 		*Attendance		`gorm:"foreignKey:AttendanceID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE" json:"Attendance"`
-// }
+type YearlyResponse struct{
+	Year			int				`json:"Year"`
+	Items			[]Item			`json:"Items"`
+	Attendance 		*Attendance		`json:"Attendance"`
+}
