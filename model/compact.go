@@ -1,7 +1,7 @@
 package model
 
 type CompactAttendance struct{
-	Year 		int			`gorm:"primaryKey" json:"Year"`
+	Year 		int			`json:"Year"`
 	PlanID 		*int		`json:"plan_id"`
 	ActualID 	*int		`json:"actual_id"`
 	CutiID 		*int		`json:"cuti_id"`
@@ -10,7 +10,7 @@ type CompactAttendance struct{
 }
 
 type CompactPAP struct{
-	Pap_ID		int				`gorm:"primaryKey;autoIncrement" json:"Pap_ID"`
+	Pap_ID		int				`json:"Pap_ID"`
 	PlanID		*int			`json:"plan_id"`
 	ActualID	*int			`json:"actual_id"`
 }

@@ -221,8 +221,8 @@ func (ka *kpiAPI) UpdateAttendance(k *gin.Context) {
 		k.JSON(http.StatusBadRequest, model.ErrorResponse{Error: "invalid Attendance ID"})
 		return
 	}
-	// err := ka.attendanceService.Saves(newAttendance)
-	err = ka.attendanceService.Update(KpiID, newAttendance)
+	newAttendance.Year = KpiID
+	err = ka.attendanceService.Saves(newAttendance)
 	if err != nil {
 		k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
 		return
@@ -240,7 +240,8 @@ func (ka *kpiAPI) UpdateFactor(k *gin.Context) {
 		k.JSON(http.StatusBadRequest, model.ErrorResponse{Error: "invalid Factor ID"})
 		return
 	}
-	err = ka.factorService.Update(KpiID, newFactor)
+	newFactor.Factor_ID = KpiID
+	err = ka.factorService.Saves(newFactor)
 	if err != nil {
 		k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
 		return
@@ -258,7 +259,8 @@ func (ka *kpiAPI) UpdateItem(k *gin.Context) {
 		k.JSON(http.StatusBadRequest, model.ErrorResponse{Error: "invalid Item ID"})
 		return
 	}
-	err = ka.itemService.Update(KpiID, newItem)
+	newItem.Item_ID = KpiID
+	err = ka.itemService.Saves(newItem)	
 	if err != nil {
 		k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
 		return
@@ -276,7 +278,8 @@ func (ka *kpiAPI) UpdateMinipap(k *gin.Context) {
 		k.JSON(http.StatusBadRequest, model.ErrorResponse{Error: "invalid Minipap ID"})
 		return
 	}
-	err = ka.minipapService.Update(KpiID, newMinipap)
+	newMinipap.MiniPAP_ID = KpiID
+	err = ka.minipapService.Saves(newMinipap)	
 	if err != nil {
 		k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
 		return
@@ -314,7 +317,8 @@ func (ka *kpiAPI) UpdatePap(k *gin.Context) {
 		k.JSON(http.StatusBadRequest, model.ErrorResponse{Error: "invalid Pap ID"})
 		return
 	}
-	err = ka.papService.Update(KpiID, newPap)
+	newPap.Pap_ID = KpiID
+	err = ka.papService.Saves(newPap)	
 	if err != nil {
 		k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
 		return
@@ -332,7 +336,8 @@ func (ka *kpiAPI) UpdateResult(k *gin.Context) {
 		k.JSON(http.StatusBadRequest, model.ErrorResponse{Error: "invalid Result ID"})
 		return
 	}
-	err = ka.resultService.Update(KpiID, newResult)
+	newResult.Result_ID = KpiID
+	err = ka.resultService.Saves(newResult)	
 	if err != nil {
 		k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
 		return
@@ -350,7 +355,8 @@ func (ka *kpiAPI) UpdateYearly(k *gin.Context) {
 		k.JSON(http.StatusBadRequest, model.ErrorResponse{Error: "invalid Yearly ID"})
 		return
 	}
-	err = ka.yearlyService.Update(KpiID, newYearly)
+	newYearly.Year = KpiID
+	err = ka.yearlyService.Saves(newYearly)	
 	if err != nil {
 		k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
 		return

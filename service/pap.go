@@ -9,6 +9,7 @@ import (
 type PAPService interface {
 	Store(PAP *model.PAP) error
 	Update(id int, pap model.PAP) error
+	Saves(pap model.PAP) error
 	Delete(id int) error
 	GetByID(id int) (*model.PAP, error)
 	GetList() ([]model.PAP, error)
@@ -30,6 +31,10 @@ func (ps *papService) Update(id int, pap model.PAP) error {
 	return ps.db.Where(id).Updates(pap).Error
 }
 
+func (ps *papService) Saves(pap model.PAP) error {
+	return ps.db.Save(pap).Error
+}
+
 func (ps *papService) Delete(id int) error {	
 	return ps.db.Where(id).Delete(&model.PAP{}).Error 
 }
@@ -38,7 +43,8 @@ func (ps *papService) GetByID(id int) (*model.PAP, error) {
 	var PAP model.PAP
 	err := ps.db.
 	Preload(clause.Associations).
-	Preload("MiniPAP.monthly").
+	Preload("Plan.Monthly").
+	Preload("Actual.Monthly").
 	Where("pap_id = ?", id).First(&PAP).Error
 	if err != nil {
 		return nil, err
@@ -50,7 +56,8 @@ func (ps *papService) GetList() ([]model.PAP, error) {
 	var result []model.PAP
 	err := ps.db.
 	Preload(clause.Associations).
-	Preload("MiniPAP.monthly").
+	Preload("Plan.Monthly").
+	Preload("Actual.Monthly").
 	Find(&result).Error
 	if err != nil{
 		return []model.PAP{}, err

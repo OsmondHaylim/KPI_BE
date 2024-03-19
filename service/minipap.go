@@ -9,6 +9,7 @@ import (
 type MiniPAPService interface {
 	Store(MiniPAP *model.MiniPAP) error
 	Update(id int, minipap model.MiniPAP) error
+	Saves(minipap model.MiniPAP) error
 	Delete(id int) error
 	GetByID(id int) (*model.MiniPAP, error)
 	GetList() ([]model.MiniPAP, error)
@@ -28,6 +29,10 @@ func (ms *minipapService) Store(minipap *model.MiniPAP) error {
 
 func (ms *minipapService) Update(id int, minipap model.MiniPAP) error {
 	return ms.db.Where(id).Updates(minipap).Error
+}
+
+func (ms *minipapService) Saves(minipap model.MiniPAP) error {
+	return ms.db.Save(minipap).Error
 }
 
 func (ms *minipapService) Delete(id int) error {	
