@@ -43,6 +43,11 @@ func (ys *yearlyService) GetByID(id int) (*model.Yearly, error) {
 	var Yearly model.Yearly
 	err := ys.db.
 	Preload(clause.Associations).
+	Preload("Attendance.Plan").
+	Preload("Attendance.Actual").
+	Preload("Attendance.Cuti").
+	Preload("Attendance.Izin").
+	Preload("Attendance.Lain").
 	Preload("Items.Results").
 	Preload("Items.Results.Factors").
 	Preload("Items.Results.Factors.Statistic").
@@ -62,6 +67,11 @@ func (ys *yearlyService) GetList() ([]model.Yearly, error) {
 	var yearly []model.Yearly
 	err := ys.db.
 	Preload(clause.Associations).
+	Preload("Attendance.Plan").
+	Preload("Attendance.Actual").
+	Preload("Attendance.Cuti").
+	Preload("Attendance.Izin").
+	Preload("Attendance.Lain").
 	Preload("Items.Results").
 	Preload("Items.Results.Factors").
 	Preload("Items.Results.Factors.Statistic").
