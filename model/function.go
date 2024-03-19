@@ -1,6 +1,8 @@
 package model
 
-import "strconv"
+import (
+	"strconv"
+)
 
 func (p PAP) ToPercentage() [][]Monthly{
 	percentMonthly := [][]Monthly{}
@@ -28,4 +30,112 @@ func (p PAP) ToPercentage() [][]Monthly{
 		percentMonthly = append(percentMonthly, temp)
 	}
 	return percentMonthly
+}
+
+func (a Attendance) ToResponse() AttendanceResponse{
+	return AttendanceResponse{
+		Year: a.Year,
+		Plan: a.Plan,
+		Actual: a.Actual,
+		Cuti: a.Cuti,
+		Izin: a.Izin,
+		Lain: a.Lain,
+	}
+}
+func (p PAP) ToResponse() PAPResponse{
+	return PAPResponse{
+		Pap_ID: p.Pap_ID,
+		Plan: p.Plan,
+		Actual: p.Actual,
+		Percentage: p.ToPercentage(),
+	}
+}
+func (f Factor) ToResponse() FactorResponse{
+	return FactorResponse{
+		Factor_ID: f.Factor_ID,
+		Title: f.Title,
+		Unit: f.Unit,
+		Target: f.Target,
+		Statistic: f.Statistic,
+	}
+}
+func (r Result) ToResponse() ResultResponse{
+	newRes := ResultResponse{
+		Result_ID: r.Result_ID,
+		Name: r.Name,
+	}
+	for _, data := range r.Factors{
+		newFac := FactorResponse{
+			Factor_ID: data.Factor_ID,
+			Title: data.Title,
+			Unit: data.Unit,
+			Target: data.Target,
+			Statistic: data.Statistic,
+		}
+		newRes.Factors = append(newRes.Factors, newFac)
+	}
+	return newRes
+}
+func (i Item) ToResponse() ItemResponse{
+	newItem := ItemResponse{
+		Item_ID: i.Item_ID,
+		Name: i.Name,
+	}
+	for _, Result := range i.Results{		
+		newRes := ResultResponse{
+			Result_ID: Result.Result_ID,
+			Name: Result.Name,
+		}
+		for _, data := range Result.Factors{
+			newFac := FactorResponse{
+				Factor_ID: data.Factor_ID,
+				Title: data.Title,
+				Unit: data.Unit,
+				Target: data.Target,
+				Statistic: data.Statistic,
+			}
+			newRes.Factors = append(newRes.Factors, newFac)
+		}
+		newItem.Results = append(newItem.Results, newRes)
+	}
+	return newItem
+}
+func (y Yearly) ToResponse() YearlyResponse{
+	newYear := YearlyResponse{
+		Year: y.Year,
+	}
+	for _, Item := range y.Items{
+		newItem := ItemResponse{
+			Item_ID: Item.Item_ID,
+			Name: Item.Name,
+		}
+		for _, Result := range Item.Results{		
+			newRes := ResultResponse{
+				Result_ID: Result.Result_ID,
+				Name: Result.Name,
+			}
+			for _, data := range Result.Factors{
+				newFac := FactorResponse{
+					Factor_ID: data.Factor_ID,
+					Title: data.Title,
+					Unit: data.Unit,
+					Target: data.Target,
+					Statistic: data.Statistic,
+				}
+				newRes.Factors = append(newRes.Factors, newFac)
+			}
+			newItem.Results = append(newItem.Results, newRes)
+		}
+		newYear.Items = append(newYear.Items, newItem)
+	}
+	newAtt := AttendanceResponse{
+		Year: y.Attendance.Year,
+		Plan: y.Attendance.Plan,
+		Actual: y.Attendance.Actual,
+		Cuti: y.Attendance.Cuti,
+		Izin: y.Attendance.Izin,
+		Lain: y.Attendance.Lain,
+	}
+	newYear.Attendance = &newAtt
+	return newYear
 }

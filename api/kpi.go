@@ -523,7 +523,7 @@ func (ka *kpiAPI) GetAttendanceByID(k *gin.Context) {
 		k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
 		return
 	}
-	k.JSON(http.StatusOK, Attendance)
+	k.JSON(http.StatusOK, Attendance.ToResponse())
 }
 func (ka *kpiAPI) GetFactorByID(k *gin.Context) {
 	KpiID, err := strconv.Atoi(k.Param("id"))
@@ -536,7 +536,7 @@ func (ka *kpiAPI) GetFactorByID(k *gin.Context) {
 		k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
 		return
 	}
-	k.JSON(http.StatusOK, Factor)
+	k.JSON(http.StatusOK, Factor.ToResponse())
 }
 func (ka *kpiAPI) GetItemByID(k *gin.Context) {
 	KpiID, err := strconv.Atoi(k.Param("id"))
@@ -549,7 +549,7 @@ func (ka *kpiAPI) GetItemByID(k *gin.Context) {
 		k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
 		return
 	}
-	k.JSON(http.StatusOK, Item)
+	k.JSON(http.StatusOK, Item.ToResponse())
 }
 func (ka *kpiAPI) GetMinipapByID(k *gin.Context) {
 	KpiID, err := strconv.Atoi(k.Param("id"))
@@ -588,13 +588,7 @@ func (ka *kpiAPI) GetPapByID(k *gin.Context) {
 		k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
 		return
 	}
-	PR := model.PAPResponse{
-		Pap_ID: Pap.Pap_ID,
-		Plan: Pap.Plan,
-		Actual: Pap.Actual,
-		Percentage: Pap.ToPercentage(),
-	}
-	k.JSON(http.StatusOK, PR)
+	k.JSON(http.StatusOK, Pap.ToResponse())
 }
 func (ka *kpiAPI) GetResultByID(k *gin.Context) {
 	KpiID, err := strconv.Atoi(k.Param("id"))
@@ -607,7 +601,7 @@ func (ka *kpiAPI) GetResultByID(k *gin.Context) {
 		k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
 		return
 	}
-	k.JSON(http.StatusOK, Result)
+	k.JSON(http.StatusOK, Result.ToResponse())
 }
 func (ka *kpiAPI) GetYearlyByID(k *gin.Context) {
 	KpiID, err := strconv.Atoi(k.Param("id"))
@@ -620,7 +614,7 @@ func (ka *kpiAPI) GetYearlyByID(k *gin.Context) {
 		k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
 		return
 	}
-	k.JSON(http.StatusOK, Yearly)
+	k.JSON(http.StatusOK, Yearly.ToResponse())
 }
 
 // Get List
@@ -631,7 +625,10 @@ func (ka *kpiAPI) GetAttendanceList(k *gin.Context) {
 		return
 	}
 	var result model.AttendanceArrayResponse
-	result.Attendance = Attendance 
+	result.Attendance = []model.AttendanceResponse{} 
+	for _,att := range Attendance{
+		result.Attendance = append(result.Attendance, att.ToResponse())	
+	}
 	result.Message = "Getting All Attendances Success"
 	k.JSON(http.StatusOK, result)
 }
@@ -642,7 +639,10 @@ func (ka *kpiAPI) GetFactorList(k *gin.Context) {
 		return
 	}
 	var result model.FactorArrayResponse
-	result.Factor = Factor 
+	result.Factor = []model.FactorResponse{}
+	for _, data := range Factor{
+		result.Factor = append(result.Factor, data.ToResponse())
+	} 
 	result.Message = "Getting All Factors Success"
 	k.JSON(http.StatusOK, result)
 }
@@ -653,7 +653,10 @@ func (ka *kpiAPI) GetItemList(k *gin.Context) {
 		return
 	}
 	var result model.ItemArrayResponse
-	result.Item = Item 
+	result.Item = []model.ItemResponse{}
+	for _, data := range Item{
+		result.Item = append(result.Item, data.ToResponse())
+	} 
 	result.Message = "Getting All Items Success"
 	k.JSON(http.StatusOK, result)
 }
@@ -686,7 +689,10 @@ func (ka *kpiAPI) GetPapList(k *gin.Context) {
 		return
 	}
 	var result model.PapArrayResponse
-	result.Pap = Pap 
+	result.Pap = []model.PAPResponse{}
+	for _, p := range Pap{
+		result.Pap = append(result.Pap, p.ToResponse())
+	} 
 	result.Message = "Getting All PAPs Success"
 	k.JSON(http.StatusOK, result)
 }
@@ -697,7 +703,10 @@ func (ka *kpiAPI) GetResultList(k *gin.Context) {
 		return
 	}
 	var result model.ResultArrayResponse
-	result.Result = Result 
+	result.Result = []model.ResultResponse{}
+	for _, data := range Result{
+		result.Result = append(result.Result, data.ToResponse())
+	} 
 	result.Message = "Getting All Results Success"
 	k.JSON(http.StatusOK, result)
 }
@@ -708,7 +717,10 @@ func (ka *kpiAPI) GetYearlyList(k *gin.Context) {
 		return
 	}
 	var result model.YearlyArrayResponse
-	result.Yearly = Yearly 
+	result.Yearly = []model.YearlyResponse{}
+	for _, data := range Yearly{
+		result.Yearly = append(result.Yearly, data.ToResponse())
+	} 
 	result.Message = "Getting All Yearlys Success"
 	k.JSON(http.StatusOK, result)
 }

@@ -10,15 +10,15 @@ type SuccessResponse struct {
 
 type AttendanceArrayResponse struct {
 	Message  	string			`json:"message"`
-	Attendance 	[]Attendance	`json:"data"`
+	Attendance 	[]AttendanceResponse	`json:"data"`
 }
 type FactorArrayResponse struct {
 	Message  	string			`json:"message"`
-	Factor 		[]Factor 		`json:"data"`
+	Factor 		[]FactorResponse 		`json:"data"`
 }
 type ItemArrayResponse struct {
 	Message  	string			`json:"message"`
-	Item 		[]Item 			`json:"data"`
+	Item 		[]ItemResponse 			`json:"data"`
 }
 type MinipapArrayResponse struct {
 	Message  	string			`json:"message"`
@@ -30,15 +30,15 @@ type MonthlyArrayResponse struct {
 }
 type PapArrayResponse struct {
 	Message  	string			`json:"message"`
-	Pap 		[]PAP 			`json:"data"`
+	Pap 		[]PAPResponse 			`json:"data"`
 }
 type ResultArrayResponse struct {
 	Message  	string			`json:"message"`
-	Result 		[]Result 		`json:"data"`
+	Result 		[]ResultResponse 		`json:"data"`
 }
 type YearlyArrayResponse struct {
 	Message  	string			`json:"message"`
-	Yearly 		[]Yearly 		`json:"data"`
+	Yearly 		[]YearlyResponse 		`json:"data"`
 }
 
 type PAPResponse struct{
@@ -68,17 +68,17 @@ type FactorResponse struct{
 type ResultResponse struct{
 	Result_ID	int				`json:"Result_ID"`
 	Name		string			`json:"Name"`
-	Factors 	[]Factor		`json:"Factors"`
+	Factors 	[]FactorResponse		`json:"Factors"`
 }
 
 type ItemResponse struct{
 	Item_ID		int				`json:"Item_ID"`
 	Name		string			`json:"Name"`
-	Results		[]Result		`json:"Results"`
+	Results		[]ResultResponse		`json:"Results"`
 }
 
 type YearlyResponse struct{
 	Year			int				`json:"Year"`
-	Items			[]Item			`json:"Items"`
-	Attendance 		*Attendance		`json:"Attendance"`
+	Items			[]ItemResponse			`json:"Items"`
+	Attendance 		*AttendanceResponse		`json:"Attendance"`
 }
