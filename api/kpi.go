@@ -17,7 +17,7 @@ type KpiAPI interface {
 	AddItem(k *gin.Context)
 	AddMinipap(k *gin.Context)
 	AddMonthly(k *gin.Context)
-	AddPap(k *gin.Context)
+	// AddPap(k *gin.Context)
 	AddResult(k *gin.Context)
 	AddYearly(k *gin.Context)
 
@@ -26,7 +26,7 @@ type KpiAPI interface {
 	UpdateItem(k *gin.Context)
 	UpdateMinipap(k *gin.Context)
 	UpdateMonthly(k *gin.Context)
-	UpdatePap(k *gin.Context)
+	// UpdatePap(k *gin.Context)
 	UpdateResult(k *gin.Context)
 	UpdateYearly(k *gin.Context)
 
@@ -35,7 +35,7 @@ type KpiAPI interface {
 	DeleteItem(k *gin.Context)
 	DeleteMinipap(k *gin.Context)
 	DeleteMonthly(k *gin.Context)
-	DeletePap(k *gin.Context)
+	// DeletePap(k *gin.Context)
 	DeleteResult(k *gin.Context)
 	DeleteYearly(k *gin.Context)
 
@@ -44,7 +44,7 @@ type KpiAPI interface {
 	GetItemByID(k *gin.Context)
 	GetMinipapByID(k *gin.Context)
 	GetMonthlyByID(k *gin.Context)
-	GetPapByID(k *gin.Context)
+	// GetPapByID(k *gin.Context)
 	GetResultByID(k *gin.Context)
 	GetYearlyByID(k *gin.Context)
 
@@ -53,7 +53,7 @@ type KpiAPI interface {
 	GetItemList(k *gin.Context)
 	GetMinipapList(k *gin.Context)
 	GetMonthlyList(k *gin.Context)
-	GetPapList(k *gin.Context)
+	// GetPapList(k *gin.Context)
 	GetResultList(k *gin.Context)
 	GetYearlyList(k *gin.Context)
 }
@@ -64,7 +64,7 @@ type kpiAPI struct {
 	itemService			service.ItemService
 	minipapService		service.MiniPAPService
 	monthlyService 		service.MonthlyService
-	papService			service.PAPService
+	// papService			service.PAPService
 	resultService		service.ResultService
 	yearlyService		service.YearlyService
 }
@@ -75,7 +75,7 @@ func NewKpiAPI(
 	itemService service.ItemService,
 	minipapService service.MiniPAPService,
 	monthlyService service.MonthlyService, 
-	papService service.PAPService,
+	// papService service.PAPService,
 	resultService service.ResultService,
 	yearlyService service.YearlyService) *kpiAPI{
 	return &kpiAPI{
@@ -84,7 +84,7 @@ func NewKpiAPI(
 		itemService,
 		minipapService, 
 		monthlyService, 
-		papService,
+		// papService,
 		resultService,
 		yearlyService}
 }
@@ -168,20 +168,20 @@ func (ka *kpiAPI) AddMonthly(k *gin.Context) {
 	}
 	k.JSON(http.StatusOK, model.SuccessResponse{Message: "add Monthly success"})
 }
-func (ka *kpiAPI) AddPap(k *gin.Context) {
-	var newPap model.PAP
-	if err := k.ShouldBindJSON(&newPap); err != nil {
-		k.JSON(http.StatusBadRequest, model.ErrorResponse{Error: err.Error()})
-		return
-	}
-	// model.ToPercentage(newPap)
-	err := ka.papService.Store(&newPap)
-	if err != nil {
-		k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
-		return
-	}
-	k.JSON(http.StatusOK, model.SuccessResponse{Message: "add PAP success"})
-}
+// func (ka *kpiAPI) AddPap(k *gin.Context) {
+// 	var newPap model.PAP
+// 	if err := k.ShouldBindJSON(&newPap); err != nil {
+// 		k.JSON(http.StatusBadRequest, model.ErrorResponse{Error: err.Error()})
+// 		return
+// 	}
+// 	// model.ToPercentage(newPap)
+// 	err := ka.papService.Store(&newPap)
+// 	if err != nil {
+// 		k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
+// 		return
+// 	}
+// 	k.JSON(http.StatusOK, model.SuccessResponse{Message: "add PAP success"})
+// }
 func (ka *kpiAPI) AddResult(k *gin.Context) {
 	var newResult model.Result
 	if err := k.ShouldBindJSON(&newResult); err != nil {
@@ -306,25 +306,25 @@ func (ka *kpiAPI) UpdateMonthly(k *gin.Context) {
 	}
 	k.JSON(http.StatusOK, model.SuccessResponse{Message: "Monthly update success"})
 }
-func (ka *kpiAPI) UpdatePap(k *gin.Context) {
-	var newPap model.PAP
-	if err := k.ShouldBindJSON(&newPap); err != nil {
-		k.JSON(http.StatusBadRequest, model.ErrorResponse{Error: err.Error()})
-		return
-	}
-	KpiID, err := strconv.Atoi(k.Param("id"))
-	if err != nil {
-		k.JSON(http.StatusBadRequest, model.ErrorResponse{Error: "invalid Pap ID"})
-		return
-	}
-	newPap.Pap_ID = KpiID
-	err = ka.papService.Saves(newPap)	
-	if err != nil {
-		k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
-		return
-	}
-	k.JSON(http.StatusOK, model.SuccessResponse{Message: "PAP update success"})
-}
+// func (ka *kpiAPI) UpdatePap(k *gin.Context) {
+// 	var newPap model.PAP
+// 	if err := k.ShouldBindJSON(&newPap); err != nil {
+// 		k.JSON(http.StatusBadRequest, model.ErrorResponse{Error: err.Error()})
+// 		return
+// 	}
+// 	KpiID, err := strconv.Atoi(k.Param("id"))
+// 	if err != nil {
+// 		k.JSON(http.StatusBadRequest, model.ErrorResponse{Error: "invalid Pap ID"})
+// 		return
+// 	}
+// 	newPap.Pap_ID = KpiID
+// 	err = ka.papService.Saves(newPap)	
+// 	if err != nil {
+// 		k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
+// 		return
+// 	}
+// 	k.JSON(http.StatusOK, model.SuccessResponse{Message: "PAP update success"})
+// }
 func (ka *kpiAPI) UpdateResult(k *gin.Context) {
 	var newResult model.Result
 	if err := k.ShouldBindJSON(&newResult); err != nil {
@@ -471,19 +471,19 @@ func (ka *kpiAPI) DeleteMonthly(k *gin.Context) {
 	}
 	k.JSON(http.StatusOK, model.SuccessResponse{Message: "Monthly delete success"})
 }
-func (ka *kpiAPI) DeletePap(k *gin.Context) {
-	KpiID, err := strconv.Atoi(k.Param("id"))
-	if err != nil {
-		k.JSON(http.StatusBadRequest, model.ErrorResponse{Error: "invalid PAP ID"})
-		return
-	}
-	err = ka.papService.Delete(KpiID)
-	if err != nil {
-		k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
-		return
-	}
-	k.JSON(http.StatusOK, model.SuccessResponse{Message: "PAP delete success"})
-}
+// func (ka *kpiAPI) DeletePap(k *gin.Context) {
+// 	KpiID, err := strconv.Atoi(k.Param("id"))
+// 	if err != nil {
+// 		k.JSON(http.StatusBadRequest, model.ErrorResponse{Error: "invalid PAP ID"})
+// 		return
+// 	}
+// 	err = ka.papService.Delete(KpiID)
+// 	if err != nil {
+// 		k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
+// 		return
+// 	}
+// 	k.JSON(http.StatusOK, model.SuccessResponse{Message: "PAP delete success"})
+// }
 func (ka *kpiAPI) DeleteResult(k *gin.Context) {
 	KpiID, err := strconv.Atoi(k.Param("id"))
 	if err != nil {
@@ -577,19 +577,19 @@ func (ka *kpiAPI) GetMonthlyByID(k *gin.Context) {
 	}
 	k.JSON(http.StatusOK, Monthly)
 }
-func (ka *kpiAPI) GetPapByID(k *gin.Context) {
-	KpiID, err := strconv.Atoi(k.Param("id"))
-	if err != nil {
-		k.JSON(http.StatusBadRequest, model.ErrorResponse{Error: "Invalid Pap ID"})
-		return
-	}
-	Pap, err := ka.papService.GetByID(KpiID)
-	if err != nil {
-		k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
-		return
-	}
-	k.JSON(http.StatusOK, Pap.ToResponse())
-}
+// func (ka *kpiAPI) GetPapByID(k *gin.Context) {
+// 	KpiID, err := strconv.Atoi(k.Param("id"))
+// 	if err != nil {
+// 		k.JSON(http.StatusBadRequest, model.ErrorResponse{Error: "Invalid Pap ID"})
+// 		return
+// 	}
+// 	Pap, err := ka.papService.GetByID(KpiID)
+// 	if err != nil {
+// 		k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
+// 		return
+// 	}
+// 	k.JSON(http.StatusOK, Pap.ToResponse())
+// }
 func (ka *kpiAPI) GetResultByID(k *gin.Context) {
 	KpiID, err := strconv.Atoi(k.Param("id"))
 	if err != nil {
@@ -682,20 +682,20 @@ func (ka *kpiAPI) GetMonthlyList(k *gin.Context) {
 	result.Message = "Getting All Monthlys Success"
 	k.JSON(http.StatusOK, result)
 }
-func (ka *kpiAPI) GetPapList(k *gin.Context) {
-	Pap, err := ka.papService.GetList()
-	if err != nil {
-		k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
-		return
-	}
-	var result model.PapArrayResponse
-	result.Pap = []model.PAPResponse{}
-	for _, p := range Pap{
-		result.Pap = append(result.Pap, p.ToResponse())
-	} 
-	result.Message = "Getting All PAPs Success"
-	k.JSON(http.StatusOK, result)
-}
+// func (ka *kpiAPI) GetPapList(k *gin.Context) {
+// 	Pap, err := ka.papService.GetList()
+// 	if err != nil {
+// 		k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
+// 		return
+// 	}
+// 	var result model.PapArrayResponse
+// 	result.Pap = []model.PAPResponse{}
+// 	for _, p := range Pap{
+// 		result.Pap = append(result.Pap, p.ToResponse())
+// 	} 
+// 	result.Message = "Getting All PAPs Success"
+// 	k.JSON(http.StatusOK, result)
+// }
 func (ka *kpiAPI) GetResultList(k *gin.Context) {
 	Result, err := ka.resultService.GetList()
 	if err != nil {

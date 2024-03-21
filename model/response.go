@@ -28,10 +28,10 @@ type MonthlyArrayResponse struct {
 	Message  	string			`json:"message"`
 	Monthly 	[]Monthly 		`json:"data"`
 }
-type PapArrayResponse struct {
-	Message  	string			`json:"message"`
-	Pap 		[]PAPResponse 			`json:"data"`
-}
+// type PapArrayResponse struct {
+// 	Message  	string			`json:"message"`
+// 	Pap 		[]PAPResponse 			`json:"data"`
+// }
 type ResultArrayResponse struct {
 	Message  	string			`json:"message"`
 	Result 		[]ResultResponse 		`json:"data"`
@@ -41,12 +41,12 @@ type YearlyArrayResponse struct {
 	Yearly 		[]YearlyResponse 		`json:"data"`
 }
 
-type PAPResponse struct{
-	Pap_ID		int				`json:"Pap_ID"`
-	Plan 		*MiniPAP		`json:"Planned"`
-	Actual 		*MiniPAP		`json:"Actual"`
-	Percentage	[][]Monthly		`json:"Monthlies"`
-}
+// type PAPResponse struct{
+// 	Pap_ID		int				`json:"Pap_ID"`
+// 	Plan 		*MiniPAP		`json:"Planned"`
+// 	Actual 		*MiniPAP		`json:"Actual"`
+// 	Percentage	[][]Monthly		`json:"Percentage"`
+// }
 
 type AttendanceResponse struct{
 	Year 		int			`json:"Year"`
@@ -62,7 +62,10 @@ type FactorResponse struct{
 	Title 		string		`json:"Title"`
 	Unit 		string		`json:"Unit"`
 	Target 		string		`json:"Target"`
-	Statistic 	*PAP		`json:"Statistic"`
+	// Statistic 	*PAP		`json:"Statistic"`
+	Plan 		*MiniPAP		`json:"Planned"`
+	Actual 		*MiniPAP		`json:"Actual"`
+	Percentage	[][]Monthly		`json:"Percentage"`
 }
 
 type ResultResponse struct{

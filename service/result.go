@@ -43,11 +43,10 @@ func (rs *resultService) GetByID(id int) (*model.Result, error) {
 	var Result model.Result
 	err := rs.db.
 	Preload(clause.Associations).
-	Preload("Factors.Statistic").
-	Preload("Factors.Statistic.Plan").
-	Preload("Factors.Statistic.Actual").
-	Preload("Factors.Statistic.Plan.Monthly").
-	Preload("Factors.Statistic.Actual.Monthly").
+	Preload("Factors.Plan").
+	Preload("Factors.Actual").
+	Preload("Factors.Plan.Monthly").
+	Preload("Factors.Actual.Monthly").
 	Where("result_id = ?", id).
 	First(&Result).Error
 	if err != nil {
@@ -60,11 +59,10 @@ func (rs *resultService) GetList() ([]model.Result, error) {
 	var result []model.Result
 	err := rs.db.
 	Preload(clause.Associations).
-	Preload("Factors.Statistic").
-	Preload("Factors.Statistic.Plan").
-	Preload("Factors.Statistic.Actual").
-	Preload("Factors.Statistic.Plan.Monthly").
-	Preload("Factors.Statistic.Actual.Monthly").
+	Preload("Factors.Plan").
+	Preload("Factors.Actual").
+	Preload("Factors.Plan.Monthly").
+	Preload("Factors.Actual.Monthly").
 	Find(&result).Error
 	if err != nil{
 		return []model.Result{}, err

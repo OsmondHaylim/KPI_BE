@@ -29,7 +29,7 @@ func RunServer(db *gorm.DB, gin *gin.Engine) *gin.Engine {
 	itemService 		:= service.NewItemService(db)
 	minipapService 		:= service.NewMiniPAPService(db)
 	monthlyService 		:= service.NewMonthlyService(db)
-	papService 			:= service.NewPAPService(db)
+	// papService 			:= service.NewPAPService(db)
 	resultService 		:= service.NewResultService(db)
 	yearlyService 		:= service.NewYearlyService(db)
 
@@ -39,7 +39,7 @@ func RunServer(db *gorm.DB, gin *gin.Engine) *gin.Engine {
 		itemService,
 		minipapService, 
 		monthlyService, 
-		papService,
+		// papService,
 		resultService,
 		yearlyService)
 	apiHandler := APIHandler{
@@ -87,14 +87,14 @@ func RunServer(db *gorm.DB, gin *gin.Engine) *gin.Engine {
 			monthly.PUT("/:id", apiHandler.KpiAPIHandler.UpdateMonthly)
 			monthly.DELETE("/:id", apiHandler.KpiAPIHandler.DeleteMonthly)
 		}
-		pap := kpi.Group("/pap")
-		{
-			pap.GET("", apiHandler.KpiAPIHandler.GetPapList)
-			pap.GET("/:id", apiHandler.KpiAPIHandler.GetPapByID)
-			pap.POST("", apiHandler.KpiAPIHandler.AddPap)
-			pap.PUT("/:id", apiHandler.KpiAPIHandler.UpdatePap)
-			pap.DELETE("/:id", apiHandler.KpiAPIHandler.DeletePap)
-		}
+		// pap := kpi.Group("/pap")
+		// {
+		// 	pap.GET("", apiHandler.KpiAPIHandler.GetPapList)
+		// 	pap.GET("/:id", apiHandler.KpiAPIHandler.GetPapByID)
+		// 	pap.POST("", apiHandler.KpiAPIHandler.AddPap)
+		// 	pap.PUT("/:id", apiHandler.KpiAPIHandler.UpdatePap)
+		// 	pap.DELETE("/:id", apiHandler.KpiAPIHandler.DeletePap)
+		// }
 		result := kpi.Group("/result")
 		{
 			result.GET("", apiHandler.KpiAPIHandler.GetResultList)
@@ -151,7 +151,7 @@ func main(){
 		conn.AutoMigrate(&model.Monthly{}) 
 		conn.AutoMigrate(&model.MiniPAP{})
 		conn.AutoMigrate(&model.Attendance{})
-		conn.AutoMigrate(&model.PAP{})
+		// conn.AutoMigrate(&model.PAP{})
 		conn.AutoMigrate(&model.Factor{})
 		conn.AutoMigrate(&model.Result{})
 		conn.AutoMigrate(&model.Item{})

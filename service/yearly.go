@@ -50,11 +50,10 @@ func (ys *yearlyService) GetByID(id int) (*model.Yearly, error) {
 	Preload("Attendance.Lain").
 	Preload("Items.Results").
 	Preload("Items.Results.Factors").
-	Preload("Items.Results.Factors.Statistic").
-	Preload("Items.Results.Factors.Statistic.Plan").
-	Preload("Items.Results.Factors.Statistic.Actual").
-	Preload("Items.Results.Factors.Statistic.Plan.Monthly").
-	Preload("Items.Results.Factors.Statistic.Actual.Monthly").
+	Preload("Items.Results.Factors.Plan").
+	Preload("Items.Results.Factors.Actual").
+	Preload("Items.Results.Factors.Plan.Monthly").
+	Preload("Items.Results.Factors.Actual.Monthly").
 	Where("year = ?", id).
 	First(&Yearly).Error
 	if err != nil {
@@ -74,11 +73,10 @@ func (ys *yearlyService) GetList() ([]model.Yearly, error) {
 	Preload("Attendance.Lain").
 	Preload("Items.Results").
 	Preload("Items.Results.Factors").
-	Preload("Items.Results.Factors.Statistic").
-	Preload("Items.Results.Factors.Statistic.Plan").
-	Preload("Items.Results.Factors.Statistic.Actual").
-	Preload("Items.Results.Factors.Statistic.Plan.Monthly").
-	Preload("Items.Results.Factors.Statistic.Actual.Monthly").
+	Preload("Items.Results.Factors.Plan").
+	Preload("Items.Results.Factors.Actual").
+	Preload("Items.Results.Factors.Plan.Monthly").
+	Preload("Items.Results.Factors.Actual.Monthly").
 	Find(&yearly).Error
 	if err != nil{
 		return []model.Yearly{}, err

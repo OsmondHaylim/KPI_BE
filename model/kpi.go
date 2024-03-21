@@ -39,21 +39,34 @@ type MiniPAP struct{
 	Monthly		[]Monthly	`gorm:"foreignKey:MinipapID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE" json:"Monthly"`
 }
 
-type PAP struct{
-	Pap_ID		int				`gorm:"primaryKey;autoIncrement" json:"Pap_ID"`
-	PlanID		*int			`json:"plan_id"`
-	Plan 		*MiniPAP		`gorm:"foreignKey:plan_id;constraint:OnUpdate:CASCADE,OnDelete:CASCADE" json:"Planned"`
-	ActualID	*int			`json:"actual_id"`
-	Actual 		*MiniPAP		`gorm:"foreignKey:actual_id;constraint:OnUpdate:CASCADE,OnDelete:CASCADE" json:"Actual"`
-}
+// type PAP struct{
+// 	Pap_ID		int				`gorm:"primaryKey;autoIncrement" json:"Pap_ID"`
+// 	PlanID		*int			`json:"plan_id"`
+// 	Plan 		*MiniPAP		`gorm:"foreignKey:plan_id;constraint:OnUpdate:CASCADE,OnDelete:CASCADE" json:"Planned"`
+// 	ActualID	*int			`json:"actual_id"`
+// 	Actual 		*MiniPAP		`gorm:"foreignKey:actual_id;constraint:OnUpdate:CASCADE,OnDelete:CASCADE" json:"Actual"`
+// }
+
+// type Factor struct{
+// 	Factor_ID	int			`gorm:"primaryKey;autoIncrement" json:"Factor_ID"`
+// 	Title 		string		`gorm:"notNull" json:"Title"`
+// 	Unit 		string		`gorm:"notNull" json:"Unit"`
+// 	Target 		string		`gorm:"notNull" json:"Target"`
+// 	StatID		*int     	`json:"stat_id"`
+// 	Statistic 	*PAP		`gorm:"foreignKey:stat_id;constraint:OnUpdate:CASCADE,OnDelete:CASCADE" json:"Statistic"`
+// 	ResultID 	*int		`json:"result_id"`
+// 	Result		*Result		`gorm:"foreignKey:ResultID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
+// }
 
 type Factor struct{
 	Factor_ID	int			`gorm:"primaryKey;autoIncrement" json:"Factor_ID"`
 	Title 		string		`gorm:"notNull" json:"Title"`
 	Unit 		string		`gorm:"notNull" json:"Unit"`
 	Target 		string		`gorm:"notNull" json:"Target"`
-	StatID		*int     	`json:"stat_id"`
-	Statistic 	*PAP		`gorm:"foreignKey:stat_id;constraint:OnUpdate:CASCADE,OnDelete:CASCADE" json:"Statistic"`
+	PlanID		*int		`json:"plan_id"`
+	Plan 		*MiniPAP	`gorm:"foreignKey:plan_id;constraint:OnUpdate:CASCADE,OnDelete:CASCADE" json:"Planned"`
+	ActualID	*int		`json:"actual_id"`
+	Actual 		*MiniPAP	`gorm:"foreignKey:actual_id;constraint:OnUpdate:CASCADE,OnDelete:CASCADE" json:"Actual"`
 	ResultID 	*int		`json:"result_id"`
 	Result		*Result		`gorm:"foreignKey:ResultID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 }

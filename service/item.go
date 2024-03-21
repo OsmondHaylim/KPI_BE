@@ -44,11 +44,10 @@ func (is *itemService) GetByID(id int) (*model.Item, error) {
 	err := is.db.
 	Preload(clause.Associations).
 	Preload("Results.Factors").
-	Preload("Results.Factors.Statistic").
-	Preload("Results.Factors.Statistic.Plan").
-	Preload("Results.Factors.Statistic.Actual").
-	Preload("Results.Factors.Statistic.Plan.Monthly").
-	Preload("Results.Factors.Statistic.Actual.Monthly").
+	Preload("Results.Factors.Plan").
+	Preload("Results.Factors.Actual").
+	Preload("Results.Factors.Plan.Monthly").
+	Preload("Results.Factors.Actual.Monthly").
 	Where("item_id = ?", id).
 	First(&Item).Error
 	if err != nil {
@@ -62,11 +61,10 @@ func (is *itemService) GetList() ([]model.Item, error) {
 	err := is.db.
 	Preload(clause.Associations).
 	Preload("Results.Factors").
-	Preload("Results.Factors.Statistic").
-	Preload("Results.Factors.Statistic.Plan").
-	Preload("Results.Factors.Statistic.Actual").
-	Preload("Results.Factors.Statistic.Plan.Monthly").
-	Preload("Results.Factors.Statistic.Actual.Monthly").
+	Preload("Results.Factors.Plan").
+	Preload("Results.Factors.Actual").
+	Preload("Results.Factors.Plan.Monthly").
+	Preload("Results.Factors.Actual.Monthly").
 	Find(&item).Error
 	if err != nil{
 		return []model.Item{}, err

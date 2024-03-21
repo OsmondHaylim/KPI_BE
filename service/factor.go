@@ -43,10 +43,8 @@ func (fs *factorService) GetByID(id int) (*model.Factor, error) {
 	var Factor model.Factor
 	err := fs.db.
 	Preload(clause.Associations).
-	Preload("Statistic.Plan").
-	Preload("Statistic.Actual").
-	Preload("Statistic.Plan.Monthly").
-	Preload("Statistic.Actual.Monthly").
+	Preload("Plan.Monthly").
+	Preload("Actual.Monthly").
 	Where("factor_id = ?", id).First(&Factor).Error
 	if err != nil {
 		return nil, err
@@ -58,10 +56,8 @@ func (fs *factorService) GetList() ([]model.Factor, error) {
 	var result []model.Factor
 	err := fs.db.
 	Preload(clause.Associations).
-	Preload("Statistic.Plan").
-	Preload("Statistic.Actual").
-	Preload("Statistic.Plan.Monthly").
-	Preload("Statistic.Actual.Monthly").
+	Preload("Plan.Monthly").
+	Preload("Actual.Monthly").
 	Find(&result).Error
 	if err != nil{
 		return []model.Factor{}, err
