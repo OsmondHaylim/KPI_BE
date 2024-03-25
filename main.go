@@ -24,22 +24,22 @@ type APIHandler struct{
 }
 
 func RunServer(db *gorm.DB, gin *gin.Engine) *gin.Engine {
+	analisaService		:= service.NewAnalisaService(db)
 	attendanceService 	:= service.NewAttendanceService(db)
 	factorService 		:= service.NewFactorService(db)
 	itemService 		:= service.NewItemService(db)
 	minipapService 		:= service.NewMiniPAPService(db)
 	monthlyService 		:= service.NewMonthlyService(db)
-	// papService 			:= service.NewPAPService(db)
 	resultService 		:= service.NewResultService(db)
 	yearlyService 		:= service.NewYearlyService(db)
 
 	kpiAPIHandler := api.NewKpiAPI(
+		analisaService,
 		attendanceService, 
 		factorService, 
 		itemService,
 		minipapService, 
 		monthlyService, 
-		// papService,
 		resultService,
 		yearlyService)
 	apiHandler := APIHandler{
@@ -47,6 +47,14 @@ func RunServer(db *gorm.DB, gin *gin.Engine) *gin.Engine {
 	}
 	kpi := gin.Group("/kpi")
 	{
+		analisa := kpi.Group("/analisa")
+		{
+			analisa.GET("", apiHandler.KpiAPIHandler.GetAnalisaList)
+			analisa.GET("/:id", apiHandler.KpiAPIHandler.GetAnalisaByID)
+			analisa.POST("", apiHandler.KpiAPIHandler.AddAnalisa)
+			analisa.PUT("/:id", apiHandler.KpiAPIHandler.UpdateAnalisa)
+			analisa.DELETE("/:id", apiHandler.KpiAPIHandler.DeleteAnalisa)
+		}
 		attendance := kpi.Group("/attendance")
 		{
 			attendance.GET("", apiHandler.KpiAPIHandler.GetAttendanceList)
@@ -71,6 +79,14 @@ func RunServer(db *gorm.DB, gin *gin.Engine) *gin.Engine {
 			item.PUT("/:id", apiHandler.KpiAPIHandler.UpdateItem)
 			item.DELETE("/:id", apiHandler.KpiAPIHandler.DeleteItem)
 		}
+		masalah := kpi.Group("/masalah")
+		{
+			masalah.GET("", apiHandler.KpiAPIHandler.GetMasalahList)
+			masalah.GET("/:id", apiHandler.KpiAPIHandler.GetMasalahByID)
+			masalah.POST("", apiHandler.KpiAPIHandler.AddMasalah)
+			masalah.PUT("/:id", apiHandler.KpiAPIHandler.UpdateMasalah)
+			masalah.DELETE("/:id", apiHandler.KpiAPIHandler.DeleteMasalah)
+		}
 		minipap := kpi.Group("/minipap")
 		{
 			minipap.GET("", apiHandler.KpiAPIHandler.GetMinipapList)
@@ -87,14 +103,7 @@ func RunServer(db *gorm.DB, gin *gin.Engine) *gin.Engine {
 			monthly.PUT("/:id", apiHandler.KpiAPIHandler.UpdateMonthly)
 			monthly.DELETE("/:id", apiHandler.KpiAPIHandler.DeleteMonthly)
 		}
-		// pap := kpi.Group("/pap")
-		// {
-		// 	pap.GET("", apiHandler.KpiAPIHandler.GetPapList)
-		// 	pap.GET("/:id", apiHandler.KpiAPIHandler.GetPapByID)
-		// 	pap.POST("", apiHandler.KpiAPIHandler.AddPap)
-		// 	pap.PUT("/:id", apiHandler.KpiAPIHandler.UpdatePap)
-		// 	pap.DELETE("/:id", apiHandler.KpiAPIHandler.DeletePap)
-		// }
+		
 		result := kpi.Group("/result")
 		{
 			result.GET("", apiHandler.KpiAPIHandler.GetResultList)
@@ -148,10 +157,9 @@ func main(){
 			panic(err)
 		}
 
-		conn.AutoMigrate(&model.Monthly{}) 
-		conn.AutoMigrate(&model.MiniPAP{})
+		conn.AutoMigrate(&model.Monthly{}, &model.Masalah{}) 
+		conn.AutoMigrate(&model.MiniPAP{}, &model.Analisa{})
 		conn.AutoMigrate(&model.Attendance{})
-		// conn.AutoMigrate(&model.PAP{})
 		conn.AutoMigrate(&model.Factor{})
 		conn.AutoMigrate(&model.Result{})
 		conn.AutoMigrate(&model.Item{})

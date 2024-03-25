@@ -8,6 +8,10 @@ type SuccessResponse struct {
 	Message string `json:"message"`
 }
 
+type AnalisaArrayResponse struct {
+	Message  	string			`json:"message"`
+	Analisa 	[]Analisa		`json:"data"`
+}
 type AttendanceArrayResponse struct {
 	Message  	string			`json:"message"`
 	Attendance 	[]AttendanceResponse	`json:"data"`
@@ -19,6 +23,10 @@ type FactorArrayResponse struct {
 type ItemArrayResponse struct {
 	Message  	string			`json:"message"`
 	Item 		[]ItemResponse 			`json:"data"`
+}
+type MasalahArrayResponse struct {
+	Message  	string			`json:"message"`
+	Masalah 	[]MasalahResponse 		`json:"data"`
 }
 type MinipapArrayResponse struct {
 	Message  	string			`json:"message"`
@@ -78,6 +86,15 @@ type ItemResponse struct{
 	Item_ID		int				`json:"Item_ID"`
 	Name		string			`json:"Name"`
 	Results		[]ResultResponse		`json:"Results"`
+}
+
+type MasalahResponse struct{
+	Masalah_ID		int				`gorm:"primaryKey" json:"Masalah_ID"`
+	Masalah 		string			`gorm:"notNull"`
+	Why				[]string		`gorm:"type:text[]" json:"Why"`
+	Tindakan		string
+	Pic				string
+	Target			string
 }
 
 type YearlyResponse struct{

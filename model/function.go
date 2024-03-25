@@ -62,14 +62,16 @@ func (a Attendance) ToResponse() AttendanceResponse{
 		Lain: a.Lain,
 	}
 }
-// func (p PAP) ToResponse() PAPResponse{
-// 	return PAPResponse{
-// 		Pap_ID: p.Pap_ID,
-// 		Plan: p.Plan,
-// 		Actual: p.Actual,
-// 		Percentage: p.ToPercentage(),
-// 	}
-// }
+func (m Masalah) ToResponse() MasalahResponse{
+	return MasalahResponse{
+		Masalah_ID: m.Masalah_ID,
+		Masalah: m.Masalah,
+		Why: m.Why,
+		Tindakan: m.Tindakan,
+		Pic: m.Pic,
+		Target: m.Target,
+	}
+}
 func (f Factor) ToResponse() FactorResponse{
 	return FactorResponse{
 		Factor_ID: f.Factor_ID,

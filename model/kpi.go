@@ -1,5 +1,10 @@
 package model
 
+import (
+	"time"
+	"github.com/lib/pq"
+)
+
 type Monthly struct{
 	Monthly_ID 		int			`gorm:"primaryKey;autoIncrement" json:"Monthly_ID"`	
 	MiniPAP			*MiniPAP	`gorm:"foreignKey:MinipapID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
@@ -39,25 +44,6 @@ type MiniPAP struct{
 	Monthly		[]Monthly	`gorm:"foreignKey:MinipapID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE" json:"Monthly"`
 }
 
-// type PAP struct{
-// 	Pap_ID		int				`gorm:"primaryKey;autoIncrement" json:"Pap_ID"`
-// 	PlanID		*int			`json:"plan_id"`
-// 	Plan 		*MiniPAP		`gorm:"foreignKey:plan_id;constraint:OnUpdate:CASCADE,OnDelete:CASCADE" json:"Planned"`
-// 	ActualID	*int			`json:"actual_id"`
-// 	Actual 		*MiniPAP		`gorm:"foreignKey:actual_id;constraint:OnUpdate:CASCADE,OnDelete:CASCADE" json:"Actual"`
-// }
-
-// type Factor struct{
-// 	Factor_ID	int			`gorm:"primaryKey;autoIncrement" json:"Factor_ID"`
-// 	Title 		string		`gorm:"notNull" json:"Title"`
-// 	Unit 		string		`gorm:"notNull" json:"Unit"`
-// 	Target 		string		`gorm:"notNull" json:"Target"`
-// 	StatID		*int     	`json:"stat_id"`
-// 	Statistic 	*PAP		`gorm:"foreignKey:stat_id;constraint:OnUpdate:CASCADE,OnDelete:CASCADE" json:"Statistic"`
-// 	ResultID 	*int		`json:"result_id"`
-// 	Result		*Result		`gorm:"foreignKey:ResultID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
-// }
-
 type Factor struct{
 	Factor_ID	int			`gorm:"primaryKey;autoIncrement" json:"Factor_ID"`
 	Title 		string		`gorm:"notNull" json:"Title"`
@@ -94,4 +80,19 @@ type Yearly struct{
 	Attendance 		*Attendance		`gorm:"foreignKey:AttendanceID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE" json:"Attendance"`
 }
 
+type Analisa struct{
+	Year 			int				`gorm:"primaryKey" json:"Year"`
+	Masalah 		[]Masalah		`gorm:"foreignKey:Year;constraint:OnUpdate:CASCADE,OnDelete:CASCADE" json:"Masalah"`
+}
 
+type Masalah struct{
+	Masalah_ID		int				`gorm:"primaryKey" json:"Masalah_ID"`
+	Masalah 		string			`gorm:"notNull"`
+	Why				pq.StringArray	`gorm:"type:text[]" json:"Why"`
+	Tindakan		string
+	Pic				string
+	Target			string
+	FolDate			*time.Time
+	Status			string		
+	Year			*int			
+}
