@@ -130,7 +130,7 @@ func RunServer(db *gorm.DB, gin *gin.Engine) *gin.Engine {
 		}
 		file := kpi.Group("/file")
 		{
-			file.POST("/file", apiHandler.FileAPIHandler.FileUpload)
+			file.POST("", apiHandler.FileAPIHandler.FileUpload)
 		}
 	}
 	return gin
