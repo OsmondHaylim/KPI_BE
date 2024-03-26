@@ -62,7 +62,6 @@ type KpiAPI interface {
 	GetResultList(k *gin.Context)
 	GetYearlyList(k *gin.Context)
 }
-
 type kpiAPI struct {
 	analisaService		service.AnalisaService
 	attendanceService 	service.AttendanceService
@@ -73,7 +72,6 @@ type kpiAPI struct {
 	resultService		service.ResultService
 	yearlyService		service.YearlyService
 }
-
 func NewKpiAPI(
 	analisaService service.AnalisaService,
 	attendanceService service.AttendanceService, 

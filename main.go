@@ -20,6 +20,7 @@ import (
 
 type APIHandler struct{
 	KpiAPIHandler	api.KpiAPI
+	FileAPIHandler	api.FileAPI
 
 }
 
@@ -32,6 +33,7 @@ func RunServer(db *gorm.DB, gin *gin.Engine) *gin.Engine {
 	monthlyService 		:= service.NewMonthlyService(db)
 	resultService 		:= service.NewResultService(db)
 	yearlyService 		:= service.NewYearlyService(db)
+	fileService			:= service.NewFileService(db)
 
 	kpiAPIHandler := api.NewKpiAPI(
 		analisaService,
@@ -42,8 +44,10 @@ func RunServer(db *gorm.DB, gin *gin.Engine) *gin.Engine {
 		monthlyService, 
 		resultService,
 		yearlyService)
+	fileAPIHandler := api.NewFileAPI(fileService)
 	apiHandler := APIHandler{
 		KpiAPIHandler: kpiAPIHandler,
+		FileAPIHandler: fileAPIHandler,
 	}
 	kpi := gin.Group("/kpi")
 	{
@@ -120,6 +124,10 @@ func RunServer(db *gorm.DB, gin *gin.Engine) *gin.Engine {
 			yearly.PUT("/:id", apiHandler.KpiAPIHandler.UpdateYearly)
 			yearly.DELETE("/:id", apiHandler.KpiAPIHandler.DeleteYearly)
 		}
+		file := kpi.Group("/file")
+		{
+			file.POST("/file", apiHandler.FileAPIHandler.FileUpload)
+		}
 	}
 	return gin
 }
@@ -157,8 +165,8 @@ func main(){
 			panic(err)
 		}
 
-		conn.AutoMigrate(&model.Monthly{}, &model.Masalah{}) 
-		conn.AutoMigrate(&model.MiniPAP{}, &model.Analisa{})
+		conn.AutoMigrate(&model.Monthly{}, &model.Masalah{}, &model.Project{}) 
+		conn.AutoMigrate(&model.MiniPAP{}, &model.Analisa{}, &model.SummaryProject{})
 		conn.AutoMigrate(&model.Attendance{})
 		conn.AutoMigrate(&model.Factor{})
 		conn.AutoMigrate(&model.Result{})

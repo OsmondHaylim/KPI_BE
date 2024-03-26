@@ -96,3 +96,27 @@ type Masalah struct{
 	Status			string		
 	Year			*int			
 }
+
+type Project struct{
+	Project_ID		int				`gorm:"primaryKey"`
+	Name 			string		
+	Summary_ID		int					
+	INYS			int
+	QNYS			int
+	IDR				int
+	QDR				int
+	IPR				int
+	QPR				int
+	II				int
+	QI				int
+	IF				int
+	QF				int
+	IC				int
+	QC				int
+}
+
+type SummaryProject struct{
+	Summary_ID		int			`gorm:"primaryKey"`
+	Projects		[]Project	`gorm:"foreignKey:Summary_ID"`
+	IssuedDate		*time.Time
+}
