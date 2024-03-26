@@ -170,7 +170,7 @@ func main(){
 		}
 
 		conn.AutoMigrate(&model.Monthly{}, &model.Masalah{}, &model.Project{}) 
-		conn.AutoMigrate(&model.MiniPAP{}, &model.Analisa{}, &model.SummaryProject{})
+		conn.AutoMigrate(&model.MiniPAP{}, &model.Analisa{}, &model.Summary{})
 		conn.AutoMigrate(&model.Attendance{})
 		conn.AutoMigrate(&model.Factor{})
 		conn.AutoMigrate(&model.Result{})

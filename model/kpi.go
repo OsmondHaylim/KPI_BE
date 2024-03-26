@@ -115,7 +115,7 @@ type Project struct{
 	QC				int
 }
 
-type SummaryProject struct{
+type Summary struct{
 	Summary_ID		int			`gorm:"primaryKey"`
 	Projects		[]Project	`gorm:"foreignKey:Summary_ID"`
 	IssuedDate		*time.Time

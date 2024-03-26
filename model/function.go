@@ -88,15 +88,6 @@ func (r Result) ToResponse() ResultResponse{
 		Name: r.Name,
 	}
 	for _, data := range r.Factors{
-		// newFac := FactorResponse{
-		// 	Factor_ID: data.Factor_ID,
-		// 	Title: data.Title,
-		// 	Unit: data.Unit,
-		// 	Target: data.Target,
-		// 	Plan: f.Plan,
-		// 	Actual: f.Actual,
-		// 	Percentage: f.ToPercentage(),
-		// }
 		newRes.Factors = append(newRes.Factors, data.ToResponse())
 	}
 	return newRes
@@ -107,20 +98,6 @@ func (i Item) ToResponse() ItemResponse{
 		Name: i.Name,
 	}
 	for _, Result := range i.Results{		
-		// newRes := ResultResponse{
-		// 	Result_ID: Result.Result_ID,
-		// 	Name: Result.Name,
-		// }
-		// for _, data := range Result.Factors{
-		// 	// newFac := FactorResponse{
-		// 	// 	Factor_ID: data.Factor_ID,
-		// 	// 	Title: data.Title,
-		// 	// 	Unit: data.Unit,
-		// 	// 	Target: data.Target,
-		// 	// 	Statistic: data.Statistic,
-		// 	// }
-		// 	newRes.Factors = append(newRes.Factors, data.ToResponse())
-		// }
 		newItem.Results = append(newItem.Results, Result.ToResponse())
 	}
 	return newItem
@@ -130,27 +107,6 @@ func (y Yearly) ToResponse() YearlyResponse{
 		Year: y.Year,
 	}
 	for _, Item := range y.Items{
-		// newItem := ItemResponse{
-		// 	Item_ID: Item.Item_ID,
-		// 	Name: Item.Name,
-		// }
-		// for _, Result := range Item.Results{		
-		// 	newRes := ResultResponse{
-		// 		Result_ID: Result.Result_ID,
-		// 		Name: Result.Name,
-		// 	}
-		// 	for _, data := range Result.Factors{
-		// 		// newFac := FactorResponse{
-		// 		// 	Factor_ID: data.Factor_ID,
-		// 		// 	Title: data.Title,
-		// 		// 	Unit: data.Unit,
-		// 		// 	Target: data.Target,
-		// 		// 	Statistic: data.Statistic,
-		// 		// }
-		// 		newRes.Factors = append(newRes.Factors, data.ToResponse())
-		// 	}
-		// 	newItem.Results = append(newItem.Results, newRes)
-		// }
 		newYear.Items = append(newYear.Items, Item.ToResponse())
 	}
 	newAtt := AttendanceResponse{
@@ -163,4 +119,36 @@ func (y Yearly) ToResponse() YearlyResponse{
 	}
 	newYear.Attendance = &newAtt
 	return newYear
+}
+func (p Project) ToResponse() ProjectResponse{
+	return ProjectResponse{
+		Project_ID: p.Project_ID,				
+		Name: p.Name,		
+		Item: map[string]int{
+			"Not Yet Start Issued FR":p.INYS,
+			"DR":p.IDR,
+			"PR to PO":p.IPR,
+			"Install":p.II,
+			"Finish":p.IF,
+			"Cancelled":p.IC,
+		},
+		Quantity: map[string]int{
+			"Not Yet Start Issued FR":p.QNYS,
+			"DR":p.QDR,
+			"PR to PO":p.QPR,
+			"Install":p.QI,
+			"Finish":p.QF,
+			"Cancelled":p.QC,
+		},
+	}
+}
+func (s Summary) ToResponse() SummaryResponse{
+	newSummary := SummaryResponse{
+		Summary_ID: s.Summary_ID,
+		IssuedDate: s.IssuedDate,
+	}
+	for _, Project := range s.Projects{
+		newSummary.Projects = append(newSummary.Projects, Project.ToResponse())
+	}
+	return newSummary
 }
