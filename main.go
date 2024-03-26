@@ -19,9 +19,9 @@ import (
 )
 
 type APIHandler struct{
-	KpiAPIHandler	api.KpiAPI
-	FileAPIHandler	api.FileAPI
-
+	KpiAPIHandler		api.KpiAPI
+	FileAPIHandler		api.FileAPI
+	AnalisaAPIHandler	api.AnalisaAPI
 }
 
 func RunServer(db *gorm.DB, gin *gin.Engine) *gin.Engine {
@@ -29,6 +29,7 @@ func RunServer(db *gorm.DB, gin *gin.Engine) *gin.Engine {
 	attendanceService 	:= service.NewAttendanceService(db)
 	factorService 		:= service.NewFactorService(db)
 	itemService 		:= service.NewItemService(db)
+	masalahService 		:= service.NewMasalahService(db)
 	minipapService 		:= service.NewMiniPAPService(db)
 	monthlyService 		:= service.NewMonthlyService(db)
 	resultService 		:= service.NewResultService(db)
@@ -36,7 +37,6 @@ func RunServer(db *gorm.DB, gin *gin.Engine) *gin.Engine {
 	fileService			:= service.NewFileService(db)
 
 	kpiAPIHandler := api.NewKpiAPI(
-		analisaService,
 		attendanceService, 
 		factorService, 
 		itemService,
@@ -45,19 +45,23 @@ func RunServer(db *gorm.DB, gin *gin.Engine) *gin.Engine {
 		resultService,
 		yearlyService)
 	fileAPIHandler := api.NewFileAPI(fileService)
+	analisaAPIHandler := api.NewAnalisaAPI(
+		analisaService,
+		masalahService)
 	apiHandler := APIHandler{
 		KpiAPIHandler: kpiAPIHandler,
 		FileAPIHandler: fileAPIHandler,
+		AnalisaAPIHandler: analisaAPIHandler,
 	}
 	kpi := gin.Group("/kpi")
 	{
 		analisa := kpi.Group("/analisa")
 		{
-			analisa.GET("", apiHandler.KpiAPIHandler.GetAnalisaList)
-			analisa.GET("/:id", apiHandler.KpiAPIHandler.GetAnalisaByID)
-			analisa.POST("", apiHandler.KpiAPIHandler.AddAnalisa)
-			analisa.PUT("/:id", apiHandler.KpiAPIHandler.UpdateAnalisa)
-			analisa.DELETE("/:id", apiHandler.KpiAPIHandler.DeleteAnalisa)
+			analisa.GET("", apiHandler.AnalisaAPIHandler.GetAnalisaList)
+			analisa.GET("/:id", apiHandler.AnalisaAPIHandler.GetAnalisaByID)
+			analisa.POST("", apiHandler.AnalisaAPIHandler.AddAnalisa)
+			analisa.PUT("/:id", apiHandler.AnalisaAPIHandler.UpdateAnalisa)
+			analisa.DELETE("/:id", apiHandler.AnalisaAPIHandler.DeleteAnalisa)
 		}
 		attendance := kpi.Group("/attendance")
 		{
@@ -85,11 +89,11 @@ func RunServer(db *gorm.DB, gin *gin.Engine) *gin.Engine {
 		}
 		masalah := kpi.Group("/masalah")
 		{
-			masalah.GET("", apiHandler.KpiAPIHandler.GetMasalahList)
-			masalah.GET("/:id", apiHandler.KpiAPIHandler.GetMasalahByID)
-			masalah.POST("", apiHandler.KpiAPIHandler.AddMasalah)
-			masalah.PUT("/:id", apiHandler.KpiAPIHandler.UpdateMasalah)
-			masalah.DELETE("/:id", apiHandler.KpiAPIHandler.DeleteMasalah)
+			masalah.GET("", apiHandler.AnalisaAPIHandler.GetMasalahList)
+			masalah.GET("/:id", apiHandler.AnalisaAPIHandler.GetMasalahByID)
+			masalah.POST("", apiHandler.AnalisaAPIHandler.AddMasalah)
+			masalah.PUT("/:id", apiHandler.AnalisaAPIHandler.UpdateMasalah)
+			masalah.DELETE("/:id", apiHandler.AnalisaAPIHandler.DeleteMasalah)
 		}
 		minipap := kpi.Group("/minipap")
 		{

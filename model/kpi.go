@@ -99,7 +99,7 @@ type Masalah struct{
 
 type Project struct{
 	Project_ID		int				`gorm:"primaryKey"`
-	Name 			string		
+	Name 			string			`gorm:"notNull"`
 	Summary_ID		int					
 	INYS			int
 	QNYS			int

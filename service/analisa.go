@@ -14,13 +14,6 @@ type AnalisaService interface {
 	Delete(id int) error
 	GetByID(id int) (*model.Analisa, error)
 	GetList() ([]model.Analisa, error)
-
-	StoreMasalah(Masalah *model.Masalah) error
-	UpdateMasalah(id int, masalah model.Masalah) error
-	SavesMasalah(masalah model.Masalah) error
-	DeleteMasalah(id int) error
-	GetMasalahByID(id int) (*model.Masalah, error)
-	GetListMasalah() ([]model.Masalah, error)
 }
 
 type analisaService struct {
@@ -56,35 +49,6 @@ func (ms *analisaService) GetList() ([]model.Analisa, error) {
 	err := ms.db.Preload(clause.Associations).Find(&result).Error
 	if err != nil{
 		return []model.Analisa{}, err
-	}
-	return result, nil 
-}
-
-func (ms *analisaService) StoreMasalah(masalah *model.Masalah) error {
-	return ms.db.Create(masalah).Error
-}
-func (ms *analisaService) UpdateMasalah(id int, masalah model.Masalah) error {
-	return ms.db.Where(id).Updates(masalah).Error
-}
-func (ms *analisaService) SavesMasalah(masalah model.Masalah) error{
-	return ms.db.Save(masalah).Error
-}
-func (ms *analisaService) DeleteMasalah(id int) error {	
-	return ms.db.Where(id).Delete(&model.Masalah{}).Error 
-}
-func (ms *analisaService) GetMasalahByID(id int) (*model.Masalah, error) {
-	var Masalah model.Masalah
-	err := ms.db.Where(id).First(&Masalah).Error
-	if err != nil {
-		return nil, err
-	}
-	return &Masalah, nil
-}
-func (ms *analisaService) GetListMasalah() ([]model.Masalah, error) {
-	var result []model.Masalah
-	err := ms.db.Find(&result).Error
-	if err != nil{
-		return []model.Masalah{}, err
 	}
 	return result, nil 
 }
