@@ -149,6 +149,7 @@ func RunServer(db *gorm.DB, gin *gin.Engine) *gin.Engine {
 			yearly.PUT("/:id", apiHandler.KpiAPIHandler.UpdateYearly)
 			yearly.DELETE("/:id", apiHandler.KpiAPIHandler.DeleteYearly)
 			yearly.POST("/entire", apiHandler.KpiAPIHandler.AddEntireYearly)
+			yearly.DELETE("/entire/:id", apiHandler.KpiAPIHandler.DeleteEntireYearly)
 		}
 		file := kpi.Group("/file")
 		{

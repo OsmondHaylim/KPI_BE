@@ -37,7 +37,7 @@ func (as *attendanceService) Saves(attendance model.Attendance) error {
 }
 
 func (as *attendanceService) Delete(id int) error {	
-	return as.db.Where(id).Delete(&model.Attendance{}).Error 
+	return as.db.Where(id).Select(clause.Associations).Delete(&model.Attendance{}).Error
 }
 
 func (as *attendanceService) GetByID(id int) (*model.Attendance, error) {
@@ -45,9 +45,7 @@ func (as *attendanceService) GetByID(id int) (*model.Attendance, error) {
 	err := as.db.
 	Preload(clause.Associations).
 	Where("Year = ?", id).First(&Attendance).Error
-	if err != nil {
-		return nil, err
-	}
+	if err != nil {return nil, err}
 	return &Attendance, nil
 }
 

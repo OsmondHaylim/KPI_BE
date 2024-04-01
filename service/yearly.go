@@ -36,7 +36,20 @@ func (ys *yearlyService) Saves(yearly model.Yearly) error {
 }
 
 func (ys *yearlyService) Delete(id int) error {	
-	return ys.db.Where(id).Delete(&model.Yearly{}).Error 
+	return ys.db.
+	Select(clause.Associations).
+	Select("Attendance.Plan").
+	Select("Attendance.Actual").
+	Select("Attendance.Cuti").
+	Select("Attendance.Izin").
+	Select("Attendance.Lain").
+	Select("Items.Results").
+	Select("Items.Results.Factors").
+	Select("Items.Results.Factors.Plan").
+	Select("Items.Results.Factors.Actual").
+	Select("Items.Results.Factors.Plan.Monthly").
+	Select("Items.Results.Factors.Actual.Monthly").
+	Delete(&model.Yearly{Year: id}).Error 
 }
 
 func (ys *yearlyService) GetByID(id int) (*model.Yearly, error) {
