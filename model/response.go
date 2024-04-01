@@ -73,14 +73,14 @@ type FactorResponse struct{
 	Percentage	[][]Monthly		`json:"Percentage"`
 }
 type ResultResponse struct{
-	Result_ID	int				`json:"Result_ID"`
-	Name		string			`json:"Name"`
-	Factors 	[]FactorResponse		`json:"Factors"`
+	Result_ID	int					`json:"Result_ID"`
+	Name		string				`json:"Name"`
+	Factors 	[]FactorResponse	`json:"Factors"`
 }
 type ItemResponse struct{
-	Item_ID		int				`json:"Item_ID"`
-	Name		string			`json:"Name"`
-	Results		[]ResultResponse		`json:"Results"`
+	Item_ID		int					`json:"Item_ID"`
+	Name		string				`json:"Name"`
+	Results		[]ResultResponse	`json:"Results"`
 }
 type MasalahResponse struct{
 	Masalah_ID		int				`gorm:"primaryKey" json:"Masalah_ID"`

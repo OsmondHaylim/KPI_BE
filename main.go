@@ -22,6 +22,7 @@ type APIHandler struct{
 	KpiAPIHandler		api.KpiAPI
 	FileAPIHandler		api.FileAPI
 	AnalisaAPIHandler	api.AnalisaAPI
+	ProjectAPIHandler 	api.ProjectAPI
 }
 
 func RunServer(db *gorm.DB, gin *gin.Engine) *gin.Engine {
@@ -35,6 +36,8 @@ func RunServer(db *gorm.DB, gin *gin.Engine) *gin.Engine {
 	resultService 		:= service.NewResultService(db)
 	yearlyService 		:= service.NewYearlyService(db)
 	fileService			:= service.NewFileService(db)
+	projectService 		:= service.NewProjectService(db)
+	summaryService		:= service.NewSummaryService(db)
 
 	kpiAPIHandler := api.NewKpiAPI(
 		attendanceService, 
@@ -48,10 +51,13 @@ func RunServer(db *gorm.DB, gin *gin.Engine) *gin.Engine {
 	analisaAPIHandler := api.NewAnalisaAPI(
 		analisaService,
 		masalahService)
+	projectAPIHandler := api.NewProjectAPI(projectService,
+		summaryService)
 	apiHandler := APIHandler{
 		KpiAPIHandler: kpiAPIHandler,
 		FileAPIHandler: fileAPIHandler,
 		AnalisaAPIHandler: analisaAPIHandler,
+		ProjectAPIHandler: projectAPIHandler,
 	}
 	kpi := gin.Group("/kpi")
 	{
@@ -111,7 +117,14 @@ func RunServer(db *gorm.DB, gin *gin.Engine) *gin.Engine {
 			monthly.PUT("/:id", apiHandler.KpiAPIHandler.UpdateMonthly)
 			monthly.DELETE("/:id", apiHandler.KpiAPIHandler.DeleteMonthly)
 		}
-		
+		project := kpi.Group("/project")
+		{
+			project.GET("", apiHandler.ProjectAPIHandler.GetProjectList)
+			project.GET("/:id", apiHandler.ProjectAPIHandler.GetProjectByID)
+			project.POST("", apiHandler.ProjectAPIHandler.AddProject)
+			project.PUT("/:id", apiHandler.ProjectAPIHandler.UpdateProject)
+			project.DELETE("/:id", apiHandler.ProjectAPIHandler.DeleteProject)
+		}
 		result := kpi.Group("/result")
 		{
 			result.GET("", apiHandler.KpiAPIHandler.GetResultList)
@@ -120,6 +133,14 @@ func RunServer(db *gorm.DB, gin *gin.Engine) *gin.Engine {
 			result.PUT("/:id", apiHandler.KpiAPIHandler.UpdateResult)
 			result.DELETE("/:id", apiHandler.KpiAPIHandler.DeleteResult)
 		}
+		summary := kpi.Group("/summary")
+		{
+			summary.GET("", apiHandler.ProjectAPIHandler.GetSummaryList)
+			summary.GET("/:id", apiHandler.ProjectAPIHandler.GetSummaryByID)
+			summary.POST("", apiHandler.ProjectAPIHandler.AddSummary)
+			summary.PUT("/:id", apiHandler.ProjectAPIHandler.UpdateSummary)
+			summary.DELETE("/:id", apiHandler.ProjectAPIHandler.DeleteSummary)
+		}
 		yearly := kpi.Group("/yearly")
 		{
 			yearly.GET("", apiHandler.KpiAPIHandler.GetYearlyList)
@@ -127,6 +148,7 @@ func RunServer(db *gorm.DB, gin *gin.Engine) *gin.Engine {
 			yearly.POST("", apiHandler.KpiAPIHandler.AddYearly)
 			yearly.PUT("/:id", apiHandler.KpiAPIHandler.UpdateYearly)
 			yearly.DELETE("/:id", apiHandler.KpiAPIHandler.DeleteYearly)
+			yearly.POST("/entire", apiHandler.KpiAPIHandler.AddEntireYearly)
 		}
 		file := kpi.Group("/file")
 		{

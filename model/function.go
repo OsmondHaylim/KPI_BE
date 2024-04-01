@@ -2,6 +2,9 @@ package model
 
 import (
 	"strconv"
+	// "net/http"
+
+	// "github.com/gin-gonic/gin"
 )
 
 func (p Factor) ToPercentage() [][]Monthly{
@@ -152,3 +155,10 @@ func (s Summary) ToResponse() SummaryResponse{
 	}
 	return newSummary
 }
+
+// func ErrorCheck(k *gin.Context, err error) {
+// 	if err != nil {
+// 		k.JSON(http.StatusInternalServerError, ErrorResponse{Error: err.Error()})
+// 		return
+// 	}
+// }

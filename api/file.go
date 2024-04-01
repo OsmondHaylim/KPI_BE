@@ -6,10 +6,11 @@ import (
 	"goreact/model"
 	"goreact/service"
 	"net/http"
+	"regexp"
 	// "path/filepath"
 	"io"
 	"os"
-	// "strconv"
+	"strconv"
 	// "time"
 	// "strings"
 	"github.com/gin-gonic/gin"
@@ -87,27 +88,45 @@ func (fa *fileAPI) FileUpload(f *gin.Context) {
 	test := ""
 	for _, sheet := range excel.Sheets {
 		if sheet.Name == "KPI staff Design" {
-			for i, row := range sheet.Rows {
-				if i > 100 {
-					break
+			re := regexp.MustCompile(`(\d{4})$`)
+			match := re.FindStringSubmatch(sheet.Rows[3].Cells[2].String())
+			year := 0
+			if len(match) == 2 {
+				year, err = strconv.Atoi(match[1])
+				if err != nil{
+					f.JSON(http.StatusBadRequest, model.ErrorResponse{Error: "Failed extracting year"})
+					return
 				}
-				if i < 14 {
+			}
+			test += strconv.Itoa(year) + " "
+			// KPI := model.Yearly{
+			// 	Year: year,
+			// }
+			// tempItem := model.Item{}
+			// tempResult := model.Result{}
+			// tempFactor := model.Factor{}
+
+			content := false
+			test += "/" + strconv.Itoa(len(sheet.Rows)) + "/"
+			for _, row := range sheet.Rows {
+				if (!content && row.Cells[0].String() == "Item"){
+					content = true
 					continue
 				}
-				test += row.Cells[0].String()
-				// Assuming your data has some structure, you can process each row accordingly
-				// For example, if you have columns 'name', 'age', 'email' in your XLSX
-				// You can access them as row.Cells[index].Value
-				// For example:
-				// name := row.Cells[0].String()
-				// age := row.Cells[1].Int()
-				// email := row.Cells[2].String()
-
-				// Now, you can use GORM to insert this data into your table
-				// Example:
-				// db.Create(&YourModel{...})
+				if content {
+					if len(row.Cells) != 0 && row.Cells[0].String() != ""{
+						// tempItem.Name = row.Cells[0].String()
+						test += row.Cells[0].String()
+					}
+				}
+				// test += "[" + strconv.Itoa(len(row.Cells)) + "]"
+				
 			}
+		// f.JSON(http.StatusOK, KPI)	
+		// return
 		}
 	}
+	// f.JSON(http.StatusOK, model.SuccessResponse{Message: strconv.Itoa(test)})
 	f.JSON(http.StatusOK, model.SuccessResponse{Message: test})
+	
 }

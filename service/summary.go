@@ -19,7 +19,7 @@ type summaryService struct {
 	db *gorm.DB
 }
 
-func NewsummaryService(db *gorm.DB) *summaryService {
+func NewSummaryService(db *gorm.DB) *summaryService {
 	return &summaryService{db}
 }
 

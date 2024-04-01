@@ -20,6 +20,8 @@ type KpiAPI interface {
 	AddResult(k *gin.Context)
 	AddYearly(k *gin.Context)
 
+	AddEntireYearly(k *gin.Context)
+
 	UpdateAttendance(k *gin.Context)
 	UpdateFactor(k *gin.Context)
 	UpdateItem(k *gin.Context)
@@ -183,6 +185,157 @@ func (ka *kpiAPI) AddYearly(k *gin.Context) {
 		return
 	}
 	k.JSON(http.StatusOK, model.SuccessResponse{Message: "add Yearly success"})
+}
+
+func (ka *kpiAPI) AddEntireYearly(k *gin.Context) {
+	var newYearly model.YearlyResponse
+	if err := k.ShouldBindJSON(&newYearly); err != nil {
+		k.JSON(http.StatusBadRequest, model.ErrorResponse{Error: err.Error()})
+		return
+	}
+	//Reformat Response to Yearly
+	var newYear model.Yearly
+	newYear.Year = newYearly.Year
+
+	//Storing Attendance
+	var newAttendance model.Attendance
+	newAttendance.Year = newYearly.Attendance.Year
+	//Creating monthly from attendance
+	if newYearly.Attendance.Plan != nil{
+		newMonthly := newYearly.Attendance.Plan
+		err := ka.monthlyService.Store(newMonthly)
+		if err != nil {
+			k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
+			return
+		}
+		newAttendance.PlanID = &newMonthly.Monthly_ID
+	}
+	if newYearly.Attendance.Actual != nil{
+		newMonthly := newYearly.Attendance.Actual
+		err := ka.monthlyService.Store(newMonthly)
+		if err != nil {
+			k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
+			return
+		}
+		newAttendance.ActualID = &newMonthly.Monthly_ID
+	}
+	if newYearly.Attendance.Cuti != nil{
+		newMonthly := newYearly.Attendance.Cuti
+		err := ka.monthlyService.Store(newMonthly)
+		if err != nil {
+			k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
+			return
+		}
+		newAttendance.CutiID = &newMonthly.Monthly_ID
+	}
+	if newYearly.Attendance.Izin != nil{
+		newMonthly := newYearly.Attendance.Izin
+		err := ka.monthlyService.Store(newMonthly)
+		if err != nil {
+			k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
+			return
+		}
+		newAttendance.IzinID = &newMonthly.Monthly_ID
+	}
+	if newYearly.Attendance.Lain != nil{
+		newMonthly := newYearly.Attendance.Lain
+		err := ka.monthlyService.Store(newMonthly)
+		if err != nil {
+			k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
+			return
+		}
+		newAttendance.LainID = &newMonthly.Monthly_ID
+	}
+	//Creating attendance
+	err := ka.attendanceService.Store(&newAttendance)
+	if err != nil {
+		k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
+		return
+	}
+	newYear.AttendanceID = &newAttendance.Year
+	err = ka.yearlyService.Store(&newYear)
+	if err != nil {
+		k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
+		return
+	}
+	//Storing Items
+	for _, item := range newYear.Items{
+		var newItem model.Item
+		newItem.Name = item.Name
+		//Connect Item to Yearly
+		newItem.YearID = &newYear.Year
+		//Creating Items to get id
+		err := ka.itemService.Store(&newItem)
+		if err != nil {
+			k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
+			return
+		}
+		//Storing Results
+		for _, result := range item.Results{
+			var newResult model.Result
+			newResult.Name = result.Name
+			//Connect Result to Item
+			newResult.ItemID = &newItem.Item_ID
+			//Creating Results to get id
+			err := ka.resultService.Store(&newResult)
+			if err != nil {
+				k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
+				return
+			}
+			//Storing Factors
+			for _, factor := range result.Factors{
+				var newFactor model.Factor
+				newFactor.Title = factor.Title
+				newFactor.Unit = factor.Unit
+				newFactor.Target = factor.Target
+				//Connect Factor to Result
+				newFactor.ResultID = &result.Result_ID
+				if factor.Plan != nil{
+					//Storing MiniPAP Plan
+					var newMinipap model.MiniPAP
+					//Create MiniPAP to get id
+					err := ka.minipapService.Store(&newMinipap)
+					if err != nil {
+						k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
+						return
+					}
+					//Connect MiniPAP to Factor
+					factor.PlanID = &newMinipap.MiniPAP_ID
+					//Storing Plan Monthly
+					for _, monthly := range factor.Plan.Monthly{
+						monthly.MinipapID = &newMinipap.MiniPAP_ID
+						err := ka.monthlyService.Store(&monthly)
+						if err != nil {
+							k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
+							return
+						}
+					}
+				}
+				if factor.Actual != nil{
+					//Storing MiniPAP Actual
+					var newMinipap model.MiniPAP
+					//Create MiniPAP to get id
+					err := ka.minipapService.Store(&newMinipap)
+					if err != nil {
+						k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
+						return
+					}
+					//Connect MiniPAP to Factor
+					factor.ActualID = &newMinipap.MiniPAP_ID
+					//Storing Actual Monthly
+					for _, monthly := range factor.Actual.Monthly{
+						monthly.MinipapID = &newMinipap.MiniPAP_ID
+						err := ka.monthlyService.Store(&monthly)
+						if err != nil {
+							k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
+							return
+						}
+					}
+				}
+			}
+		}
+	}
+	k.JSON(http.StatusOK, model.SuccessResponse{Message: "add Entire Yearly success"})
 }
 
 // Update
