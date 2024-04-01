@@ -6,6 +6,7 @@ import (
 	"goreact/service"
 	"net/http"
 	"strconv"
+
 	// "strings"
 
 	"github.com/gin-gonic/gin"
@@ -37,6 +38,8 @@ type KpiAPI interface {
 	DeleteMonthly(k *gin.Context)
 	DeleteResult(k *gin.Context)
 	DeleteYearly(k *gin.Context)
+
+	DeleteEntireYearly(k *gin.Context)
 
 	GetAttendanceByID(k *gin.Context)
 	GetFactorByID(k *gin.Context)
@@ -89,10 +92,7 @@ func (ka *kpiAPI) AddAttendance(k *gin.Context) {
 		return
 	}
 	err := ka.attendanceService.Store(&newAttendance)
-	if err != nil {
-		k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
-		return
-	}
+	if model.ErrorCheck(k, err) {return}
 	k.JSON(http.StatusOK, model.SuccessResponse{Message: "add Attendance success"})
 }
 func (ka *kpiAPI) AddFactor(k *gin.Context) {
@@ -102,10 +102,7 @@ func (ka *kpiAPI) AddFactor(k *gin.Context) {
 		return
 	}
 	err := ka.factorService.Store(&newFactor)
-	if err != nil {
-		k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
-		return
-	}
+	if model.ErrorCheck(k, err) {return}
 	k.JSON(http.StatusOK, model.SuccessResponse{Message: "add Factor success"})
 }
 func (ka *kpiAPI) AddItem(k *gin.Context) {
@@ -115,10 +112,7 @@ func (ka *kpiAPI) AddItem(k *gin.Context) {
 		return
 	}
 	err := ka.itemService.Store(&newItem)
-	if err != nil {
-		k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
-		return
-	}
+	if model.ErrorCheck(k, err) {return}
 	k.JSON(http.StatusOK, model.SuccessResponse{Message: "add Item success"})
 }
 func (ka *kpiAPI) AddMinipap(k *gin.Context) {
@@ -128,10 +122,7 @@ func (ka *kpiAPI) AddMinipap(k *gin.Context) {
 		return
 	}
 	err := ka.minipapService.Store(&newMinipap)
-	if err != nil {
-		k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
-		return
-	}
+	if model.ErrorCheck(k, err) {return}
 	k.JSON(http.StatusOK, model.SuccessResponse{Message: "add Minipap success"})
 }
 func (ka *kpiAPI) AddMonthly(k *gin.Context) {
@@ -140,24 +131,9 @@ func (ka *kpiAPI) AddMonthly(k *gin.Context) {
 		k.JSON(http.StatusBadRequest, model.ErrorResponse{Error: err.Error()})
 		return
 	}
-	newMonthly.Ytd = 
-		newMonthly.Jan + 
-		newMonthly.Feb +
-		newMonthly.Mar +
-		newMonthly.Apr +
-		newMonthly.May +
-		newMonthly.Jun +
-		newMonthly.Jul +
-		newMonthly.Aug +
-		newMonthly.Sep +
-		newMonthly.Oct +
-		newMonthly.Nov + 
-		newMonthly.Dec
+	newMonthly = newMonthly.Reseted()
 	err := ka.monthlyService.Store(&newMonthly)
-	if err != nil {
-		k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
-		return
-	}
+	if model.ErrorCheck(k, err) {return}
 	k.JSON(http.StatusOK, model.SuccessResponse{Message: "add Monthly success"})
 }
 func (ka *kpiAPI) AddResult(k *gin.Context) {
@@ -167,10 +143,7 @@ func (ka *kpiAPI) AddResult(k *gin.Context) {
 		return
 	}
 	err := ka.resultService.Store(&newResult)
-	if err != nil {
-		k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
-		return
-	}
+	if model.ErrorCheck(k, err) {return}
 	k.JSON(http.StatusOK, model.SuccessResponse{Message: "add Result success"})
 }
 func (ka *kpiAPI) AddYearly(k *gin.Context) {
@@ -180,10 +153,7 @@ func (ka *kpiAPI) AddYearly(k *gin.Context) {
 		return
 	}
 	err := ka.yearlyService.Store(&newYearly)
-	if err != nil {
-		k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
-		return
-	}
+	if model.ErrorCheck(k, err) {return}
 	k.JSON(http.StatusOK, model.SuccessResponse{Message: "add Yearly success"})
 }
 
@@ -199,11 +169,11 @@ func (ka *kpiAPI) AddEntireYearly(k *gin.Context) {
 
 	//Storing Attendance
 	var newAttendance model.Attendance
-	newAttendance.Year = newYearly.Attendance.Year
+	newAttendance.Year = newYearly.Year
 	//Creating monthly from attendance
 	if newYearly.Attendance.Plan != nil{
-		newMonthly := newYearly.Attendance.Plan
-		err := ka.monthlyService.Store(newMonthly)
+		newMonthly := newYearly.Attendance.Plan.Reseted()
+		err := ka.monthlyService.Store(&newMonthly)
 		if err != nil {
 			k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
 			return
@@ -211,8 +181,8 @@ func (ka *kpiAPI) AddEntireYearly(k *gin.Context) {
 		newAttendance.PlanID = &newMonthly.Monthly_ID
 	}
 	if newYearly.Attendance.Actual != nil{
-		newMonthly := newYearly.Attendance.Actual
-		err := ka.monthlyService.Store(newMonthly)
+		newMonthly := newYearly.Attendance.Actual.Reseted()
+		err := ka.monthlyService.Store(&newMonthly)
 		if err != nil {
 			k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
 			return
@@ -220,8 +190,8 @@ func (ka *kpiAPI) AddEntireYearly(k *gin.Context) {
 		newAttendance.ActualID = &newMonthly.Monthly_ID
 	}
 	if newYearly.Attendance.Cuti != nil{
-		newMonthly := newYearly.Attendance.Cuti
-		err := ka.monthlyService.Store(newMonthly)
+		newMonthly := newYearly.Attendance.Cuti.Reseted()
+		err := ka.monthlyService.Store(&newMonthly)
 		if err != nil {
 			k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
 			return
@@ -229,17 +199,17 @@ func (ka *kpiAPI) AddEntireYearly(k *gin.Context) {
 		newAttendance.CutiID = &newMonthly.Monthly_ID
 	}
 	if newYearly.Attendance.Izin != nil{
-		newMonthly := newYearly.Attendance.Izin
-		err := ka.monthlyService.Store(newMonthly)
+		newMonthly := newYearly.Attendance.Izin.Reseted()
+		err := ka.monthlyService.Store(&newMonthly)
 		if err != nil {
 			k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
 			return
 		}
-		newAttendance.IzinID = &newMonthly.Monthly_ID
+		newAttendance.CutiID = &newMonthly.Monthly_ID
 	}
 	if newYearly.Attendance.Lain != nil{
-		newMonthly := newYearly.Attendance.Lain
-		err := ka.monthlyService.Store(newMonthly)
+		newMonthly := newYearly.Attendance.Lain.Reseted()
+		err := ka.monthlyService.Store(&newMonthly)
 		if err != nil {
 			k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
 			return
@@ -248,18 +218,12 @@ func (ka *kpiAPI) AddEntireYearly(k *gin.Context) {
 	}
 	//Creating attendance
 	err := ka.attendanceService.Store(&newAttendance)
-	if err != nil {
-		k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
-		return
-	}
+	if model.ErrorCheck(k, err) {return}
 	newYear.AttendanceID = &newAttendance.Year
 	err = ka.yearlyService.Store(&newYear)
-	if err != nil {
-		k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
-		return
-	}
+	if model.ErrorCheck(k, err) {return}
 	//Storing Items
-	for _, item := range newYear.Items{
+	for _, item := range newYearly.Items{
 		var newItem model.Item
 		newItem.Name = item.Name
 		//Connect Item to Yearly
@@ -289,26 +253,21 @@ func (ka *kpiAPI) AddEntireYearly(k *gin.Context) {
 				newFactor.Unit = factor.Unit
 				newFactor.Target = factor.Target
 				//Connect Factor to Result
-				newFactor.ResultID = &result.Result_ID
+				newFactor.ResultID = &newResult.Result_ID
 				if factor.Plan != nil{
 					//Storing MiniPAP Plan
 					var newMinipap model.MiniPAP
 					//Create MiniPAP to get id
 					err := ka.minipapService.Store(&newMinipap)
-					if err != nil {
-						k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
-						return
-					}
+					if model.ErrorCheck(k, err) {return}
 					//Connect MiniPAP to Factor
-					factor.PlanID = &newMinipap.MiniPAP_ID
+					newFactor.PlanID = &newMinipap.MiniPAP_ID
 					//Storing Plan Monthly
 					for _, monthly := range factor.Plan.Monthly{
-						monthly.MinipapID = &newMinipap.MiniPAP_ID
-						err := ka.monthlyService.Store(&monthly)
-						if err != nil {
-							k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
-							return
-						}
+						newMonthly := monthly.Reseted()
+						newMonthly.MinipapID = &newMinipap.MiniPAP_ID
+						err := ka.monthlyService.Store(&newMonthly)
+						if model.ErrorCheck(k, err) {return}
 					}
 				}
 				if factor.Actual != nil{
@@ -316,22 +275,19 @@ func (ka *kpiAPI) AddEntireYearly(k *gin.Context) {
 					var newMinipap model.MiniPAP
 					//Create MiniPAP to get id
 					err := ka.minipapService.Store(&newMinipap)
-					if err != nil {
-						k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
-						return
-					}
+					if model.ErrorCheck(k, err) {return}
 					//Connect MiniPAP to Factor
-					factor.ActualID = &newMinipap.MiniPAP_ID
+					newFactor.ActualID = &newMinipap.MiniPAP_ID
 					//Storing Actual Monthly
 					for _, monthly := range factor.Actual.Monthly{
-						monthly.MinipapID = &newMinipap.MiniPAP_ID
-						err := ka.monthlyService.Store(&monthly)
-						if err != nil {
-							k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
-							return
-						}
+						newMonthly := monthly.Reseted()
+						newMonthly.MinipapID = &newMinipap.MiniPAP_ID
+						err := ka.monthlyService.Store(&newMonthly)
+						if model.ErrorCheck(k, err) {return}
 					}
 				}
+				err := ka.factorService.Store(&newFactor)
+				if model.ErrorCheck(k, err){return}
 			}
 		}
 	}
@@ -352,10 +308,7 @@ func (ka *kpiAPI) UpdateAttendance(k *gin.Context) {
 	}
 	newAttendance.Year = KpiID
 	err = ka.attendanceService.Saves(newAttendance)
-	if err != nil {
-		k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
-		return
-	}
+	if model.ErrorCheck(k, err) {return}
 	k.JSON(http.StatusOK, model.SuccessResponse{Message: "Attendance update success"})
 }
 func (ka *kpiAPI) UpdateFactor(k *gin.Context) {
@@ -371,10 +324,7 @@ func (ka *kpiAPI) UpdateFactor(k *gin.Context) {
 	}
 	newFactor.Factor_ID = KpiID
 	err = ka.factorService.Saves(newFactor)
-	if err != nil {
-		k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
-		return
-	}
+	if model.ErrorCheck(k, err) {return}
 	k.JSON(http.StatusOK, model.SuccessResponse{Message: "Factor update success"})
 }
 func (ka *kpiAPI) UpdateItem(k *gin.Context) {
@@ -390,10 +340,7 @@ func (ka *kpiAPI) UpdateItem(k *gin.Context) {
 	}
 	newItem.Item_ID = KpiID
 	err = ka.itemService.Saves(newItem)	
-	if err != nil {
-		k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
-		return
-	}
+	if model.ErrorCheck(k, err) {return}
 	k.JSON(http.StatusOK, model.SuccessResponse{Message: "Item update success"})
 }
 func (ka *kpiAPI) UpdateMinipap(k *gin.Context) {
@@ -409,10 +356,7 @@ func (ka *kpiAPI) UpdateMinipap(k *gin.Context) {
 	}
 	newMinipap.MiniPAP_ID = KpiID
 	err = ka.minipapService.Saves(newMinipap)	
-	if err != nil {
-		k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
-		return
-	}
+	if model.ErrorCheck(k, err) {return}
 	k.JSON(http.StatusOK, model.SuccessResponse{Message: "MiniPAP update success"})
 }
 func (ka *kpiAPI) UpdateMonthly(k *gin.Context) {
@@ -429,10 +373,7 @@ func (ka *kpiAPI) UpdateMonthly(k *gin.Context) {
 	// err = ka.monthlyService.Update(KpiID, newMonthly)
 	newMonthly.Monthly_ID = KpiID
 	err = ka.monthlyService.Saves(newMonthly)
-	if err != nil {
-		k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
-		return
-	}
+	if model.ErrorCheck(k, err) {return}
 	k.JSON(http.StatusOK, model.SuccessResponse{Message: "Monthly update success"})
 }
 func (ka *kpiAPI) UpdateResult(k *gin.Context) {
@@ -448,10 +389,7 @@ func (ka *kpiAPI) UpdateResult(k *gin.Context) {
 	}
 	newResult.Result_ID = KpiID
 	err = ka.resultService.Saves(newResult)	
-	if err != nil {
-		k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
-		return
-	}
+	if model.ErrorCheck(k, err) {return}
 	k.JSON(http.StatusOK, model.SuccessResponse{Message: "Result update success"})
 }
 func (ka *kpiAPI) UpdateYearly(k *gin.Context) {
@@ -467,10 +405,7 @@ func (ka *kpiAPI) UpdateYearly(k *gin.Context) {
 	}
 	newYearly.Year = KpiID
 	err = ka.yearlyService.Saves(newYearly)	
-	if err != nil {
-		k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
-		return
-	}
+	if model.ErrorCheck(k, err) {return}
 	k.JSON(http.StatusOK, model.SuccessResponse{Message: "Yearly update success"})
 }
 
@@ -482,10 +417,7 @@ func (ka *kpiAPI) DeleteAttendance(k *gin.Context) {
 		return
 	}
 	err = ka.attendanceService.Delete(KpiID)
-	if err != nil {
-		k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
-		return
-	}
+	if model.ErrorCheck(k, err) {return}
 	k.JSON(http.StatusOK, model.SuccessResponse{Message: "Attendance delete success"})
 }
 func (ka *kpiAPI) DeleteFactor(k *gin.Context) {
@@ -495,10 +427,7 @@ func (ka *kpiAPI) DeleteFactor(k *gin.Context) {
 		return
 	}
 	err = ka.factorService.Delete(KpiID)
-	if err != nil {
-		k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
-		return
-	}
+	if model.ErrorCheck(k, err) {return}
 	k.JSON(http.StatusOK, model.SuccessResponse{Message: "Factor delete success"})
 }
 func (ka *kpiAPI) DeleteItem(k *gin.Context) {
@@ -508,10 +437,7 @@ func (ka *kpiAPI) DeleteItem(k *gin.Context) {
 		return
 	}
 	err = ka.itemService.Delete(KpiID)
-	if err != nil {
-		k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
-		return
-	}
+	if model.ErrorCheck(k, err) {return}
 	k.JSON(http.StatusOK, model.SuccessResponse{Message: "Item delete success"})
 }
 func (ka *kpiAPI) DeleteMinipap(k *gin.Context) {
@@ -521,10 +447,7 @@ func (ka *kpiAPI) DeleteMinipap(k *gin.Context) {
 		return
 	}
 	err = ka.minipapService.Delete(KpiID)
-	if err != nil {
-		k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
-		return
-	}
+	if model.ErrorCheck(k, err) {return}
 	k.JSON(http.StatusOK, model.SuccessResponse{Message: "MiniPAP delete success"})
 }
 func (ka *kpiAPI) DeleteMonthly(k *gin.Context) {
@@ -534,10 +457,7 @@ func (ka *kpiAPI) DeleteMonthly(k *gin.Context) {
 		return
 	}
 	err = ka.monthlyService.Delete(KpiID)
-	if err != nil {
-		k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
-		return
-	}
+	if model.ErrorCheck(k, err) {return}
 	k.JSON(http.StatusOK, model.SuccessResponse{Message: "Monthly delete success"})
 }
 func (ka *kpiAPI) DeleteResult(k *gin.Context) {
@@ -547,10 +467,7 @@ func (ka *kpiAPI) DeleteResult(k *gin.Context) {
 		return
 	}
 	err = ka.resultService.Delete(KpiID)
-	if err != nil {
-		k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
-		return
-	}
+	if model.ErrorCheck(k, err) {return}
 	k.JSON(http.StatusOK, model.SuccessResponse{Message: "Result delete success"})
 }
 func (ka *kpiAPI) DeleteYearly(k *gin.Context) {
@@ -560,11 +477,23 @@ func (ka *kpiAPI) DeleteYearly(k *gin.Context) {
 		return
 	}
 	err = ka.yearlyService.Delete(KpiID)
+	if model.ErrorCheck(k, err) {return}
+	k.JSON(http.StatusOK, model.SuccessResponse{Message: "Yearly delete success"})
+}
+
+func (ka *kpiAPI) DeleteEntireYearly(k *gin.Context) {
+	KpiID, err := strconv.Atoi(k.Param("id"))
 	if err != nil {
-		k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
+		k.JSON(http.StatusBadRequest, model.ErrorResponse{Error: "invalid Yearly ID"})
 		return
 	}
-	k.JSON(http.StatusOK, model.SuccessResponse{Message: "Yearly delete success"})
+	Yearly, err := ka.yearlyService.GetByID(KpiID)
+	if model.ErrorCheck(k, err) {return}
+	Attendance, err := ka.attendanceService.GetByID(*Yearly.AttendanceID)
+	if model.ErrorCheck(k, err) {return}
+	err = ka.attendanceService.Delete(Attendance.Year)
+	if model.ErrorCheck(k, err) {return}
+	k.JSON(http.StatusOK, model.SuccessResponse{Message: "delete Entire Yearly success"})
 }
 
 // Get By ID
@@ -575,10 +504,7 @@ func (ka *kpiAPI) GetAttendanceByID(k *gin.Context) {
 		return
 	}
 	Attendance, err := ka.attendanceService.GetByID(KpiID)
-	if err != nil {
-		k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
-		return
-	}
+	if model.ErrorCheck(k, err) {return}
 	k.JSON(http.StatusOK, Attendance.ToResponse())
 }
 func (ka *kpiAPI) GetFactorByID(k *gin.Context) {
@@ -588,10 +514,7 @@ func (ka *kpiAPI) GetFactorByID(k *gin.Context) {
 		return
 	}
 	Factor, err := ka.factorService.GetByID(KpiID)
-	if err != nil {
-		k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
-		return
-	}
+	if model.ErrorCheck(k, err) {return}
 	k.JSON(http.StatusOK, Factor.ToResponse())
 }
 func (ka *kpiAPI) GetItemByID(k *gin.Context) {
@@ -601,10 +524,7 @@ func (ka *kpiAPI) GetItemByID(k *gin.Context) {
 		return
 	}
 	Item, err := ka.itemService.GetByID(KpiID)
-	if err != nil {
-		k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
-		return
-	}
+	if model.ErrorCheck(k, err) {return}
 	k.JSON(http.StatusOK, Item.ToResponse())
 }
 func (ka *kpiAPI) GetMinipapByID(k *gin.Context) {
@@ -614,10 +534,7 @@ func (ka *kpiAPI) GetMinipapByID(k *gin.Context) {
 		return
 	}
 	Minipap, err := ka.minipapService.GetByID(KpiID)
-	if err != nil {
-		k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
-		return
-	}
+	if model.ErrorCheck(k, err) {return}
 	k.JSON(http.StatusOK, Minipap)
 }
 func (ka *kpiAPI) GetMonthlyByID(k *gin.Context) {
@@ -627,10 +544,7 @@ func (ka *kpiAPI) GetMonthlyByID(k *gin.Context) {
 		return
 	}
 	Monthly, err := ka.monthlyService.GetByID(KpiID)
-	if err != nil {
-		k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
-		return
-	}
+	if model.ErrorCheck(k, err) {return}
 	k.JSON(http.StatusOK, Monthly)
 }
 func (ka *kpiAPI) GetResultByID(k *gin.Context) {
@@ -640,10 +554,7 @@ func (ka *kpiAPI) GetResultByID(k *gin.Context) {
 		return
 	}
 	Result, err := ka.resultService.GetByID(KpiID)
-	if err != nil {
-		k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
-		return
-	}
+	if model.ErrorCheck(k, err) {return}
 	k.JSON(http.StatusOK, Result.ToResponse())
 }
 func (ka *kpiAPI) GetYearlyByID(k *gin.Context) {
@@ -653,20 +564,14 @@ func (ka *kpiAPI) GetYearlyByID(k *gin.Context) {
 		return
 	}
 	Yearly, err := ka.yearlyService.GetByID(KpiID)
-	if err != nil {
-		k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
-		return
-	}
+	if model.ErrorCheck(k, err) {return}
 	k.JSON(http.StatusOK, Yearly.ToResponse())
 }
 
 // Get List
 func (ka *kpiAPI) GetAttendanceList(k *gin.Context) {
 	Attendance, err := ka.attendanceService.GetList()
-	if err != nil {
-		k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
-		return
-	}
+	if model.ErrorCheck(k, err) {return}
 	var result model.AttendanceArrayResponse
 	result.Attendance = []model.AttendanceResponse{} 
 	for _,att := range Attendance{
@@ -677,10 +582,7 @@ func (ka *kpiAPI) GetAttendanceList(k *gin.Context) {
 }
 func (ka *kpiAPI) GetFactorList(k *gin.Context) {
 	Factor, err := ka.factorService.GetList()
-	if err != nil {
-		k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
-		return
-	}
+	if model.ErrorCheck(k, err) {return}
 	var result model.FactorArrayResponse
 	result.Factor = []model.FactorResponse{}
 	for _, data := range Factor{
@@ -691,10 +593,7 @@ func (ka *kpiAPI) GetFactorList(k *gin.Context) {
 }
 func (ka *kpiAPI) GetItemList(k *gin.Context) {
 	Item, err := ka.itemService.GetList()
-	if err != nil {
-		k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
-		return
-	}
+	if model.ErrorCheck(k, err) {return}
 	var result model.ItemArrayResponse
 	result.Item = []model.ItemResponse{}
 	for _, data := range Item{
@@ -705,10 +604,7 @@ func (ka *kpiAPI) GetItemList(k *gin.Context) {
 }
 func (ka *kpiAPI) GetMinipapList(k *gin.Context) {
 	Minipap, err := ka.minipapService.GetList()
-	if err != nil {
-		k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
-		return
-	}
+	if model.ErrorCheck(k, err) {return}
 	var result model.MinipapArrayResponse
 	result.Minipap = Minipap 
 	result.Message = "Getting All MiniPAPs Success"
@@ -716,10 +612,7 @@ func (ka *kpiAPI) GetMinipapList(k *gin.Context) {
 }
 func (ka *kpiAPI) GetMonthlyList(k *gin.Context) {
 	Monthly, err := ka.monthlyService.GetList()
-	if err != nil {
-		k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
-		return
-	}
+	if model.ErrorCheck(k, err) {return}
 	var result model.MonthlyArrayResponse
 	result.Monthly = Monthly 
 	result.Message = "Getting All Monthlys Success"
@@ -727,10 +620,7 @@ func (ka *kpiAPI) GetMonthlyList(k *gin.Context) {
 }
 func (ka *kpiAPI) GetResultList(k *gin.Context) {
 	Result, err := ka.resultService.GetList()
-	if err != nil {
-		k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
-		return
-	}
+	if model.ErrorCheck(k, err) {return}
 	var result model.ResultArrayResponse
 	result.Result = []model.ResultResponse{}
 	for _, data := range Result{
@@ -741,10 +631,7 @@ func (ka *kpiAPI) GetResultList(k *gin.Context) {
 }
 func (ka *kpiAPI) GetYearlyList(k *gin.Context) {
 	Yearly, err := ka.yearlyService.GetList()
-	if err != nil {
-		k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
-		return
-	}
+	if model.ErrorCheck(k, err) {return}
 	var result model.YearlyArrayResponse
 	result.Yearly = []model.YearlyResponse{}
 	for _, data := range Yearly{
