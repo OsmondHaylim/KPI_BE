@@ -69,29 +69,35 @@ func RunServer(db *gorm.DB, gin *gin.Engine) *gin.Engine {
 			analisa.PUT("/:id", apiHandler.AnalisaAPIHandler.UpdateAnalisa)
 			analisa.DELETE("/:id", apiHandler.AnalisaAPIHandler.DeleteAnalisa)
 		}
-		attendance := kpi.Group("/attendance")
+		attendance := kpi.Group("/attendance") //inefficient endpoint
 		{
 			attendance.GET("", apiHandler.KpiAPIHandler.GetAttendanceList)
 			attendance.GET("/:id", apiHandler.KpiAPIHandler.GetAttendanceByID)
 			attendance.POST("", apiHandler.KpiAPIHandler.AddAttendance)
+			attendance.POST("/entire", apiHandler.KpiAPIHandler.AddEntireAttendance)
 			attendance.PUT("/:id", apiHandler.KpiAPIHandler.UpdateAttendance)
 			attendance.DELETE("/:id", apiHandler.KpiAPIHandler.DeleteAttendance)
+			attendance.DELETE("/entire/:id", apiHandler.KpiAPIHandler.DeleteEntireAttendance)
 		}
-		factor := kpi.Group("/factor")
+		factor := kpi.Group("/factor") //inefficient endpoint
 		{
 			factor.GET("", apiHandler.KpiAPIHandler.GetFactorList)
 			factor.GET("/:id", apiHandler.KpiAPIHandler.GetFactorByID)
 			factor.POST("", apiHandler.KpiAPIHandler.AddFactor)
+			factor.POST("/entire", apiHandler.KpiAPIHandler.AddEntireFactor)
 			factor.PUT("/:id", apiHandler.KpiAPIHandler.UpdateFactor)
 			factor.DELETE("/:id", apiHandler.KpiAPIHandler.DeleteFactor)
+			factor.DELETE("/entire/:id", apiHandler.KpiAPIHandler.DeleteEntireFactor)
 		}
-		item := kpi.Group("/item")
+		item := kpi.Group("/item") //inefficient endpoint
 		{
 			item.GET("", apiHandler.KpiAPIHandler.GetItemList)
 			item.GET("/:id", apiHandler.KpiAPIHandler.GetItemByID)
 			item.POST("", apiHandler.KpiAPIHandler.AddItem)
+			item.POST("/entire", apiHandler.KpiAPIHandler.AddEntireItem)
 			item.PUT("/:id", apiHandler.KpiAPIHandler.UpdateItem)
 			item.DELETE("/:id", apiHandler.KpiAPIHandler.DeleteItem)
+			item.DELETE("/entire/:id", apiHandler.KpiAPIHandler.DeleteEntireItem)
 		}
 		masalah := kpi.Group("/masalah")
 		{
@@ -101,7 +107,7 @@ func RunServer(db *gorm.DB, gin *gin.Engine) *gin.Engine {
 			masalah.PUT("/:id", apiHandler.AnalisaAPIHandler.UpdateMasalah)
 			masalah.DELETE("/:id", apiHandler.AnalisaAPIHandler.DeleteMasalah)
 		}
-		minipap := kpi.Group("/minipap")
+		minipap := kpi.Group("/minipap") //inefficient endpoint
 		{
 			minipap.GET("", apiHandler.KpiAPIHandler.GetMinipapList)
 			minipap.GET("/:id", apiHandler.KpiAPIHandler.GetMinipapByID)
@@ -109,7 +115,7 @@ func RunServer(db *gorm.DB, gin *gin.Engine) *gin.Engine {
 			minipap.PUT("/:id", apiHandler.KpiAPIHandler.UpdateMinipap)
 			minipap.DELETE("/:id", apiHandler.KpiAPIHandler.DeleteMinipap)
 		}
-		monthly := kpi.Group("/monthly")
+		monthly := kpi.Group("/monthly") //inefficient endpoint
 		{
 			monthly.GET("", apiHandler.KpiAPIHandler.GetMonthlyList)
 			monthly.GET("/:id", apiHandler.KpiAPIHandler.GetMonthlyByID)
@@ -125,13 +131,15 @@ func RunServer(db *gorm.DB, gin *gin.Engine) *gin.Engine {
 			project.PUT("/:id", apiHandler.ProjectAPIHandler.UpdateProject)
 			project.DELETE("/:id", apiHandler.ProjectAPIHandler.DeleteProject)
 		}
-		result := kpi.Group("/result")
+		result := kpi.Group("/result") //inefficient endpoint
 		{
 			result.GET("", apiHandler.KpiAPIHandler.GetResultList)
 			result.GET("/:id", apiHandler.KpiAPIHandler.GetResultByID)
 			result.POST("", apiHandler.KpiAPIHandler.AddResult)
+			result.POST("/entire", apiHandler.KpiAPIHandler.AddEntireResult)
 			result.PUT("/:id", apiHandler.KpiAPIHandler.UpdateResult)
 			result.DELETE("/:id", apiHandler.KpiAPIHandler.DeleteResult)
+			result.DELETE("/entire/:id", apiHandler.KpiAPIHandler.DeleteEntireResult)
 		}
 		summary := kpi.Group("/summary")
 		{
@@ -141,7 +149,7 @@ func RunServer(db *gorm.DB, gin *gin.Engine) *gin.Engine {
 			summary.PUT("/:id", apiHandler.ProjectAPIHandler.UpdateSummary)
 			summary.DELETE("/:id", apiHandler.ProjectAPIHandler.DeleteSummary)
 		}
-		yearly := kpi.Group("/yearly")
+		yearly := kpi.Group("/yearly") 
 		{
 			yearly.GET("", apiHandler.KpiAPIHandler.GetYearlyList)
 			yearly.GET("/:id", apiHandler.KpiAPIHandler.GetYearlyByID)

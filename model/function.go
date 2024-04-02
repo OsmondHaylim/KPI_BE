@@ -29,6 +29,7 @@ func (p Factor) ToPercentage() [][]Monthly{
 						Oct: ((data.Oct + 1) / (act.Oct + 1)) * 100,
 						Nov: ((data.Nov + 1) / (act.Nov + 1)) * 100,
 						Dec: ((data.Dec + 1) / (act.Dec + 1)) * 100,
+						Ytd: (a.Jan + a.Feb + a.Mar + a.Apr + a.May + a.Jun + a.Jul + a.Aug + a.Sep + a.Oct + a.Nov + a.Dec) / 12,
 						Remarks: &b,	
 					}
 				} else{
@@ -44,6 +45,7 @@ func (p Factor) ToPercentage() [][]Monthly{
 					if data.Oct == 0 {a.Oct = (act.Oct / (data.Oct + 1)) * 100} else {a.Oct = (act.Oct / data.Oct) * 100}
 					if data.Nov == 0 {a.Nov = (act.Nov / (data.Nov + 1)) * 100} else {a.Nov = (act.Nov / data.Nov) * 100}
 					if data.Dec == 0 {a.Dec = (act.Dec / (data.Dec + 1)) * 100} else {a.Dec = (act.Dec / data.Dec) * 100}
+					a.Ytd = ((data.Jan + data.Feb + data.Mar + data.Apr + data.May + data.Jun + data.Jul + data.Aug + data.Sep + data.Oct + data.Nov + data.Dec) / (act.Jan + act.Feb + act.Mar + act.Apr + act.May + act.Jun + act.Jul + act.Aug + act.Sep + act.Oct + act.Nov + act.Dec)) * 100
 					a.Remarks = &b
 				}
 				temp = append(temp, a)
