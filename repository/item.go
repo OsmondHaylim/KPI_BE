@@ -1,4 +1,4 @@
-package service
+package repository
 
 import (
 	"goreact/model"
@@ -6,7 +6,7 @@ import (
 	"gorm.io/gorm/clause"
 )
 
-type ItemService interface {
+type ItemRepo interface {
 	Store(Item *model.Item) error
 	Update(id int, item model.Item) error
 	Saves(item model.Item) error
@@ -15,31 +15,31 @@ type ItemService interface {
 	GetList() ([]model.Item, error)
 }
 
-type itemService struct {
+type itemRepo struct {
 	db *gorm.DB
 }
 
-func NewItemService(db *gorm.DB) *itemService {
-	return &itemService{db}
+func NewItemRepo(db *gorm.DB) *itemRepo {
+	return &itemRepo{db}
 }
 
-func (is *itemService) Store(item *model.Item) error {
+func (is *itemRepo) Store(item *model.Item) error {
 	return is.db.Create(item).Error
 }
 
-func (is *itemService) Update(id int, item model.Item) error {
+func (is *itemRepo) Update(id int, item model.Item) error {
 	return is.db.Where(id).Updates(item).Error
 }
 
-func (is *itemService) Saves(item model.Item) error {
+func (is *itemRepo) Saves(item model.Item) error {
 	return is.db.Save(item).Error
 }
 
-func (is *itemService) Delete(id int) error {	
+func (is *itemRepo) Delete(id int) error {	
 	return is.db.Where(id).Delete(&model.Item{}).Error 
 }
 
-func (is *itemService) GetByID(id int) (*model.Item, error) {
+func (is *itemRepo) GetByID(id int) (*model.Item, error) {
 	var Item model.Item
 	err := is.db.
 	Preload(clause.Associations).
@@ -56,7 +56,7 @@ func (is *itemService) GetByID(id int) (*model.Item, error) {
 	return &Item, nil
 }
 
-func (is *itemService) GetList() ([]model.Item, error) {
+func (is *itemRepo) GetList() ([]model.Item, error) {
 	var item []model.Item
 	err := is.db.
 	Preload(clause.Associations).

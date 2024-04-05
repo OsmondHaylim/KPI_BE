@@ -27,145 +27,84 @@ type ProjectAPI interface {
 	GetProjectList(k *gin.Context)
 	GetSummaryList(k *gin.Context)
 }
-type projectAPI struct {
-	projectService		service.ProjectService
-	summaryService 		service.SummaryService
-}
-func NewProjectAPI(
-	projectService service.ProjectService,
-	summaryService service.SummaryService) *projectAPI{
-	return &projectAPI{
-		projectService,
-		summaryService}
-}
+type projectAPI struct {crudService		service.CrudService}
+func NewProjectAPI(crudService service.CrudService) *projectAPI{
+	return &projectAPI{crudService,}}
 
 func (aa *projectAPI) AddProject(k *gin.Context) {
 	var newProject model.Project
-	if err := k.ShouldBindJSON(&newProject); err != nil {
-		k.JSON(http.StatusBadRequest, model.ErrorResponse{Error: err.Error()})
-		return
-	}
-	err := aa.projectService.Store(&newProject)
-	if err != nil {
-		k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
-		return
-	}
+	err := k.ShouldBindJSON(&newProject)
+	if model.ErrorCheck(k, err){return}
+	err = aa.crudService.AddProject(&newProject)
+	if model.ErrorCheck(k, err){return}
 	k.JSON(http.StatusOK, model.SuccessResponse{Message: "add Project success"})
 }
 func (aa *projectAPI) AddSummary(k *gin.Context) {
 	var newSummary model.Summary
-	if err := k.ShouldBindJSON(&newSummary); err != nil {
-		k.JSON(http.StatusBadRequest, model.ErrorResponse{Error: err.Error()})
-		return
-	}
-	err := aa.summaryService.Store(&newSummary)
-	if err != nil {
-		k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
-		return
-	}
+	err := k.ShouldBindJSON(&newSummary)
+	if model.ErrorCheck(k, err){return}
+	err = aa.crudService.AddSummary(&newSummary)
+	if model.ErrorCheck(k, err){return}
 	k.JSON(http.StatusOK, model.SuccessResponse{Message: "add Summary success"})
 }
 
 func (aa *projectAPI) UpdateProject(k *gin.Context) {
 	var newProject model.Project
-	if err := k.ShouldBindJSON(&newProject); err != nil {
-		k.JSON(http.StatusBadRequest, model.ErrorResponse{Error: err.Error()})
-		return
-	}
+	err := k.ShouldBindJSON(&newProject)
+	if model.ErrorCheck(k, err){return}
 	KpiID, err := strconv.Atoi(k.Param("id"))
-	if err != nil {
-		k.JSON(http.StatusBadRequest, model.ErrorResponse{Error: "invalid Project ID"})
-		return
-	}
+	if model.ErrorCheck(k, err){return}
 	newProject.Project_ID = KpiID
-	err = aa.projectService.Saves(newProject)
-	if err != nil {
-		k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
-		return
-	}
+	err = aa.crudService.UpdateProject(newProject)
+	if model.ErrorCheck(k, err){return}
 	k.JSON(http.StatusOK, model.SuccessResponse{Message: "Project update success"})
 }
 func (aa *projectAPI) UpdateSummary(k *gin.Context) {
 	var newSummary model.Summary
-	if err := k.ShouldBindJSON(&newSummary); err != nil {
-		k.JSON(http.StatusBadRequest, model.ErrorResponse{Error: err.Error()})
-		return
-	}
+	err := k.ShouldBindJSON(&newSummary)
+	if model.ErrorCheck(k, err){return}
 	KpiID, err := strconv.Atoi(k.Param("id"))
-	if err != nil {
-		k.JSON(http.StatusBadRequest, model.ErrorResponse{Error: "invalid Summary ID"})
-		return
-	}
+	if model.ErrorCheck(k, err){return}
 	newSummary.Summary_ID = KpiID
-	err = aa.summaryService.Saves(newSummary)	
-	if err != nil {
-		k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
-		return
-	}
+	err = aa.crudService.UpdateSummary(newSummary)	
+	if model.ErrorCheck(k, err){return}
 	k.JSON(http.StatusOK, model.SuccessResponse{Message: "Summary update success"})
 }
 
 func (aa *projectAPI) DeleteProject(k *gin.Context) {
 	KpiID, err := strconv.Atoi(k.Param("id"))
-	if err != nil {
-		k.JSON(http.StatusBadRequest, model.ErrorResponse{Error: "invalid Project ID"})
-		return
-	}
-	err = aa.projectService.Delete(KpiID)
-	if err != nil {
-		k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
-		return
-	}
+	if model.ErrorCheck(k, err){return}
+	err = aa.crudService.DeleteProject(KpiID)
+	if model.ErrorCheck(k, err){return}
 	k.JSON(http.StatusOK, model.SuccessResponse{Message: "Project delete success"})
 }
 func (aa *projectAPI) DeleteSummary(k *gin.Context) {
 	KpiID, err := strconv.Atoi(k.Param("id"))
-	if err != nil {
-		k.JSON(http.StatusBadRequest, model.ErrorResponse{Error: "invalid Summary ID"})
-		return
-	}
-	err = aa.summaryService.Delete(KpiID)
-	if err != nil {
-		k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
-		return
-	}
+	if model.ErrorCheck(k, err){return}
+	err = aa.crudService.DeleteSummary(KpiID)
+	if model.ErrorCheck(k, err){return}
 	k.JSON(http.StatusOK, model.SuccessResponse{Message: "Summary delete success"})
 }
 
 func (aa *projectAPI) GetProjectByID(k *gin.Context) {
 	KpiID, err := strconv.Atoi(k.Param("id"))
-	if err != nil {
-		k.JSON(http.StatusBadRequest, model.ErrorResponse{Error: "Invalid Project Year"})
-		return
-	}
-	Project, err := aa.projectService.GetByID(KpiID)
-	if err != nil {
-		k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
-		return
-	}
+	if model.ErrorCheck(k, err){return}
+	Project, err := aa.crudService.GetByID(KpiID)
+	if model.ErrorCheck(k, err){return}
 	k.JSON(http.StatusOK, Project)
 }
 func (aa *projectAPI) GetSummaryByID(k *gin.Context) {
 	KpiID, err := strconv.Atoi(k.Param("id"))
-	if err != nil {
-		k.JSON(http.StatusBadRequest, model.ErrorResponse{Error: "Invalid Summary ID"})
-		return
-	}
-	Summary, err := aa.summaryService.GetByID(KpiID)
-	if err != nil {
-		k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
-		return
-	}
+	if model.ErrorCheck(k, err){return}
+	Summary, err := aa.crudService.GetByID(KpiID)
+	if model.ErrorCheck(k, err){return}
 	// Result := Summary.ToResponse()
 	k.JSON(http.StatusOK, Summary)
 }
 
 func (aa *projectAPI) GetProjectList(k *gin.Context) {
-	Project, err := aa.projectService.GetList()
-	if err != nil {
-		k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
-		return
-	}
+	Project, err := aa.crudService.GetList()
+	if model.ErrorCheck(k, err){return}
 	var result model.ProjectArrayResponse
 	result.Project = []model.ProjectResponse{}
 	for _, data := range Project{
@@ -175,11 +114,8 @@ func (aa *projectAPI) GetProjectList(k *gin.Context) {
 	k.JSON(http.StatusOK, result)
 }
 func (aa *projectAPI) GetSummaryList(k *gin.Context) {
-	Summary, err := aa.summaryService.GetList()
-	if err != nil {
-		k.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
-		return
-	}
+	Summary, err := aa.crudService.GetList()
+	if model.ErrorCheck(k, err){return}
 	var result model.SummaryArrayResponse
 	result.Summary = []model.SummaryResponse{}
 	for _, data := range Summary{

@@ -1,4 +1,4 @@
-package service
+package repository
 
 import (
 	"goreact/model"
@@ -6,7 +6,7 @@ import (
 	"gorm.io/gorm/clause"
 )
 
-type FactorService interface {
+type FactorRepo interface {
 	Store(Factor *model.Factor) error
 	Update(id int, factor model.Factor) error
 	Saves(factor model.Factor) error
@@ -15,31 +15,31 @@ type FactorService interface {
 	GetList() ([]model.Factor, error)
 }
 
-type factorService struct {
+type factorRepo struct {
 	db *gorm.DB
 }
 
-func NewFactorService(db *gorm.DB) *factorService {
-	return &factorService{db}
+func NewFactorRepo(db *gorm.DB) *factorRepo {
+	return &factorRepo{db}
 }
 
-func (fs *factorService) Store(factor *model.Factor) error {
+func (fs *factorRepo) Store(factor *model.Factor) error {
 	return fs.db.Create(factor).Error
 }
 
-func (fs *factorService) Update(id int, factor model.Factor) error {
+func (fs *factorRepo) Update(id int, factor model.Factor) error {
 	return fs.db.Where(id).Updates(factor).Error
 }
 
-func (fs *factorService) Saves(factor model.Factor) error {
+func (fs *factorRepo) Saves(factor model.Factor) error {
 	return fs.db.Save(factor).Error
 }
 
-func (fs *factorService) Delete(id int) error {	
+func (fs *factorRepo) Delete(id int) error {	
 	return fs.db.Where(id).Delete(&model.Factor{}).Error 
 }
 
-func (fs *factorService) GetByID(id int) (*model.Factor, error) {
+func (fs *factorRepo) GetByID(id int) (*model.Factor, error) {
 	var Factor model.Factor
 	err := fs.db.
 	Preload(clause.Associations).
@@ -52,7 +52,7 @@ func (fs *factorService) GetByID(id int) (*model.Factor, error) {
 	return &Factor, nil
 }
 
-func (fs *factorService) GetList() ([]model.Factor, error) {
+func (fs *factorRepo) GetList() ([]model.Factor, error) {
 	var result []model.Factor
 	err := fs.db.
 	Preload(clause.Associations).

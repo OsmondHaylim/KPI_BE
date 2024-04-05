@@ -1,4 +1,4 @@
-package service
+package repository
 
 import (
 	"goreact/model"
@@ -6,7 +6,7 @@ import (
 	"gorm.io/gorm/clause"
 )
 
-type YearlyService interface {
+type YearlyRepo interface {
 	Store(Yearly *model.Yearly) error
 	Update(id int, yearly model.Yearly) error
 	Saves(yearly model.Yearly) error
@@ -15,27 +15,27 @@ type YearlyService interface {
 	GetList() ([]model.Yearly, error)
 }
 
-type yearlyService struct {
+type yearlyRepo struct {
 	db *gorm.DB
 }
 
-func NewYearlyService(db *gorm.DB) *yearlyService {
-	return &yearlyService{db}
+func NewYearlyRepo(db *gorm.DB) *yearlyRepo {
+	return &yearlyRepo{db}
 }
 
-func (ys *yearlyService) Store(yearly *model.Yearly) error {
+func (ys *yearlyRepo) Store(yearly *model.Yearly) error {
 	return ys.db.Create(yearly).Error
 }
 
-func (ys *yearlyService) Update(id int, yearly model.Yearly) error {
+func (ys *yearlyRepo) Update(id int, yearly model.Yearly) error {
 	return ys.db.Where(id).Updates(yearly).Error
 }
 
-func (ys *yearlyService) Saves(yearly model.Yearly) error {
+func (ys *yearlyRepo) Saves(yearly model.Yearly) error {
 	return ys.db.Save(yearly).Error
 }
 
-func (ys *yearlyService) Delete(id int) error {	
+func (ys *yearlyRepo) Delete(id int) error {	
 	return ys.db.
 	Select(clause.Associations).
 	Select("Attendance.Plan").
@@ -52,7 +52,7 @@ func (ys *yearlyService) Delete(id int) error {
 	Delete(&model.Yearly{Year: id}).Error 
 }
 
-func (ys *yearlyService) GetByID(id int) (*model.Yearly, error) {
+func (ys *yearlyRepo) GetByID(id int) (*model.Yearly, error) {
 	var Yearly model.Yearly
 	err := ys.db.
 	Preload(clause.Associations).
@@ -75,7 +75,7 @@ func (ys *yearlyService) GetByID(id int) (*model.Yearly, error) {
 	return &Yearly, nil
 }
 
-func (ys *yearlyService) GetList() ([]model.Yearly, error) {
+func (ys *yearlyRepo) GetList() ([]model.Yearly, error) {
 	var yearly []model.Yearly
 	err := ys.db.
 	Preload(clause.Associations).

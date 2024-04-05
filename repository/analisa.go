@@ -1,4 +1,4 @@
-package service
+package repository
 
 import (
 	"goreact/model"
@@ -7,7 +7,7 @@ import (
 
 )
 
-type AnalisaService interface {
+type AnalisaRepo interface {
 	Store(Analisa *model.Analisa) error
 	Update(id int, analisa model.Analisa) error
 	Saves(analisa model.Analisa) error
@@ -16,27 +16,27 @@ type AnalisaService interface {
 	GetList() ([]model.Analisa, error)
 }
 
-type analisaService struct {
+type analisaRepo struct {
 	db *gorm.DB
 }
 
-func NewAnalisaService(db *gorm.DB) *analisaService {
-	return &analisaService{db}
+func NewAnalisaRepo(db *gorm.DB) *analisaRepo {
+	return &analisaRepo{db}
 }
 
-func (ms *analisaService) Store(analisa *model.Analisa) error {
+func (ms *analisaRepo) Store(analisa *model.Analisa) error {
 	return ms.db.Create(analisa).Error
 }
-func (ms *analisaService) Update(id int, analisa model.Analisa) error {
+func (ms *analisaRepo) Update(id int, analisa model.Analisa) error {
 	return ms.db.Where(id).Updates(analisa).Error
 }
-func (ms *analisaService) Saves(analisa model.Analisa) error{
+func (ms *analisaRepo) Saves(analisa model.Analisa) error{
 	return ms.db.Save(analisa).Error
 }
-func (ms *analisaService) Delete(id int) error {	
+func (ms *analisaRepo) Delete(id int) error {	
 	return ms.db.Where(id).Delete(&model.Analisa{}).Error 
 }
-func (ms *analisaService) GetByID(id int) (*model.Analisa, error) {
+func (ms *analisaRepo) GetByID(id int) (*model.Analisa, error) {
 	var Analisa model.Analisa
 	err := ms.db.Preload(clause.Associations).Where(id).First(&Analisa).Error
 	if err != nil {
@@ -44,7 +44,7 @@ func (ms *analisaService) GetByID(id int) (*model.Analisa, error) {
 	}
 	return &Analisa, nil
 }
-func (ms *analisaService) GetList() ([]model.Analisa, error) {
+func (ms *analisaRepo) GetList() ([]model.Analisa, error) {
 	var result []model.Analisa
 	err := ms.db.Preload(clause.Associations).Find(&result).Error
 	if err != nil{

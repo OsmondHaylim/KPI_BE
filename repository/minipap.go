@@ -1,4 +1,4 @@
-package service
+package repository
 
 import (
 	"goreact/model"
@@ -6,7 +6,7 @@ import (
 	"gorm.io/gorm/clause"
 )
 
-type MiniPAPService interface {
+type MiniPAPRepo interface {
 	Store(MiniPAP *model.MiniPAP) error
 	Update(id int, minipap model.MiniPAP) error
 	Saves(minipap model.MiniPAP) error
@@ -15,31 +15,31 @@ type MiniPAPService interface {
 	GetList() ([]model.MiniPAP, error)
 }
 
-type minipapService struct {
+type minipapRepo struct {
 	db *gorm.DB
 }
 
-func NewMiniPAPService(db *gorm.DB) *minipapService {
-	return &minipapService{db}
+func NewMiniPAPRepo(db *gorm.DB) *minipapRepo {
+	return &minipapRepo{db}
 }
 
-func (ms *minipapService) Store(minipap *model.MiniPAP) error {
+func (ms *minipapRepo) Store(minipap *model.MiniPAP) error {
 	return ms.db.Create(minipap).Error
 }
 
-func (ms *minipapService) Update(id int, minipap model.MiniPAP) error {
+func (ms *minipapRepo) Update(id int, minipap model.MiniPAP) error {
 	return ms.db.Where(id).Updates(minipap).Error
 }
 
-func (ms *minipapService) Saves(minipap model.MiniPAP) error {
+func (ms *minipapRepo) Saves(minipap model.MiniPAP) error {
 	return ms.db.Save(minipap).Error
 }
 
-func (ms *minipapService) Delete(id int) error {	
+func (ms *minipapRepo) Delete(id int) error {	
 	return ms.db.Where(id).Delete(&model.MiniPAP{}).Error 
 }
 
-func (ms *minipapService) GetByID(id int) (*model.MiniPAP, error) {
+func (ms *minipapRepo) GetByID(id int) (*model.MiniPAP, error) {
 	var MiniPAP model.MiniPAP
 	err := ms.db.
 	Preload(clause.Associations).
@@ -50,7 +50,7 @@ func (ms *minipapService) GetByID(id int) (*model.MiniPAP, error) {
 	return &MiniPAP, nil
 }
 
-func (ms *minipapService) GetList() ([]model.MiniPAP, error) {
+func (ms *minipapRepo) GetList() ([]model.MiniPAP, error) {
 	var result []model.MiniPAP
 	err := ms.db.
 	Preload(clause.Associations).

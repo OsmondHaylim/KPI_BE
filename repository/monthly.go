@@ -1,11 +1,11 @@
-package service
+package repository
 
 import (
 	"goreact/model"
 	"gorm.io/gorm"
 )
 
-type MonthlyService interface {
+type MonthlyRepo interface {
 	Store(Monthly *model.Monthly) error
 	Update(id int, monthly model.Monthly) error
 	Saves(monthly model.Monthly) error
@@ -14,31 +14,31 @@ type MonthlyService interface {
 	GetList() ([]model.Monthly, error)
 }
 
-type monthlyService struct {
+type monthlyRepo struct {
 	db *gorm.DB
 }
 
-func NewMonthlyService(db *gorm.DB) *monthlyService {
-	return &monthlyService{db}
+func NewMonthlyRepo(db *gorm.DB) *monthlyRepo {
+	return &monthlyRepo{db}
 }
 
-func (ms *monthlyService) Store(monthly *model.Monthly) error {
+func (ms *monthlyRepo) Store(monthly *model.Monthly) error {
 	return ms.db.Create(monthly).Error
 }
 
-func (ms *monthlyService) Update(id int, monthly model.Monthly) error {
+func (ms *monthlyRepo) Update(id int, monthly model.Monthly) error {
 	return ms.db.Where(id).Updates(monthly).Error
 }
 
-func (ms *monthlyService) Saves(monthly model.Monthly) error{
+func (ms *monthlyRepo) Saves(monthly model.Monthly) error{
 	return ms.db.Save(monthly).Error
 }
 
-func (ms *monthlyService) Delete(id int) error {	
+func (ms *monthlyRepo) Delete(id int) error {	
 	return ms.db.Where(id).Delete(&model.Monthly{}).Error 
 }
 
-func (ms *monthlyService) GetByID(id int) (*model.Monthly, error) {
+func (ms *monthlyRepo) GetByID(id int) (*model.Monthly, error) {
 	var Monthly model.Monthly
 	err := ms.db.Where("monthly_id = ?", id).First(&Monthly).Error
 	if err != nil {
@@ -47,7 +47,7 @@ func (ms *monthlyService) GetByID(id int) (*model.Monthly, error) {
 	return &Monthly, nil
 }
 
-func (ms *monthlyService) GetList() ([]model.Monthly, error) {
+func (ms *monthlyRepo) GetList() ([]model.Monthly, error) {
 	var result []model.Monthly
 	err := ms.db.Find(&result).Error
 	if err != nil{

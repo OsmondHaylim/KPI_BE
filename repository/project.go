@@ -1,4 +1,4 @@
-package service
+package repository
 
 import (
 	"goreact/model"
@@ -6,7 +6,7 @@ import (
 
 )
 
-type ProjectService interface {
+type ProjectRepo interface {
 	Store(Project *model.Project) error
 	Update(id int, project model.Project) error
 	Saves(project model.Project) error
@@ -14,27 +14,27 @@ type ProjectService interface {
 	GetByID(id int) (*model.Project, error)
 	GetList() ([]model.Project, error)
 }
-type projectService struct {
+type projectRepo struct {
 	db *gorm.DB
 }
 
-func NewProjectService(db *gorm.DB) *projectService {
-	return &projectService{db}
+func NewProjectRepo(db *gorm.DB) *projectRepo {
+	return &projectRepo{db}
 }
 
-func (ms *projectService) Store(project *model.Project) error {
+func (ms *projectRepo) Store(project *model.Project) error {
 	return ms.db.Create(project).Error
 }
-func (ms *projectService) Update(id int, project model.Project) error {
+func (ms *projectRepo) Update(id int, project model.Project) error {
 	return ms.db.Where(id).Updates(project).Error
 }
-func (ms *projectService) Saves(project model.Project) error{
+func (ms *projectRepo) Saves(project model.Project) error{
 	return ms.db.Save(project).Error
 }
-func (ms *projectService) Delete(id int) error {	
+func (ms *projectRepo) Delete(id int) error {	
 	return ms.db.Where(id).Delete(&model.Project{}).Error 
 }
-func (ms *projectService) GetByID(id int) (*model.Project, error) {
+func (ms *projectRepo) GetByID(id int) (*model.Project, error) {
 	var Project model.Project
 	err := ms.db.Where(id).First(&Project).Error
 	if err != nil {
@@ -42,7 +42,7 @@ func (ms *projectService) GetByID(id int) (*model.Project, error) {
 	}
 	return &Project, nil
 }
-func (ms *projectService) GetList() ([]model.Project, error) {
+func (ms *projectRepo) GetList() ([]model.Project, error) {
 	var result []model.Project
 	err := ms.db.Find(&result).Error
 	if err != nil{

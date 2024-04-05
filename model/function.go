@@ -57,6 +57,8 @@ func (p Factor) ToPercentage() [][]Monthly{
 	return percentMonthly
 }
 
+
+
 // func PercentParse(a float64, v string, err error) error {
 // 	if len(v) > 5{
 // 		a, err = strconv.ParseFloat(v[:5], 64)

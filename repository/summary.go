@@ -1,4 +1,4 @@
-package service
+package repository
 
 import (
 	"goreact/model"
@@ -6,7 +6,7 @@ import (
 	"gorm.io/gorm/clause"
 )
 
-type SummaryService interface {
+type SummaryRepo interface {
 	Store(Summary *model.Summary) error
 	Update(id int, summary model.Summary) error
 	Saves(summary model.Summary) error
@@ -15,31 +15,31 @@ type SummaryService interface {
 	GetList() ([]model.Summary, error)
 }
 
-type summaryService struct {
+type summaryRepo struct {
 	db *gorm.DB
 }
 
-func NewSummaryService(db *gorm.DB) *summaryService {
-	return &summaryService{db}
+func NewSummaryRepo(db *gorm.DB) *summaryRepo {
+	return &summaryRepo{db}
 }
 
-func (ms *summaryService) Store(summary *model.Summary) error {
+func (ms *summaryRepo) Store(summary *model.Summary) error {
 	return ms.db.Create(summary).Error
 }
 
-func (ms *summaryService) Update(id int, summary model.Summary) error {
+func (ms *summaryRepo) Update(id int, summary model.Summary) error {
 	return ms.db.Where(id).Updates(summary).Error
 }
 
-func (ms *summaryService) Saves(summary model.Summary) error {
+func (ms *summaryRepo) Saves(summary model.Summary) error {
 	return ms.db.Save(summary).Error
 }
 
-func (ms *summaryService) Delete(id int) error {	
+func (ms *summaryRepo) Delete(id int) error {	
 	return ms.db.Where(id).Delete(&model.Summary{}).Error 
 }
 
-func (ms *summaryService) GetByID(id int) (*model.Summary, error) {
+func (ms *summaryRepo) GetByID(id int) (*model.Summary, error) {
 	var Summary model.Summary
 	err := ms.db.
 	Preload(clause.Associations).
@@ -50,7 +50,7 @@ func (ms *summaryService) GetByID(id int) (*model.Summary, error) {
 	return &Summary, nil
 }
 
-func (ms *summaryService) GetList() ([]model.Summary, error) {
+func (ms *summaryRepo) GetList() ([]model.Summary, error) {
 	var result []model.Summary
 	err := ms.db.
 	Preload(clause.Associations).
