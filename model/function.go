@@ -57,6 +57,32 @@ func (p Factor) ToPercentage() [][]Monthly{
 	return percentMonthly
 }
 
+// func PercentParse(a float64, v string, err error) error {
+// 	if len(v) > 5{
+// 		a, err = strconv.ParseFloat(v[:5], 64)
+// 	}else if len(v) >= 1{
+// 		a, err = strconv.ParseFloat(v[:len(v)-1], 64)
+// 	}
+// 	return err
+// }
+// func Input (jan float64, feb float64, mar float64, apr float64, may float64, jun float64, jul float64, aug float64, sep float64, oct float64, nov float64, dec float64, remarks string) Monthly{
+// 	result := Monthly{}
+// 	result.Jan = jan
+// 	result.Feb = feb
+// 	result.Mar = mar
+// 	result.Apr = apr
+// 	result.May = may
+// 	result.Jun = jun
+// 	result.Jul = jul
+// 	result.Aug = aug
+// 	result.Sep = sep
+// 	result.Oct = oct
+// 	result.Nov = nov
+// 	result.Dec = dec
+// 	result.Remarks = &remarks
+// 	return result
+// }
+
 func (a Attendance) ToResponse() AttendanceResponse{
 	return AttendanceResponse{
 		Year: a.Year,
