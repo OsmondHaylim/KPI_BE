@@ -187,34 +187,34 @@ func (s Summary) ToResponse() SummaryResponse{
 }
 
 func (m Monthly) Reseted() Monthly{
-		return Monthly{
-			Jan: m.Jan,
-			Feb: m.Feb,
-			Mar: m.Mar,
-			Apr: m.Apr,
-			May: m.May,
-			Jun: m.Jun,
-			Jul: m.Jul,
-			Aug: m.Aug,
-			Sep: m.Sep,
-			Oct: m.Oct,
-			Nov: m.Nov,
-			Dec: m.Dec,
-			Ytd: m.Jan + 
-			m.Feb +
-			m.Mar +
-			m.Apr +
-			m.May +
-			m.Jun +
-			m.Jul +
-			m.Aug +
-			m.Sep +
-			m.Oct +
-			m.Nov + 
-			m.Dec,
-			Remarks: m.Remarks,
-			MinipapID: m.MinipapID,
-		}
+	return Monthly{
+		Jan: m.Jan,
+		Feb: m.Feb,
+		Mar: m.Mar,
+		Apr: m.Apr,
+		May: m.May,
+		Jun: m.Jun,
+		Jul: m.Jul,
+		Aug: m.Aug,
+		Sep: m.Sep,
+		Oct: m.Oct,
+		Nov: m.Nov,
+		Dec: m.Dec,
+		Ytd: m.Jan + 
+		m.Feb +
+		m.Mar +
+		m.Apr +
+		m.May +
+		m.Jun +
+		m.Jul +
+		m.Aug +
+		m.Sep +
+		m.Oct +
+		m.Nov + 
+		m.Dec,
+		Remarks: m.Remarks,
+		MinipapID: m.MinipapID,
+	}
 }
 
 func ErrorCheck(k *gin.Context, err error) bool {

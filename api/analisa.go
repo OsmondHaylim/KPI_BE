@@ -54,8 +54,7 @@ func (aa *analisaAPI) UpdateAnalisa(k *gin.Context) {
 	if model.ErrorCheck(k, err){return}
 	KpiID, err := strconv.Atoi(k.Param("id"))
 	if model.ErrorCheck(k, err){return}
-	newAnalisa.Year = KpiID
-	err = aa.crudService.UpdateAnalisa(newAnalisa)
+	err = aa.crudService.UpdateAnalisa(KpiID, newAnalisa)
 	if model.ErrorCheck(k, err){return}
 	k.JSON(http.StatusOK, model.SuccessResponse{Message: "Analisa update success"})
 }
@@ -65,8 +64,7 @@ func (aa *analisaAPI) UpdateMasalah(k *gin.Context) {
 	if model.ErrorCheck(k, err){return}
 	KpiID, err := strconv.Atoi(k.Param("id"))
 	if model.ErrorCheck(k, err){return}
-	newMasalah.Masalah_ID = KpiID
-	err = aa.crudService.UpdateMasalah(newMasalah)	
+	err = aa.crudService.UpdateMasalah(KpiID, newMasalah)	
 	if model.ErrorCheck(k, err){return}
 	k.JSON(http.StatusOK, model.SuccessResponse{Message: "Masalah update success"})
 }
@@ -89,36 +87,29 @@ func (aa *analisaAPI) DeleteMasalah(k *gin.Context) {
 func (aa *analisaAPI) GetAnalisaByID(k *gin.Context) {
 	KpiID, err := strconv.Atoi(k.Param("id"))
 	if model.ErrorCheck(k, err){return}
-	Analisa, err := aa.crudService.GetByID(KpiID)
+	Analisa, err := aa.crudService.GetAnalisaByID(KpiID)
 	if model.ErrorCheck(k, err){return}
 	k.JSON(http.StatusOK, Analisa)
 }
 func (aa *analisaAPI) GetMasalahByID(k *gin.Context) {
 	KpiID, err := strconv.Atoi(k.Param("id"))
 	if model.ErrorCheck(k, err){return}
-	Masalah, err := aa.crudService.GetByID(KpiID)
+	Masalah, err := aa.crudService.GetMasalahByID(KpiID)
 	if model.ErrorCheck(k, err){return}
 	// Result := Masalah.ToResponse()
 	k.JSON(http.StatusOK, Masalah)
 }
 
 func (aa *analisaAPI) GetAnalisaList(k *gin.Context) {
-	Analisa, err := aa.crudService.GetList()
+	Analisa, err := aa.crudService.GetAnalisaList()
 	if model.ErrorCheck(k, err){return}
-	var result model.AnalisaArrayResponse
-	result.Analisa = Analisa 
-	result.Message = "Getting All Analisas Success"
-	k.JSON(http.StatusOK, result)
+	Analisa.Message = "Getting All Analisas Success"
+	k.JSON(http.StatusOK, Analisa)
 }
 func (aa *analisaAPI) GetMasalahList(k *gin.Context) {
-	Masalah, err := aa.crudService.GetList()
+	Masalah, err := aa.crudService.GetMasalahList()
 	if model.ErrorCheck(k, err){return}
-	var result model.MasalahArrayResponse
-	result.Masalah = []model.MasalahResponse{}
-	for _, data := range Masalah{
-		result.Masalah = append(result.Masalah, data.ToResponse())
-	} 
-	result.Message = "Getting All Masalahs Success"
-	k.JSON(http.StatusOK, result)
+	Masalah.Message = "Getting All Masalahs Success"
+	k.JSON(http.StatusOK, Masalah)
 }
 

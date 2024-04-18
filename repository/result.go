@@ -19,7 +19,7 @@ type resultRepo struct {
 	db *gorm.DB
 }
 
-func NewResultdRepo(db *gorm.DB) *resultRepo {
+func NewResultRepo(db *gorm.DB) *resultRepo {
 	return &resultRepo{db}
 }
 

@@ -28,18 +28,18 @@ type CrudService interface {
 	AddEntireAttendance()
 
 	//Update
-	UpdateAttendance(input model.Attendance) error
-	UpdateAnalisa(input model.Analisa) error
-	UpdateFactor(input model.Factor) error
-	UpdateFile(input model.UploadFile) error
-	UpdateItem(input model.Item) error
-	UpdateMasalah(input model.Masalah) error
-	UpdateMinipap(input model.MiniPAP) error
-	UpdateMonthly(input model.Monthly) error
-	UpdateProject(input model.Project) error
-	UpdateResult(input model.Result) error
-	UpdateSummary(input model.Summary) error
-	UpdateYearly(input model.Yearly) error
+	UpdateAttendance(id int, input model.Attendance) error
+	UpdateAnalisa(id int, input model.Analisa) error
+	UpdateFactor(id int, input model.Factor) error
+	UpdateFile(id int, input model.UploadFile) error
+	UpdateItem(id int, input model.Item) error
+	UpdateMasalah(id int, input model.Masalah) error
+	UpdateMinipap(id int, input model.MiniPAP) error
+	UpdateMonthly(id int, input model.Monthly) error
+	UpdateProject(id int, input model.Project) error
+	UpdateResult(id int, input model.Result) error
+	UpdateSummary(id int, input model.Summary) error
+	UpdateYearly(id int, input model.Yearly) error
 
 
 	//Delete independent
@@ -65,32 +65,32 @@ type CrudService interface {
 	DeleteEntireAttendance()
 
 	//Get specified
-	GetAttendanceByID()
-	GetFactorByID()
-	GetItemByID()
-	GetMinipapByID()
-	GetMonthlyByID()
-	GetResultByID()
-	GetYearlyByID()
-	GetAnalisaByID()
-	GetMasalahByID()
-	GetProjectByID()
-	GetSummaryByID()
-	GetFileByID()
+	GetAttendanceByID(input int) (*model.AttendanceResponse, error)
+	GetFactorByID(input int) (*model.FactorResponse, error)
+	GetItemByID(input int) (*model.ItemResponse, error)
+	GetMinipapByID(input int) (*model.MiniPAP, error)
+	GetMonthlyByID(input int) (*model.Monthly, error)
+	GetResultByID(input int) (*model.ResultResponse, error)
+	GetYearlyByID(input int) (*model.YearlyResponse, error)
+	GetAnalisaByID(input int) (*model.Analisa, error)
+	GetMasalahByID(input int) (*model.MasalahResponse, error)
+	GetProjectByID(input int) (*model.ProjectResponse, error)
+	GetSummaryByID(input int) (*model.SummaryResponse, error)
+	GetFileByID(input int) (*model.UploadFile, error)
 
 	//Get batch
-	GetAttendanceList()
-	GetFactorList()
-	GetItemList()
-	GetMinipapList()
-	GetMonthlyList()
-	GetResultList()
-	GetYearlyList()
-	GetAnalisaList()
-	GetMasalahList()
-	GetProjectList()
-	GetSummaryList()
-	GetFileList()
+	GetAttendanceList()(model.AttendanceArrayResponse, error)
+	GetFactorList()(model.FactorArrayResponse, error)
+	GetItemList()(model.ItemArrayResponse, error)
+	GetMinipapList()(model.MinipapArrayResponse, error)
+	GetMonthlyList()(model.MonthlyArrayResponse, error)
+	GetResultList()(model.ResultArrayResponse, error)
+	GetYearlyList()(model.YearlyArrayResponse, error)
+	GetAnalisaList()(model.AnalisaArrayResponse, error)
+	GetMasalahList()(model.MasalahArrayResponse, error)
+	GetProjectList()(model.ProjectArrayResponse, error)
+	GetSummaryList()(model.SummaryArrayResponse, error)
+	GetFileList()([]model.UploadFile, error)
 }
 
 type ParseService interface {
@@ -109,43 +109,43 @@ type ParseService interface {
 
 type crudService struct {
 	attendanceRepo 	repo.AttendanceRepo
+	analisaRepo		repo.AnalisaRepo
 	factorRepo     	repo.FactorRepo
+	fileRepo 		repo.FileRepo
 	itemRepo       	repo.ItemRepo
+	masalahRepo 	repo.MasalahRepo
 	minipapRepo    	repo.MiniPAPRepo
 	monthlyRepo    	repo.MonthlyRepo
-	resultRepo     	repo.ResultRepo
-	yearlyRepo     	repo.YearlyRepo
 	projectRepo		repo.ProjectRepo
+	resultRepo     	repo.ResultRepo
 	summaryRepo 	repo.SummaryRepo
-	analisaRepo		repo.AnalisaRepo
-	masalahRepo 	repo.MasalahRepo
-	fileRepo 		repo.FileRepo
+	yearlyRepo     	repo.YearlyRepo
 }
 
 func NewCrudService(
 	attendanceRepo 	repo.AttendanceRepo,
+	analisaRepo 	repo.AnalisaRepo,
 	factorRepo 		repo.FactorRepo,
+	fileRepo		repo.FileRepo,
 	itemRepo 		repo.ItemRepo,
+	masalahRepo 	repo.MasalahRepo,
 	minipapRepo 	repo.MiniPAPRepo,
 	monthlyRepo 	repo.MonthlyRepo,
-	resultRepo 		repo.ResultRepo,
-	yearlyRepo 		repo.YearlyRepo,
 	projectRepo		repo.ProjectRepo,
+	resultRepo 		repo.ResultRepo,
 	summaryRepo 	repo.SummaryRepo,
-	analisaRepo 	repo.AnalisaRepo,
-	masalahRepo 	repo.MasalahRepo,
-	fileRepo		repo.FileRepo) *crudService {
+	yearlyRepo 		repo.YearlyRepo,) *crudService {
 	return &crudService{
 		attendanceRepo,
+		analisaRepo,
 		factorRepo,
+		fileRepo,
 		itemRepo,
+		masalahRepo,
 		minipapRepo,
 		monthlyRepo,
-		resultRepo,
-		yearlyRepo,
 		projectRepo,
+		resultRepo,
 		summaryRepo,
-		analisaRepo,
-		masalahRepo,
-		fileRepo}
+		yearlyRepo}
 }

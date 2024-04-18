@@ -54,8 +54,7 @@ func (aa *projectAPI) UpdateProject(k *gin.Context) {
 	if model.ErrorCheck(k, err){return}
 	KpiID, err := strconv.Atoi(k.Param("id"))
 	if model.ErrorCheck(k, err){return}
-	newProject.Project_ID = KpiID
-	err = aa.crudService.UpdateProject(newProject)
+	err = aa.crudService.UpdateProject(KpiID, newProject)
 	if model.ErrorCheck(k, err){return}
 	k.JSON(http.StatusOK, model.SuccessResponse{Message: "Project update success"})
 }
@@ -65,8 +64,7 @@ func (aa *projectAPI) UpdateSummary(k *gin.Context) {
 	if model.ErrorCheck(k, err){return}
 	KpiID, err := strconv.Atoi(k.Param("id"))
 	if model.ErrorCheck(k, err){return}
-	newSummary.Summary_ID = KpiID
-	err = aa.crudService.UpdateSummary(newSummary)	
+	err = aa.crudService.UpdateSummary(KpiID, newSummary)	
 	if model.ErrorCheck(k, err){return}
 	k.JSON(http.StatusOK, model.SuccessResponse{Message: "Summary update success"})
 }
@@ -89,39 +87,29 @@ func (aa *projectAPI) DeleteSummary(k *gin.Context) {
 func (aa *projectAPI) GetProjectByID(k *gin.Context) {
 	KpiID, err := strconv.Atoi(k.Param("id"))
 	if model.ErrorCheck(k, err){return}
-	Project, err := aa.crudService.GetByID(KpiID)
+	Project, err := aa.crudService.GetProjectByID(KpiID)
 	if model.ErrorCheck(k, err){return}
 	k.JSON(http.StatusOK, Project)
 }
 func (aa *projectAPI) GetSummaryByID(k *gin.Context) {
 	KpiID, err := strconv.Atoi(k.Param("id"))
 	if model.ErrorCheck(k, err){return}
-	Summary, err := aa.crudService.GetByID(KpiID)
+	Summary, err := aa.crudService.GetSummaryByID(KpiID)
 	if model.ErrorCheck(k, err){return}
 	// Result := Summary.ToResponse()
 	k.JSON(http.StatusOK, Summary)
 }
 
 func (aa *projectAPI) GetProjectList(k *gin.Context) {
-	Project, err := aa.crudService.GetList()
+	Project, err := aa.crudService.GetProjectList()
 	if model.ErrorCheck(k, err){return}
-	var result model.ProjectArrayResponse
-	result.Project = []model.ProjectResponse{}
-	for _, data := range Project{
-		result.Project = append(result.Project, data.ToResponse())
-	}
-	result.Message = "Getting All Projects Success"
-	k.JSON(http.StatusOK, result)
+	Project.Message = "Getting All Projects Success"
+	k.JSON(http.StatusOK, Project)
 }
 func (aa *projectAPI) GetSummaryList(k *gin.Context) {
-	Summary, err := aa.crudService.GetList()
+	Summary, err := aa.crudService.GetSummaryList()
 	if model.ErrorCheck(k, err){return}
-	var result model.SummaryArrayResponse
-	result.Summary = []model.SummaryResponse{}
-	for _, data := range Summary{
-		result.Summary = append(result.Summary, data.ToResponse())
-	} 
-	result.Message = "Getting All Summarys Success"
-	k.JSON(http.StatusOK, result)
+	Summary.Message = "Getting All Summarys Success"
+	k.JSON(http.StatusOK, Summary)
 }
 

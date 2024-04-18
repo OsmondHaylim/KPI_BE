@@ -1,9 +1,10 @@
 package main
 
 import (
+	"goreact/api"
 	"goreact/db"
 	"goreact/model"
-	"goreact/api"
+	"goreact/repository"
 	"goreact/service"
 
 	_ "embed"
@@ -20,42 +21,47 @@ import (
 
 type APIHandler struct{
 	KpiAPIHandler		api.KpiAPI
-	FileAPIHandler		api.FileAPI
+	// FileAPIHandler		api.FileAPI
 	AnalisaAPIHandler	api.AnalisaAPI
 	ProjectAPIHandler 	api.ProjectAPI
 }
 
 func RunServer(db *gorm.DB, gin *gin.Engine) *gin.Engine {
-	analisaService		:= service.NewAnalisaService(db)
-	attendanceService 	:= service.NewAttendanceService(db)
-	factorService 		:= service.NewFactorService(db)
-	itemService 		:= service.NewItemService(db)
-	masalahService 		:= service.NewMasalahService(db)
-	minipapService 		:= service.NewMiniPAPService(db)
-	monthlyService 		:= service.NewMonthlyService(db)
-	resultService 		:= service.NewResultService(db)
-	yearlyService 		:= service.NewYearlyService(db)
-	fileService			:= service.NewFileService(db)
-	projectService 		:= service.NewProjectService(db)
-	summaryService		:= service.NewSummaryService(db)
+	analisaRepo		:= repository.NewAnalisaRepo(db)
+	attendanceRepo 	:= repository.NewAttendanceRepo(db)
+	factorRepo 		:= repository.NewFactorRepo(db)
+	itemRepo 		:= repository.NewItemRepo(db)
+	masalahRepo 	:= repository.NewMasalahRepo(db)
+	minipapRepo 	:= repository.NewMiniPAPRepo(db)
+	monthlyRepo 	:= repository.NewMonthlyRepo(db)
+	resultRepo 		:= repository.NewResultRepo(db)
+	yearlyRepo 		:= repository.NewYearlyRepo(db)
+	fileRepo		:= repository.NewFileRepo(db)
+	projectRepo 	:= repository.NewProjectRepo(db)
+	summaryRepo		:= repository.NewSummaryRepo(db)
 
-	kpiAPIHandler := api.NewKpiAPI(
-		attendanceService, 
-		factorService, 
-		itemService,
-		minipapService, 
-		monthlyService, 
-		resultService,
-		yearlyService)
-	fileAPIHandler := api.NewFileAPI(fileService)
-	analisaAPIHandler := api.NewAnalisaAPI(
-		analisaService,
-		masalahService)
-	projectAPIHandler := api.NewProjectAPI(projectService,
-		summaryService)
+	crudService 	:= service.NewCrudService(
+		attendanceRepo,
+		analisaRepo,
+		factorRepo,
+		fileRepo,
+		itemRepo,
+		masalahRepo,
+		minipapRepo,
+		monthlyRepo,
+		projectRepo,
+		resultRepo,
+		summaryRepo,
+		yearlyRepo)
+
+	
+	kpiAPIHandler := api.NewKpiAPI(crudService)
+	// fileAPIHandler := api.NewFileAPI(fileService)
+	analisaAPIHandler := api.NewAnalisaAPI(crudService)
+	projectAPIHandler := api.NewProjectAPI(crudService)
 	apiHandler := APIHandler{
 		KpiAPIHandler: kpiAPIHandler,
-		FileAPIHandler: fileAPIHandler,
+		// FileAPIHandler: fileAPIHandler,
 		AnalisaAPIHandler: analisaAPIHandler,
 		ProjectAPIHandler: projectAPIHandler,
 	}
@@ -159,10 +165,10 @@ func RunServer(db *gorm.DB, gin *gin.Engine) *gin.Engine {
 			yearly.POST("/entire", apiHandler.KpiAPIHandler.AddEntireYearly)
 			yearly.DELETE("/entire/:id", apiHandler.KpiAPIHandler.DeleteEntireYearly)
 		}
-		file := kpi.Group("/file")
-		{
-			file.POST("", apiHandler.FileAPIHandler.FileUpload)
-		}
+		// file := kpi.Group("/file")
+		// {
+		// 	file.POST("", apiHandler.FileAPIHandler.FileUpload)
+		// }
 	}
 	return gin
 }
