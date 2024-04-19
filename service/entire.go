@@ -134,3 +134,101 @@ func (cs *crudService) AddEntireAttendance(input *model.AttendanceResponse, id *
 	if err != nil {return err}
 	return nil
 }
+
+func (cs *crudService) DeleteEntireYearly(input int) error{
+	temp, err := cs.GetYearlyByID(input)
+	if err != nil {return err}
+	if temp.Items != nil {
+		for _, item := range temp.Items{
+			err = cs.DeleteEntireItem(item.Item_ID)
+			if err != nil {return err}
+		}
+	}
+	err = cs.DeleteYearly(input)
+	if err != nil {return err}
+
+	if temp.Attendance != nil {
+		cs.DeleteEntireAttendance(temp.Attendance.Year)
+		if err != nil {return err}
+	}
+	return nil
+}
+func (cs *crudService) DeleteEntireItem(input int) error{
+	temp, err := cs.GetItemByID(input)
+	if err != nil {return err}
+	if temp.Results != nil {
+		for _, result := range temp.Results{
+			err = cs.DeleteEntireResult(result.Result_ID)
+			if err != nil {return err}
+		}
+	}
+	err = cs.DeleteItem(input)
+	if err != nil {return err}
+	return nil
+}
+func (cs *crudService) DeleteEntireResult(input int) error{
+	temp, err := cs.GetResultByID(input)
+	if err != nil {return err}
+	if temp.Factors != nil {
+		for _, factor := range temp.Factors{
+			err = cs.DeleteEntireFactor(factor.Factor_ID)
+			if err != nil {return err}
+		}
+	}
+	err = cs.DeleteResult(input)
+	if err != nil {return err}
+	return nil
+}
+func (cs *crudService) DeleteEntireFactor(input int) error{
+	temp, err := cs.GetFactorByID(input)
+	if err != nil {return err}
+	
+	if temp.Plan != nil {
+		for _, monthly := range temp.Plan.Monthly{
+			err = cs.DeleteMonthly(monthly.Monthly_ID)
+			if err != nil {return err}
+		}
+		err = cs.DeleteMinipap(temp.Plan.MiniPAP_ID)
+		if err != nil {return err}
+	}
+	if temp.Actual != nil {
+		for _, monthly := range temp.Actual.Monthly{
+			err = cs.DeleteMonthly(monthly.Monthly_ID)
+			if err != nil {return err}
+		}
+		err = cs.DeleteMinipap(temp.Actual.MiniPAP_ID)
+		if err != nil {return err}
+	}
+	err = cs.DeleteFactor(input)
+	if err != nil {return err}
+	return nil
+}
+func (cs *crudService) DeleteEntireAttendance(input int) error{
+	temp, err := cs.GetAttendanceByID(input)
+	if err != nil {return err}
+	
+	err = cs.DeleteAttendance(temp.Year)
+	if err != nil {return err}
+
+	if temp.Plan != nil {
+		err = cs.DeleteMonthly(temp.Plan.Monthly_ID)
+		if err != nil {return err}
+	}
+	if temp.Actual != nil {
+		err = cs.DeleteMonthly(temp.Actual.Monthly_ID)
+		if err != nil {return err}
+	}
+	if temp.Cuti != nil {
+		err = cs.DeleteMonthly(temp.Cuti.Monthly_ID)
+		if err != nil {return err}
+	}
+	if temp.Izin != nil {
+		err = cs.DeleteMonthly(temp.Izin.Monthly_ID)
+		if err != nil {return err}
+	}
+	if temp.Lain != nil {
+		err = cs.DeleteMonthly(temp.Lain.Monthly_ID)
+		if err != nil {return err}
+	}
+	return nil
+}

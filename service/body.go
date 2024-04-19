@@ -58,11 +58,11 @@ type CrudService interface {
 
 
 	//Delete cascade
-	DeleteEntireYearly()
-	DeleteEntireItem()
-	DeleteEntireResult()
-	DeleteEntireFactor()
-	DeleteEntireAttendance()
+	DeleteEntireYearly(input int) error
+	DeleteEntireItem(input int) error
+	DeleteEntireResult(input int) error
+	DeleteEntireFactor(input int) error
+	DeleteEntireAttendance(input int) error
 
 	//Get specified
 	GetAttendanceByID(input int) (*model.AttendanceResponse, error)
@@ -93,20 +93,6 @@ type CrudService interface {
 	GetFileList()([]model.UploadFile, error)
 }
 
-type ParseService interface {
-	ParseYearly()
-	ParseItem()
-	ParseResult()
-	ParseFactor()
-	ParseAttendance()
-
-	ParseAnalisa()
-	ParseMasalah()
-
-	ParseSummary()
-	ParseProject()
-}
-
 type crudService struct {
 	attendanceRepo 	repo.AttendanceRepo
 	analisaRepo		repo.AnalisaRepo
@@ -121,6 +107,21 @@ type crudService struct {
 	summaryRepo 	repo.SummaryRepo
 	yearlyRepo     	repo.YearlyRepo
 }
+type ParseService interface {
+	ParseYearly()
+	ParseItem()
+	ParseResult()
+	ParseFactor()
+	ParseAttendance()
+
+	ParseAnalisa()
+	ParseMasalah()
+
+	ParseSummary()
+	ParseProject()
+}
+
+
 
 func NewCrudService(
 	attendanceRepo 	repo.AttendanceRepo,
