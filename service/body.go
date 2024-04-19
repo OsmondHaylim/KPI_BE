@@ -3,6 +3,7 @@ package service
 import (
 	"goreact/model"
 	repo "goreact/repository"
+	"os"
 )
 
 type CrudService interface {
@@ -92,7 +93,6 @@ type CrudService interface {
 	GetSummaryList()(model.SummaryArrayResponse, error)
 	GetFileList()([]model.UploadFile, error)
 }
-
 type crudService struct {
 	attendanceRepo 	repo.AttendanceRepo
 	analisaRepo		repo.AnalisaRepo
@@ -107,22 +107,6 @@ type crudService struct {
 	summaryRepo 	repo.SummaryRepo
 	yearlyRepo     	repo.YearlyRepo
 }
-type ParseService interface {
-	ParseYearly()
-	ParseItem()
-	ParseResult()
-	ParseFactor()
-	ParseAttendance()
-
-	ParseAnalisa()
-	ParseMasalah()
-
-	ParseSummary()
-	ParseProject()
-}
-
-
-
 func NewCrudService(
 	attendanceRepo 	repo.AttendanceRepo,
 	analisaRepo 	repo.AnalisaRepo,
@@ -149,4 +133,16 @@ func NewCrudService(
 		resultRepo,
 		summaryRepo,
 		yearlyRepo}
+}
+
+type ParseService interface {
+	ParseKpi(input *os.File) (*model.YearlyResponse, error)
+}
+type parseService struct {
+	fileRepo repo.FileRepo
+}
+func NewParseService(fileRepo repo.FileRepo) *parseService{
+	return &parseService{
+		fileRepo,
+	}
 }

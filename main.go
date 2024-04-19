@@ -21,7 +21,7 @@ import (
 
 type APIHandler struct{
 	KpiAPIHandler		api.KpiAPI
-	// FileAPIHandler		api.FileAPI
+	FileAPIHandler		api.FileAPI
 	AnalisaAPIHandler	api.AnalisaAPI
 	ProjectAPIHandler 	api.ProjectAPI
 }
@@ -52,16 +52,21 @@ func RunServer(db *gorm.DB, gin *gin.Engine) *gin.Engine {
 		projectRepo,
 		resultRepo,
 		summaryRepo,
-		yearlyRepo)
+		yearlyRepo,
+	)
+	
+	parseService	:= service.NewParseService(
+		fileRepo,
+	)
 
 	
 	kpiAPIHandler := api.NewKpiAPI(crudService)
-	// fileAPIHandler := api.NewFileAPI(fileService)
+	fileAPIHandler := api.NewFileAPI(crudService, parseService)
 	analisaAPIHandler := api.NewAnalisaAPI(crudService)
 	projectAPIHandler := api.NewProjectAPI(crudService)
 	apiHandler := APIHandler{
 		KpiAPIHandler: kpiAPIHandler,
-		// FileAPIHandler: fileAPIHandler,
+		FileAPIHandler: fileAPIHandler,
 		AnalisaAPIHandler: analisaAPIHandler,
 		ProjectAPIHandler: projectAPIHandler,
 	}
@@ -165,10 +170,10 @@ func RunServer(db *gorm.DB, gin *gin.Engine) *gin.Engine {
 			yearly.POST("/entire", apiHandler.KpiAPIHandler.AddEntireYearly)
 			yearly.DELETE("/entire/:id", apiHandler.KpiAPIHandler.DeleteEntireYearly)
 		}
-		// file := kpi.Group("/file")
-		// {
-		// 	file.POST("", apiHandler.FileAPIHandler.FileUpload)
-		// }
+		file := kpi.Group("/file")
+		{
+			file.POST("", apiHandler.FileAPIHandler.KpiFileUpload)
+		}
 	}
 	return gin
 }

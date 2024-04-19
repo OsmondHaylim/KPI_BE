@@ -380,7 +380,7 @@ func (ka *kpiAPI) GetYearlyByID(k *gin.Context) {
 	k.JSON(http.StatusOK, Yearly)
 }
 
-// Get List (Not Done)
+// Get List
 func (ka *kpiAPI) GetAttendanceList(k *gin.Context) {
 	Attendance, err := ka.crudService.GetAttendanceList()
 	if model.ErrorCheck(k, err) {return}
