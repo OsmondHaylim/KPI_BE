@@ -3,7 +3,7 @@ package service
 import (
 	"goreact/model"
 	repo "goreact/repository"
-	"os"
+	"mime/multipart"
 )
 
 type CrudService interface {
@@ -136,7 +136,8 @@ func NewCrudService(
 }
 
 type ParseService interface {
-	ParseKpi(input *os.File) (*model.YearlyResponse, error)
+	ParseKpi(input multipart.File) (*model.YearlyResponse, error)
+	SaveFile(input multipart.File, header *multipart.FileHeader) error
 }
 type parseService struct {
 	fileRepo repo.FileRepo

@@ -2,10 +2,11 @@ package service
 
 import (
 	"goreact/model"
+	"mime/multipart"
 	"regexp"
 
 	// "path/filepath"
-	// "io"
+	"io"
 	"os"
 	"strconv"
 
@@ -14,8 +15,15 @@ import (
 	"github.com/tealeg/xlsx"
 )
 
-func (ps *parseService) ParseKpi (input *os.File) (*model.YearlyResponse, error){
-	excel, err := xlsx.OpenFile(input.Name())
+func (ps *parseService) ParseKpi (input multipart.File) (*model.YearlyResponse, error){
+	//Create temp file
+	out, err := os.CreateTemp("", "upload-*.xlsx")
+	if err != nil {return nil, err}	
+	defer out.Close()
+	//Copy File
+	_, err = io.Copy(out, input)
+	if err != nil {return nil, err}
+	excel, err := xlsx.OpenFile(out.Name())
 	if err != nil {return nil, err}
 	test := ""
 	for _, sheet := range excel.Sheets {
@@ -252,4 +260,30 @@ func (ps *parseService) ParseKpi (input *os.File) (*model.YearlyResponse, error)
 		}
 	}
 	return nil, nil
+} 
+
+func (ps *parseService) SaveFile (input multipart.File, header *multipart.FileHeader) error {
+	//Create temp file
+	out, err := os.CreateTemp("", "upload-*.xlsx")
+	if err != nil {return err}	
+	defer out.Close()
+	//Copy File
+	_, err = io.Copy(out, input)
+	if err != nil {return err}
+
+	//Create Directory
+	directory := "./uploads/"
+	if _, err := os.Stat(directory); os.IsNotExist(err) {
+		os.Mkdir(directory, os.ModePerm)
+	}
+
+	// Create a new file in the specified directory
+	out, err = os.Create(directory + header.Filename)
+	if err != nil {return err}
+	defer out.Close()
+
+	// Copy the uploaded file to the newly created file
+	_, err = io.Copy(out, input)
+	if err != nil {return err}
+	return nil
 }

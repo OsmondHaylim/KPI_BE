@@ -6,7 +6,7 @@ import (
 	"net/http"
 	// "path/filepath"
 	// "io"
-	"os"
+	// "os"
 	// "strconv"
 
 	// "time"
@@ -15,6 +15,7 @@ import (
 )
 
 type FileAPI interface {
+	SaveFile(f *gin.Context)
 	KpiFileUpload(f *gin.Context)
 }
 
@@ -30,50 +31,32 @@ func NewFileAPI(crudService service.CrudService, parseService service.ParseServi
 	}
 }
 
-func (fa *fileAPI) KpiFileUpload(f *gin.Context) {
-	//get File
+func (fa *fileAPI) SaveFile(f *gin.Context) {
 	file, header, err := f.Request.FormFile("file")
 	if model.ErrorCheck(f, err){return}
 	defer file.Close()
-	//Check format
+
+	err = fa.parseService.SaveFile(file, header)
+	if model.ErrorCheck(f, err) {return}
+
+	f.JSON(http.StatusAccepted, model.SuccessResponse{Message: "File Saved"})
+}
+
+func (fa *fileAPI) KpiFileUpload(f *gin.Context) {
+	file, header, err := f.Request.FormFile("file")
+	if model.ErrorCheck(f, err){return}
+	defer file.Close()
+
 	if header.Header.Get("Content-Type") != "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" {
 		f.JSON(http.StatusBadRequest, model.ErrorResponse{Error: "Not xlsx"})
 		return
 	}
-	//Create temp file
-	out, err := os.CreateTemp("", "upload-*.xlsx")
-	if model.ErrorCheck(f, err){return}
-	defer out.Close()
-	// //Copy File
-	// _, err = io.Copy(out, file)
-	// if model.ErrorCheck(f, err){return}
 
-	// //Create Directory
-	// directory := "./uploads/"
-	// if _, err := os.Stat(directory); os.IsNotExist(err) {
-	// 	os.Mkdir(directory, os.ModePerm)
-	// }
-
-	// // Create a new file in the specified directory
-	// out, err = os.Create(directory + header.Filename)
-	// if err != nil {
-	// 	f.JSON(http.StatusBadRequest, model.ErrorResponse{Error: err.Error()})
-	// 	return
-	// }
-	// defer out.Close()
-
-	// // Copy the uploaded file to the newly created file
-	// _, err = io.Copy(out, file)
-	// if err != nil {
-	// 	f.JSON(http.StatusBadRequest, model.ErrorResponse{Error: err.Error()})
-	// 	return
-	// }
-
-	input, err := fa.parseService.ParseKpi(out)
+	input, err := fa.parseService.ParseKpi(file)
 	if model.ErrorCheck(f, err) {return}
 
 	err = fa.crudService.AddEntireYearly(input)
 	if model.ErrorCheck(f, err) {return}
 
-	f.JSON(http.StatusAccepted, model.SuccessResponse{Message: "Data Received"})
+	f.JSON(http.StatusAccepted, input)
 }
