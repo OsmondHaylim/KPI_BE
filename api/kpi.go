@@ -130,334 +130,41 @@ func (ka *kpiAPI) AddYearly(k *gin.Context) {
 // Add Entire (Not Done)
 func (ka *kpiAPI) AddEntireYearly(k *gin.Context) {
 	var newYearly model.YearlyResponse
-	if err := k.ShouldBindJSON(&newYearly); err != nil {
-		k.JSON(http.StatusBadRequest, model.ErrorResponse{Error: err.Error()})
-		return
-	}
-	//Reformat Response to Yearly
-	var newYear model.Yearly
-	newYear.Year = newYearly.Year
-
-	//Storing Attendance
-	var newAttendance model.Attendance
-	newAttendance.Year = newYearly.Year
-	//Creating monthly from attendance
-	if newYearly.Attendance.Plan != nil{
-		newMonthly := newYearly.Attendance.Plan.Reseted()
-		err := ka.crudService.Store(&newMonthly)
-		if model.ErrorCheck(k, err){return}
-		newAttendance.PlanID = &newMonthly.Monthly_ID
-	}
-	if newYearly.Attendance.Actual != nil{
-		newMonthly := newYearly.Attendance.Actual.Reseted()
-		err := ka.crudService.Store(&newMonthly)
-		if model.ErrorCheck(k, err){return}
-		newAttendance.ActualID = &newMonthly.Monthly_ID
-	}
-	if newYearly.Attendance.Cuti != nil{
-		newMonthly := newYearly.Attendance.Cuti.Reseted()
-		err := ka.crudService.Store(&newMonthly)
-		if model.ErrorCheck(k, err){return}
-		newAttendance.CutiID = &newMonthly.Monthly_ID
-	}
-	if newYearly.Attendance.Izin != nil{
-		newMonthly := newYearly.Attendance.Izin.Reseted()
-		err := ka.crudService.Store(&newMonthly)
-		if model.ErrorCheck(k, err){return}
-		newAttendance.CutiID = &newMonthly.Monthly_ID
-	}
-	if newYearly.Attendance.Lain != nil{
-		newMonthly := newYearly.Attendance.Lain.Reseted()
-		err := ka.crudService.Store(&newMonthly)
-		if model.ErrorCheck(k, err){return}
-		newAttendance.LainID = &newMonthly.Monthly_ID
-	}
-	//Creating attendance
-	err := ka.crudService.Store(&newAttendance)
+	err := k.ShouldBindJSON(&newYearly)
 	if model.ErrorCheck(k, err) {return}
-	//Link Attendance to Yearly
-	newYear.AttendanceID = &newAttendance.Year
-	//Create Yearly
-	err = ka.crudService.Store(&newYear)
+	err = ka.crudService.AddEntireYearly(&newYearly)
 	if model.ErrorCheck(k, err) {return}
-	//Storing Items
-	for _, item := range newYearly.Items{
-		var newItem model.Item
-		newItem.Name = item.Name
-		//Connect Item to Yearly
-		newItem.YearID = &newYear.Year
-		//Creating Items to get id
-		err := ka.crudService.Store(&newItem)
-		if model.ErrorCheck(k, err){return}
-		//Storing Results
-		for _, result := range item.Results{
-			var newResult model.Result
-			newResult.Name = result.Name
-			//Connect Result to Item
-			newResult.ItemID = &newItem.Item_ID
-			//Creating Results to get id
-			err := ka.crudService.Store(&newResult)
-			if model.ErrorCheck(k, err){return}
-			//Storing Factors
-			for _, factor := range result.Factors{
-				var newFactor model.Factor
-				newFactor.Title = factor.Title
-				newFactor.Unit = factor.Unit
-				newFactor.Target = factor.Target
-				//Connect Factor to Result
-				newFactor.ResultID = &newResult.Result_ID
-				if factor.Plan != nil{
-					//Storing MiniPAP Plan
-					var newMinipap model.MiniPAP
-					//Create MiniPAP to get id
-					err := ka.crudService.Store(&newMinipap)
-					if model.ErrorCheck(k, err) {return}
-					//Connect MiniPAP to Factor
-					newFactor.PlanID = &newMinipap.MiniPAP_ID
-					//Storing Plan Monthly
-					for _, monthly := range factor.Plan.Monthly{
-						newMonthly := monthly.Reseted()
-						newMonthly.MinipapID = &newMinipap.MiniPAP_ID
-						err := ka.crudService.Store(&newMonthly)
-						if model.ErrorCheck(k, err) {return}
-					}
-				}
-				if factor.Actual != nil{
-					//Storing MiniPAP Actual
-					var newMinipap model.MiniPAP
-					//Create MiniPAP to get id
-					err := ka.crudService.Store(&newMinipap)
-					if model.ErrorCheck(k, err) {return}
-					//Connect MiniPAP to Factor
-					newFactor.ActualID = &newMinipap.MiniPAP_ID
-					//Storing Actual Monthly
-					for _, monthly := range factor.Actual.Monthly{
-						newMonthly := monthly.Reseted()
-						newMonthly.MinipapID = &newMinipap.MiniPAP_ID
-						err := ka.crudService.Store(&newMonthly)
-						if model.ErrorCheck(k, err) {return}
-					}
-				}
-				err := ka.crudService.Store(&newFactor)
-				if model.ErrorCheck(k, err){return}
-			}
-		}
-	}
 	k.JSON(http.StatusOK, model.SuccessResponse{Message: "add Entire Yearly success"})
 }
 func (ka *kpiAPI) AddEntireItem(k *gin.Context) {
 	var response model.ItemResponse
-	if err := k.ShouldBindJSON(&response); err != nil {
-		k.JSON(http.StatusBadRequest, model.ErrorResponse{Error: err.Error()})
-		return
-	}
-	//Storing Items
-	var newItem model.Item
-	newItem.Name = response.Name
-	//Creating Items to get id
-	err := ka.crudService.Store(&newItem)
-	if model.ErrorCheck(k, err){return}
-	//Storing Results
-	for _, result := range response.Results{
-		var newResult model.Result
-		newResult.Name = result.Name
-		//Connect Result to Item
-		newResult.ItemID = &newItem.Item_ID
-		//Creating Results to get id
-		err := ka.crudService.Store(&newResult)
-		if model.ErrorCheck(k, err){return}
-		//Storing Factors
-		for _, factor := range result.Factors{
-			var newFactor model.Factor
-			newFactor.Title = factor.Title
-			newFactor.Unit = factor.Unit
-			newFactor.Target = factor.Target
-			//Connect Factor to Result
-			newFactor.ResultID = &newResult.Result_ID
-			if factor.Plan != nil{
-				//Storing MiniPAP Plan
-				var newMinipap model.MiniPAP
-				//Create MiniPAP to get id
-				err := ka.crudService.Store(&newMinipap)
-				if model.ErrorCheck(k, err) {return}
-				//Connect MiniPAP to Factor
-				newFactor.PlanID = &newMinipap.MiniPAP_ID
-				//Storing Plan Monthly
-				for _, monthly := range factor.Plan.Monthly{
-					newMonthly := monthly.Reseted()
-					newMonthly.MinipapID = &newMinipap.MiniPAP_ID
-					err := ka.crudService.Store(&newMonthly)
-					if model.ErrorCheck(k, err) {return}
-				}
-			}
-			if factor.Actual != nil{
-				//Storing MiniPAP Actual
-				var newMinipap model.MiniPAP
-				//Create MiniPAP to get id
-				err := ka.crudService.Store(&newMinipap)
-				if model.ErrorCheck(k, err) {return}
-				//Connect MiniPAP to Factor
-				newFactor.ActualID = &newMinipap.MiniPAP_ID
-				//Storing Actual Monthly
-				for _, monthly := range factor.Actual.Monthly{
-					newMonthly := monthly.Reseted()
-					newMonthly.MinipapID = &newMinipap.MiniPAP_ID
-					err := ka.crudService.Store(&newMonthly)
-					if model.ErrorCheck(k, err) {return}
-				}
-			}
-			err := ka.crudService.Store(&newFactor)
-			if model.ErrorCheck(k, err){return}
-		}
-	}
-
+	err := k.ShouldBindJSON(&response)
+	if model.ErrorCheck(k, err) {return}
+	err = ka.crudService.AddEntireItem(&response, nil)
+	if model.ErrorCheck(k, err) {return}
 	k.JSON(http.StatusOK, model.SuccessResponse{Message: "add Entire Item success"})
 }
 func (ka *kpiAPI) AddEntireResult(k *gin.Context) {
 	var response model.ResultResponse
-	if err := k.ShouldBindJSON(&response); err != nil {
-		k.JSON(http.StatusBadRequest, model.ErrorResponse{Error: err.Error()})
-		return
-	}
-	//Storing Results
-	var newResult model.Result
-	newResult.Name = response.Name
-	//Creating Results to get id
-	err := ka.crudService.Store(&newResult)
-	if model.ErrorCheck(k, err){return}
-	//Storing Factors
-	for _, factor := range response.Factors{
-		var newFactor model.Factor
-		newFactor.Title = factor.Title
-		newFactor.Unit = factor.Unit
-		newFactor.Target = factor.Target
-		//Connect Factor to Result
-		newFactor.ResultID = &newResult.Result_ID
-		if factor.Plan != nil{
-			//Storing MiniPAP Plan
-			var newMinipap model.MiniPAP
-			//Create MiniPAP to get id
-			err := ka.crudService.Store(&newMinipap)
-			if model.ErrorCheck(k, err) {return}
-			//Connect MiniPAP to Factor
-			newFactor.PlanID = &newMinipap.MiniPAP_ID
-			//Storing Plan Monthly
-			for _, monthly := range factor.Plan.Monthly{
-				newMonthly := monthly.Reseted()
-				newMonthly.MinipapID = &newMinipap.MiniPAP_ID
-				err := ka.crudService.Store(&newMonthly)
-				if model.ErrorCheck(k, err) {return}
-			}
-		}
-		if factor.Actual != nil{
-			//Storing MiniPAP Actual
-			var newMinipap model.MiniPAP
-			//Create MiniPAP to get id
-			err := ka.crudService.Store(&newMinipap)
-			if model.ErrorCheck(k, err) {return}
-			//Connect MiniPAP to Factor
-			newFactor.ActualID = &newMinipap.MiniPAP_ID
-			//Storing Actual Monthly
-			for _, monthly := range factor.Actual.Monthly{
-				newMonthly := monthly.Reseted()
-				newMonthly.MinipapID = &newMinipap.MiniPAP_ID
-				err := ka.crudService.Store(&newMonthly)
-				if model.ErrorCheck(k, err) {return}
-			}
-		}
-		err := ka.crudService.Store(&newFactor)
-		if model.ErrorCheck(k, err){return}
-	}
+	err := k.ShouldBindJSON(&response) 
+	if model.ErrorCheck(k, err) {return}
+	err = ka.crudService.AddEntireResult(&response, nil)
+	if model.ErrorCheck(k, err) {return}
 	k.JSON(http.StatusOK, model.SuccessResponse{Message: "add Entire Result success"})
 }
 func (ka *kpiAPI) AddEntireFactor(k *gin.Context) {
 	var response model.FactorResponse
-	if err := k.ShouldBindJSON(&response); err != nil {
-		k.JSON(http.StatusBadRequest, model.ErrorResponse{Error: err.Error()})
-		return
-	}
-	var newFactor model.Factor
-	newFactor.Title = response.Title
-	newFactor.Unit = response.Unit
-	newFactor.Target = response.Target
-	if response.Plan != nil{
-		//Storing MiniPAP Plan
-		var newMinipap model.MiniPAP
-		//Create MiniPAP to get id
-		err := ka.crudService.Store(&newMinipap)
-		if model.ErrorCheck(k, err) {return}
-		//Connect MiniPAP to Factor
-		newFactor.PlanID = &newMinipap.MiniPAP_ID
-		//Storing Plan Monthly
-		for _, monthly := range response.Plan.Monthly{
-			newMonthly := monthly.Reseted()
-			newMonthly.MinipapID = &newMinipap.MiniPAP_ID
-			err := ka.crudService.Store(&newMonthly)
-			if model.ErrorCheck(k, err) {return}
-		}
-	}
-	if response.Actual != nil{
-		//Storing MiniPAP Actual
-		var newMinipap model.MiniPAP
-		//Create MiniPAP to get id
-		err := ka.crudService.Store(&newMinipap)
-		if model.ErrorCheck(k, err) {return}
-		//Connect MiniPAP to Factor
-		newFactor.ActualID = &newMinipap.MiniPAP_ID
-		//Storing Actual Monthly
-		for _, monthly := range response.Actual.Monthly{
-			newMonthly := monthly.Reseted()
-			newMonthly.MinipapID = &newMinipap.MiniPAP_ID
-			err := ka.crudService.Store(&newMonthly)
-			if model.ErrorCheck(k, err) {return}
-		}
-	}
-	err := ka.crudService.Store(&newFactor)
+	err := k.ShouldBindJSON(&response) 
+	if model.ErrorCheck(k, err) {return}
+	err = ka.crudService.AddEntireFactor(&response, nil)
 	if model.ErrorCheck(k, err){return}
 	k.JSON(http.StatusOK, model.SuccessResponse{Message: "add Entire Factor success"})
 }
 func (ka *kpiAPI) AddEntireAttendance(k *gin.Context) {
 	var response model.AttendanceResponse
-	if err := k.ShouldBindJSON(&response); err != nil {
-		k.JSON(http.StatusBadRequest, model.ErrorResponse{Error: err.Error()})
-		return
-	}
-	//Storing Attendance
-	var newAttendance model.Attendance
-	newAttendance.Year = response.Year
-	//Creating monthly from attendance
-	if response.Plan != nil{
-		newMonthly := response.Plan.Reseted()
-		err := ka.crudService.Store(&newMonthly)
-		if model.ErrorCheck(k, err){return}
-		newAttendance.PlanID = &newMonthly.Monthly_ID
-	}
-	if response.Actual != nil{
-		newMonthly := response.Actual.Reseted()
-		err := ka.crudService.Store(&newMonthly)
-		if model.ErrorCheck(k, err){return}
-		newAttendance.ActualID = &newMonthly.Monthly_ID
-	}
-	if response.Cuti != nil{
-		newMonthly := response.Cuti.Reseted()
-		err := ka.crudService.Store(&newMonthly)
-		if model.ErrorCheck(k, err){return}
-		newAttendance.CutiID = &newMonthly.Monthly_ID
-	}
-	if response.Izin != nil{
-		newMonthly := response.Izin.Reseted()
-		err := ka.crudService.Store(&newMonthly)
-		if model.ErrorCheck(k, err){return}
-		newAttendance.IzinID = &newMonthly.Monthly_ID
-	}
-	if response.Lain != nil{
-		newMonthly := response.Lain.Reseted()
-		err := ka.crudService.Store(&newMonthly)
-		if model.ErrorCheck(k, err){return}
-		newAttendance.LainID = &newMonthly.Monthly_ID
-	}
-	//Creating attendance
-	err := ka.crudService.Store(&newAttendance)
+	err := k.ShouldBindJSON(&response)
+	if model.ErrorCheck(k, err){return}
+	err = ka.crudService.AddEntireAttendance(&response, nil)
 	if model.ErrorCheck(k, err) {return}
 	k.JSON(http.StatusOK, model.SuccessResponse{Message: "add Entire Attendance success"})
 }

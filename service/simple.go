@@ -4,7 +4,7 @@ import (
 	"goreact/model"
 )
 
-// Create Function
+// Create Functions
 func (cs *crudService) AddAttendance(input *model.Attendance) error{return cs.attendanceRepo.Store(input)}
 func (cs *crudService) AddAnalisa(input *model.Analisa) error{return cs.analisaRepo.Store(input)}
 func (cs *crudService) AddFactor(input *model.Factor) error{return cs.factorRepo.Store(input)}
@@ -22,7 +22,7 @@ func (cs *crudService) AddSummary(input *model.Summary) error{return cs.summaryR
 func (cs *crudService) AddYearly(input *model.Yearly) error{return cs.yearlyRepo.Store(input)}
 
 
-// Update Function
+// Update Functions
 func (cs *crudService) UpdateAttendance(id int, input model.Attendance) error{
 	newInput := input
 	newInput.Year = id
@@ -84,6 +84,7 @@ func (cs *crudService) UpdateYearly(id int, input model.Yearly) error{
 	return cs.yearlyRepo.Saves(newInput)
 }
 
+// Delete Functions
 func (cs *crudService) DeleteAttendance(input int) error{return cs.attendanceRepo.Delete(input)}
 func (cs *crudService) DeleteAnalisa(input int) error{return cs.analisaRepo.Delete(input)}
 func (cs *crudService) DeleteFactor(input int) error{return cs.factorRepo.Delete(input)}
@@ -97,6 +98,7 @@ func (cs *crudService) DeleteResult(input int) error{return cs.resultRepo.Delete
 func (cs *crudService) DeleteSummary(input int) error{return cs.summaryRepo.Delete(input)}
 func (cs *crudService) DeleteYearly(input int) error{return cs.yearlyRepo.Delete(input)}
 
+// Read Specified Functions
 func (cs *crudService) GetAttendanceByID(input int) (*model.AttendanceResponse, error){
 	tempInput, err := cs.attendanceRepo.GetByID(input)
 	newInput := tempInput.ToResponse()
@@ -142,6 +144,7 @@ func (cs *crudService) GetYearlyByID(input int) (*model.YearlyResponse, error){
 	return &newInput, err
 }
 
+// Read All Functions
 func (cs *crudService) GetAttendanceList() (model.AttendanceArrayResponse, error){
 	tempInput, err := cs.attendanceRepo.GetList()
 	var newInput model.AttendanceArrayResponse
@@ -154,10 +157,7 @@ func (cs *crudService) GetAttendanceList() (model.AttendanceArrayResponse, error
 func (cs *crudService) GetAnalisaList() (model.AnalisaArrayResponse, error){
 	tempInput, err := cs.analisaRepo.GetList()
 	var newInput model.AnalisaArrayResponse
-	newInput.Analisa = []model.Analisa{}
-	for _, temp := range tempInput{
-		newInput.Analisa = append(newInput.Analisa, temp)	
-	}
+	newInput.Analisa = append(newInput.Analisa, tempInput...)
 	return newInput, err
 }
 func (cs *crudService) GetFactorList() (model.FactorArrayResponse, error){
@@ -191,19 +191,13 @@ func (cs *crudService) GetMasalahList() (model.MasalahArrayResponse, error){
 func (cs *crudService) GetMinipapList() (model.MinipapArrayResponse, error){
 	tempInput, err := cs.minipapRepo.GetList()
 	var newInput model.MinipapArrayResponse
-	newInput.Minipap = []model.MiniPAP{}
-	for _, temp := range tempInput{
-		newInput.Minipap = append(newInput.Minipap, temp)	
-	}
+	newInput.Minipap = append(newInput.Minipap, tempInput...)
 	return newInput, err
 }
 func (cs *crudService) GetMonthlyList() (model.MonthlyArrayResponse, error){
 	tempInput, err := cs.monthlyRepo.GetList()
 	var newInput model.MonthlyArrayResponse
-	newInput.Monthly = []model.Monthly{}
-	for _, temp := range tempInput{
-		newInput.Monthly = append(newInput.Monthly, temp)	
-	}
+	newInput.Monthly = append(newInput.Monthly, tempInput...)
 	return newInput, err
 }
 func (cs *crudService) GetProjectList() (model.ProjectArrayResponse, error){

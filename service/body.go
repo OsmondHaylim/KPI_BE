@@ -21,11 +21,11 @@ type CrudService interface {
 	AddYearly(input *model.Yearly) error
 
 	//Create cascade
-	AddEntireYearly()
-	AddEntireItem()
-	AddEntireResult()
-	AddEntireFactor()
-	AddEntireAttendance()
+	AddEntireYearly(input *model.YearlyResponse) error
+	AddEntireItem(input *model.ItemResponse, id *int) error
+	AddEntireResult(input *model.ResultResponse, id *int) error
+	AddEntireFactor(input *model.FactorResponse, id *int) error
+	AddEntireAttendance(input *model.AttendanceResponse, year *int) error
 
 	//Update
 	UpdateAttendance(id int, input model.Attendance) error
