@@ -72,6 +72,9 @@ type MasalahResponse struct{
 	Tindakan		string
 	Pic				string
 	Target			string}
+type AnalisaResponse struct{
+	Year 			int
+	Masalah			[]MasalahResponse}
 type ProjectResponse struct{
 	Project_ID		int				
 	Name 			string		

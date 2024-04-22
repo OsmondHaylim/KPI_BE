@@ -134,6 +134,56 @@ func (cs *crudService) AddEntireAttendance(input *model.AttendanceResponse, id *
 	if err != nil {return err}
 	return nil
 }
+func (cs *crudService) AddEntireAnalisa(input *model.AnalisaResponse) error{
+	var newAnalisa model.Analisa
+	newAnalisa.Year = input.Year
+
+	err := cs.AddAnalisa(&newAnalisa)
+	if err != nil {return err}
+
+	for _, data := range input.Masalah{
+		var newMasalah = model.Masalah{
+			Masalah: data.Masalah,
+			Why: data.Why,
+			Tindakan: data.Tindakan,
+			Pic: data.Pic,
+			Target: data.Target,
+			Year: &newAnalisa.Year,
+			//Default status here
+		}
+		err = cs.AddMasalah(&newMasalah)
+		if err != nil {return err}
+	}
+	return nil
+}
+func (cs *crudService) AddEntireSummary(input *model.SummaryResponse) error{
+	var newSummary = model.Summary{
+		IssuedDate: input.IssuedDate,
+	}
+	err := cs.AddSummary(&newSummary)
+	if err != nil {return err}
+	for _, data := range input.Projects{
+		var newProject = model.Project{
+			Name: data.Name,
+			Summary_ID: newSummary.Summary_ID,
+			INYS: data.Item["Not Yet Start Issued FR"],
+			QNYS: data.Quantity["Not Yet Start Issued FR"],
+			IDR: data.Item["DR"],
+			QDR: data.Quantity["DR"],
+			IPR: data.Item["PR to PO"],
+			QPR: data.Quantity["PR to PO"],
+			II: data.Item["Install"],
+			QI: data.Quantity["Install"],
+			IF: data.Item["Finish"],
+			QF: data.Quantity["Finish"],
+			IC: data.Item["Cancelled"],
+			QC: data.Quantity["Cancelled"],
+		}
+		err = cs.AddProject(&newProject)
+		if err != nil {return err}
+	}
+	return nil
+}
 
 func (cs *crudService) DeleteEntireYearly(input int) error{
 	temp, err := cs.GetYearlyByID(input)
@@ -228,6 +278,32 @@ func (cs *crudService) DeleteEntireAttendance(input int) error{
 	}
 	if temp.Lain != nil {
 		err = cs.DeleteMonthly(temp.Lain.Monthly_ID)
+		if err != nil {return err}
+	}
+	return nil
+}
+func (cs *crudService) DeleteEntireAnalisa(input int) error{
+	temp, err := cs.GetAnalisaByID(input)
+	if err != nil {return err}
+	
+	err = cs.DeleteAnalisa(temp.Year)
+	if err != nil {return err}
+
+	for _, data := range temp.Masalah{
+		err = cs.DeleteMasalah(data.Masalah_ID)
+		if err != nil {return err}
+	}
+	return nil
+}
+func (cs *crudService) DeleteEntireSummary(input int) error{
+	temp, err := cs.GetSummaryByID(input)
+	if err != nil {return err}
+	
+	err = cs.DeleteSummary(temp.Summary_ID)
+	if err != nil {return err}
+
+	for _, data := range temp.Projects{
+		err = cs.DeleteProject(data.Project_ID)
 		if err != nil {return err}
 	}
 	return nil

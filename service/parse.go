@@ -10,11 +10,13 @@ import (
 	"os"
 	"strconv"
 
+	"errors"
 	// "time"
 	// "strings"
 	"github.com/tealeg/xlsx"
 )
 
+var directory = "./uploads/"
 func (ps *parseService) ParseKpi (input multipart.File) (*model.YearlyResponse, error){
 	//Create temp file
 	out, err := os.CreateTemp("", "upload-*.xlsx")
@@ -263,27 +265,18 @@ func (ps *parseService) ParseKpi (input multipart.File) (*model.YearlyResponse, 
 } 
 
 func (ps *parseService) SaveFile (input multipart.File, header *multipart.FileHeader) error {
-	//Create temp file
-	out, err := os.CreateTemp("", "upload-*.xlsx")
-	if err != nil {return err}	
-	defer out.Close()
-	//Copy File
-	_, err = io.Copy(out, input)
-	if err != nil {return err}
-
-	//Create Directory
-	directory := "./uploads/"
 	if _, err := os.Stat(directory); os.IsNotExist(err) {
 		os.Mkdir(directory, os.ModePerm)
 	}
 
 	// Create a new file in the specified directory
-	out, err = os.Create(directory + header.Filename)
+	newFiles, err := os.Create(directory + header.Filename)
 	if err != nil {return err}
-	defer out.Close()
+	defer newFiles.Close()
 
 	// Copy the uploaded file to the newly created file
-	_, err = io.Copy(out, input)
+	written, err := io.Copy(newFiles, input)
 	if err != nil {return err}
+	if written <= 0 {return errors.New("nothing pasted")}
 	return nil
 }

@@ -77,8 +77,10 @@ func RunServer(db *gorm.DB, gin *gin.Engine) *gin.Engine {
 			analisa.GET("", apiHandler.AnalisaAPIHandler.GetAnalisaList)
 			analisa.GET("/:id", apiHandler.AnalisaAPIHandler.GetAnalisaByID)
 			analisa.POST("", apiHandler.AnalisaAPIHandler.AddAnalisa)
+			analisa.POST("/entire", apiHandler.AnalisaAPIHandler.AddEntireAnalisa)
 			analisa.PUT("/:id", apiHandler.AnalisaAPIHandler.UpdateAnalisa)
 			analisa.DELETE("/:id", apiHandler.AnalisaAPIHandler.DeleteAnalisa)
+			analisa.DELETE("/entire/:id", apiHandler.AnalisaAPIHandler.DeleteEntireAnalisa)
 		}
 		attendance := kpi.Group("/attendance") //inefficient endpoint
 		{
@@ -157,8 +159,10 @@ func RunServer(db *gorm.DB, gin *gin.Engine) *gin.Engine {
 			summary.GET("", apiHandler.ProjectAPIHandler.GetSummaryList)
 			summary.GET("/:id", apiHandler.ProjectAPIHandler.GetSummaryByID)
 			summary.POST("", apiHandler.ProjectAPIHandler.AddSummary)
+			summary.POST("/entire", apiHandler.ProjectAPIHandler.AddEntireSummary)
 			summary.PUT("/:id", apiHandler.ProjectAPIHandler.UpdateSummary)
 			summary.DELETE("/:id", apiHandler.ProjectAPIHandler.DeleteSummary)
+			summary.DELETE("/entire/:id", apiHandler.ProjectAPIHandler.DeleteEntireSummary)
 		}
 		yearly := kpi.Group("/yearly") 
 		{
@@ -212,7 +216,7 @@ func main(){
 			panic(err)
 		}
 
-		conn.AutoMigrate(&model.Monthly{}, &model.Masalah{}, &model.Project{}) 
+		conn.AutoMigrate(&model.Monthly{}, &model.Masalah{}, &model.Project{}, &model.UploadFile{}) 
 		conn.AutoMigrate(&model.MiniPAP{}, &model.Analisa{}, &model.Summary{})
 		conn.AutoMigrate(&model.Attendance{})
 		conn.AutoMigrate(&model.Factor{})

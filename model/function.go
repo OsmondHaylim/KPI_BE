@@ -95,6 +95,15 @@ func (a Attendance) ToResponse() AttendanceResponse{
 		Lain: a.Lain,
 	}
 }
+func (a Analisa) ToResponse() AnalisaResponse{
+	newAnalisa := AnalisaResponse{
+		Year: a.Year,
+	}
+	for _, masalah := range a.Masalah{
+		newAnalisa.Masalah = append(newAnalisa.Masalah, masalah.ToResponse())
+	}
+	return newAnalisa
+}
 func (m Masalah) ToResponse() MasalahResponse{
 	return MasalahResponse{
 		Masalah_ID: m.Masalah_ID,

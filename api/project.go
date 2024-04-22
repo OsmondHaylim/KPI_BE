@@ -26,6 +26,9 @@ type ProjectAPI interface {
 
 	GetProjectList(k *gin.Context)
 	GetSummaryList(k *gin.Context)
+
+	AddEntireSummary(k *gin.Context)
+	DeleteEntireSummary(k *gin.Context)
 }
 type projectAPI struct {crudService		service.CrudService}
 func NewProjectAPI(crudService service.CrudService) *projectAPI{
@@ -113,3 +116,18 @@ func (aa *projectAPI) GetSummaryList(k *gin.Context) {
 	k.JSON(http.StatusOK, Summary)
 }
 
+func (aa *projectAPI) AddEntireSummary(k *gin.Context){
+	var newSummary model.SummaryResponse
+	err := k.ShouldBindJSON(&newSummary)
+	if model.ErrorCheck(k, err){return}
+	err = aa.crudService.AddEntireSummary(&newSummary)
+	if model.ErrorCheck(k, err){return}
+	k.JSON(http.StatusOK, model.SuccessResponse{Message: "add Summary success"})
+}
+func (aa *projectAPI) DeleteEntireSummary(k *gin.Context) {
+	KpiID, err := strconv.Atoi(k.Param("id"))
+	if model.ErrorCheck(k, err){return}
+	err = aa.crudService.DeleteEntireSummary(KpiID)
+	if model.ErrorCheck(k, err){return}
+	k.JSON(http.StatusOK, model.SuccessResponse{Message: "Summary delete success"})
+}

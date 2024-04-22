@@ -27,6 +27,8 @@ type CrudService interface {
 	AddEntireResult(input *model.ResultResponse, id *int) error
 	AddEntireFactor(input *model.FactorResponse, id *int) error
 	AddEntireAttendance(input *model.AttendanceResponse, year *int) error
+	AddEntireAnalisa(input *model.AnalisaResponse) error
+	AddEntireSummary(input *model.SummaryResponse) error
 
 	//Update
 	UpdateAttendance(id int, input model.Attendance) error
@@ -64,6 +66,8 @@ type CrudService interface {
 	DeleteEntireResult(input int) error
 	DeleteEntireFactor(input int) error
 	DeleteEntireAttendance(input int) error
+	DeleteEntireAnalisa(input int) error
+	DeleteEntireSummary(input int) error
 
 	//Get specified
 	GetAttendanceByID(input int) (*model.AttendanceResponse, error)
