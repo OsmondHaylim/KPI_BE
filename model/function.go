@@ -151,15 +151,18 @@ func (y Yearly) ToResponse() YearlyResponse{
 	for _, Item := range y.Items{
 		newYear.Items = append(newYear.Items, Item.ToResponse())
 	}
-	newAtt := AttendanceResponse{
-		Year: y.Attendance.Year,
-		Plan: y.Attendance.Plan,
-		Actual: y.Attendance.Actual,
-		Cuti: y.Attendance.Cuti,
-		Izin: y.Attendance.Izin,
-		Lain: y.Attendance.Lain,
+	zero := 0
+	if y.Attendance != nil && (y.AttendanceID == &zero|| y.AttendanceID == nil){
+		newAtt := AttendanceResponse{
+			Year: y.Attendance.Year,
+			Plan: y.Attendance.Plan,
+			Actual: y.Attendance.Actual,
+			Cuti: y.Attendance.Cuti,
+			Izin: y.Attendance.Izin,
+			Lain: y.Attendance.Lain,
+		}
+		newYear.Attendance = &newAtt
 	}
-	newYear.Attendance = &newAtt
 	return newYear
 }
 func (p Project) ToResponse() ProjectResponse{

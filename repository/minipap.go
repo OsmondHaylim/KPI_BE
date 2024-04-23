@@ -43,7 +43,7 @@ func (ms *minipapRepo) GetByID(id int) (*model.MiniPAP, error) {
 	var MiniPAP model.MiniPAP
 	err := ms.db.
 	Preload(clause.Associations).
-	Where("minipap_id = ?", id).First(&MiniPAP).Error
+	Where("mini_pap_id = ?", id).First(&MiniPAP).Error
 	if err != nil {
 		return nil, err
 	}

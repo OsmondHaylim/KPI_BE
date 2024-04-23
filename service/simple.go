@@ -5,7 +5,16 @@ import (
 )
 
 // Create Functions
-func (cs *crudService) AddAttendance(input *model.Attendance) error{return cs.attendanceRepo.Store(input)}
+func (cs *crudService) AddAttendance(input *model.Attendance) error{
+	newInput := input
+	zero := 0
+	if input.PlanID != &zero {newInput.PlanID = nil}
+	if input.ActualID != &zero {newInput.ActualID = nil}
+	if input.CutiID != &zero {newInput.CutiID = nil}
+	if input.IzinID != &zero {newInput.IzinID = nil}
+	if input.LainID != &zero {newInput.LainID = nil}
+	return cs.attendanceRepo.Store(input)
+}
 func (cs *crudService) AddAnalisa(input *model.Analisa) error{return cs.analisaRepo.Store(input)}
 func (cs *crudService) AddFactor(input *model.Factor) error{return cs.factorRepo.Store(input)}
 func (cs *crudService) AddFile(input *model.UploadFile) error{return cs.fileRepo.Store(input)}

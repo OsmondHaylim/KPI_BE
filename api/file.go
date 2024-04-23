@@ -55,8 +55,8 @@ func (fa *fileAPI) KpiFileUpload(f *gin.Context) {
 	input, err := fa.parseService.ParseKpi(file)
 	if model.ErrorCheck(f, err) {return}
 
-	err = fa.crudService.AddEntireYearly(input)
-	if model.ErrorCheck(f, err) {return}
+	// err = fa.crudService.AddEntireYearly(input)
+	// if model.ErrorCheck(f, err) {return}
 
 	f.JSON(http.StatusAccepted, input)
 }

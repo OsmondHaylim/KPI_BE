@@ -8,6 +8,7 @@ func (cs *crudService) AddEntireYearly(input *model.YearlyResponse) error {
 	//Storing Yearlys
 	var newYearly model.Yearly
 	newYearly.Year = input.Year
+	newYearly.AttendanceID = &input.Year
 	//Store Attendance
 	err := cs.AddEntireAttendance(input.Attendance, &newYearly.Year)
 	if err != nil {return err}
