@@ -166,7 +166,7 @@ func (cs *crudService) AddEntireSummary(input *model.SummaryResponse) error{
 	for _, data := range input.Projects{
 		var newProject = model.Project{
 			Name: data.Name,
-			Summary_ID: newSummary.Summary_ID,
+			Summary_ID: &newSummary.Summary_ID,
 			INYS: data.Item["Not Yet Start Issued FR"],
 			QNYS: data.Quantity["Not Yet Start Issued FR"],
 			IDR: data.Item["DR"],
@@ -299,13 +299,15 @@ func (cs *crudService) DeleteEntireAnalisa(input int) error{
 func (cs *crudService) DeleteEntireSummary(input int) error{
 	temp, err := cs.GetSummaryByID(input)
 	if err != nil {return err}
-	
-	err = cs.DeleteSummary(temp.Summary_ID)
-	if err != nil {return err}
 
 	for _, data := range temp.Projects{
 		err = cs.DeleteProject(data.Project_ID)
 		if err != nil {return err}
 	}
+	
+	err = cs.DeleteSummary(temp.Summary_ID)
+	if err != nil {return err}
+
+	
 	return nil
 }

@@ -86,7 +86,7 @@ type Analisa struct{
 }
 
 type Masalah struct{
-	Masalah_ID		int				`gorm:"primaryKey" json:"Masalah_ID"`
+	Masalah_ID		int				`gorm:"primaryKey;autoIncrement" json:"Masalah_ID"`
 	Masalah 		string			`gorm:"notNull"`
 	Why				pq.StringArray	`gorm:"type:text[]" json:"Why"`
 	Tindakan		string
@@ -98,9 +98,9 @@ type Masalah struct{
 }
 
 type Project struct{
-	Project_ID		int				`gorm:"primaryKey"`
-	Name 			string			`gorm:"notNull"`
-	Summary_ID		int					
+	Project_ID		int				`gorm:"primaryKey;autoIncrement"`
+	Name 			string			`gorm:"notNull" json:"Name"`
+	Summary_ID		*int					
 	INYS			int
 	QNYS			int
 	IDR				int
@@ -116,7 +116,7 @@ type Project struct{
 }
 
 type Summary struct{
-	Summary_ID		int			`gorm:"primaryKey"`
+	Summary_ID		int			`gorm:"primaryKey;autoIncrement"`
 	Projects		[]Project	`gorm:"foreignKey:Summary_ID"`
 	IssuedDate		*time.Time
 }

@@ -2,17 +2,18 @@ package service
 
 import (
 	"goreact/model"
+	"errors"
 )
 
 // Create Functions
 func (cs *crudService) AddAttendance(input *model.Attendance) error{
 	newInput := input
 	zero := 0
-	if input.PlanID != &zero {newInput.PlanID = nil}
-	if input.ActualID != &zero {newInput.ActualID = nil}
-	if input.CutiID != &zero {newInput.CutiID = nil}
-	if input.IzinID != &zero {newInput.IzinID = nil}
-	if input.LainID != &zero {newInput.LainID = nil}
+	if input.PlanID != &zero && (input.Plan == nil || input.Plan == &model.Monthly{}){newInput.PlanID = nil}
+	if input.ActualID != &zero && (input.Actual == nil || input.Actual == &model.Monthly{}){newInput.ActualID = nil}
+	if input.CutiID != &zero && (input.Cuti == nil || input.Cuti == &model.Monthly{}){newInput.CutiID = nil}
+	if input.IzinID != &zero && (input.Izin == nil || input.Izin == &model.Monthly{}){newInput.IzinID = nil}
+	if input.LainID != &zero && (input.Lain == nil || input.Lain == &model.Monthly{}){newInput.LainID = nil}
 	return cs.attendanceRepo.Store(input)
 }
 func (cs *crudService) AddAnalisa(input *model.Analisa) error{return cs.analisaRepo.Store(input)}
@@ -94,39 +95,151 @@ func (cs *crudService) UpdateYearly(id int, input model.Yearly) error{
 }
 
 // Delete Functions
-func (cs *crudService) DeleteAttendance(input int) error{return cs.attendanceRepo.Delete(input)}
-func (cs *crudService) DeleteAnalisa(input int) error{return cs.analisaRepo.Delete(input)}
-func (cs *crudService) DeleteFactor(input int) error{return cs.factorRepo.Delete(input)}
-func (cs *crudService) DeleteFile(input int) error{return cs.fileRepo.Delete(input)}
-func (cs *crudService) DeleteItem(input int) error{return cs.itemRepo.Delete(input)}
-func (cs *crudService) DeleteMasalah(input int) error{return cs.masalahRepo.Delete(input)}
-func (cs *crudService) DeleteMinipap(input int) error{return cs.minipapRepo.Delete(input)}
-func (cs *crudService) DeleteMonthly(input int) error{return cs.monthlyRepo.Delete(input)}
-func (cs *crudService) DeleteProject(input int) error{return cs.projectRepo.Delete(input)}
-func (cs *crudService) DeleteResult(input int) error{return cs.resultRepo.Delete(input)}
-func (cs *crudService) DeleteSummary(input int) error{return cs.summaryRepo.Delete(input)}
-func (cs *crudService) DeleteYearly(input int) error{return cs.yearlyRepo.Delete(input)}
+func (cs *crudService) DeleteAttendance(input int) error{
+	list, err := cs.attendanceRepo.GetList()
+	if err != nil {return err}
+	for _, data := range list{
+		if data.Year == input{
+			return cs.attendanceRepo.Delete(input)
+		}
+	}
+	return errors.New("not found")
+}
+func (cs *crudService) DeleteAnalisa(input int) error{
+	list, err := cs.analisaRepo.GetList()
+	if err != nil {return err}
+	for _, data := range list{
+		if data.Year == input{
+			return cs.analisaRepo.Delete(input)
+		}
+	}
+	return errors.New("not found")
+}
+func (cs *crudService) DeleteFactor(input int) error{
+	list, err := cs.factorRepo.GetList()
+	if err != nil {return err}
+	for _, data := range list{
+		if data.Factor_ID == input{
+			return cs.factorRepo.Delete(input)
+		}
+	}
+	return errors.New("not found")
+}
+func (cs *crudService) DeleteFile(input int) error{
+	list, err := cs.fileRepo.GetList()
+	if err != nil {return err}
+	for _, data := range list{
+		if int(data.ID) == input{
+			return cs.fileRepo.Delete(input)
+		}
+	}
+	return errors.New("not found")
+}
+func (cs *crudService) DeleteItem(input int) error{
+	list, err := cs.itemRepo.GetList()
+	if err != nil {return err}
+	for _, data := range list{
+		if data.Item_ID == input{
+			return cs.itemRepo.Delete(input)
+		}
+	}
+	return errors.New("not found")
+}
+func (cs *crudService) DeleteMasalah(input int) error{
+	list, err := cs.masalahRepo.GetList()
+	if err != nil {return err}
+	for _, data := range list{
+		if data.Masalah_ID == input{
+			return cs.masalahRepo.Delete(input)
+		}
+	}
+	return errors.New("not found")
+}
+func (cs *crudService) DeleteMinipap(input int) error{
+	list, err := cs.minipapRepo.GetList()
+	if err != nil {return err}
+	for _, data := range list{
+		if data.MiniPAP_ID == input{
+			return cs.minipapRepo.Delete(input)
+		}
+	}
+	return errors.New("not found")
+}
+func (cs *crudService) DeleteMonthly(input int) error{
+	list, err := cs.monthlyRepo.GetList()
+	if err != nil {return err}
+	for _, data := range list{
+		if data.Monthly_ID == input{
+			return cs.monthlyRepo.Delete(input)
+		}
+	}
+	return errors.New("not found")
+}
+func (cs *crudService) DeleteProject(input int) error{
+	list, err := cs.projectRepo.GetList()
+	if err != nil {return err}
+	for _, data := range list{
+		if data.Project_ID == input{
+			return cs.projectRepo.Delete(input)
+		}
+	}
+	return errors.New("not found")
+}
+func (cs *crudService) DeleteResult(input int) error{
+	list, err := cs.resultRepo.GetList()
+	if err != nil {return err}
+	for _, data := range list{
+		if data.Result_ID == input{
+			return cs.resultRepo.Delete(input)
+		}
+	}
+	return errors.New("not found")
+}
+func (cs *crudService) DeleteSummary(input int) error{
+	list, err := cs.summaryRepo.GetList()
+	if err != nil {return err}
+	for _, data := range list{
+		if data.Summary_ID == input{
+			return cs.summaryRepo.Delete(input)
+		}
+	}
+	return errors.New("not found")
+}
+func (cs *crudService) DeleteYearly(input int) error{
+	list, err := cs.yearlyRepo.GetList()
+	if err != nil {return err}
+	for _, data := range list{
+		if data.Year == input{
+			return cs.yearlyRepo.Delete(input)
+		}
+	}
+	return errors.New("not found")
+}
 
 // Read Specified Functions
 func (cs *crudService) GetAttendanceByID(input int) (*model.AttendanceResponse, error){
 	tempInput, err := cs.attendanceRepo.GetByID(input)
+	if err != nil {return nil, err}
 	newInput := tempInput.ToResponse()
 	return &newInput, err
 }
 func (cs *crudService) GetAnalisaByID(input int) (*model.Analisa, error){return cs.analisaRepo.GetByID(input)}
 func (cs *crudService) GetFactorByID(input int) (*model.FactorResponse, error){
 	tempInput, err := cs.factorRepo.GetByID(input)
+	if err != nil {return nil, err}
 	newInput := tempInput.ToResponse()
 	return &newInput, err
 }
 func (cs *crudService) GetFileByID(input int) (*model.UploadFile, error){return cs.fileRepo.GetByID(input)}
 func (cs *crudService) GetItemByID(input int) (*model.ItemResponse, error){
 	tempInput, err := cs.itemRepo.GetByID(input)
+	if err != nil {return nil, err}
 	newInput := tempInput.ToResponse()
 	return &newInput, err
 }
 func (cs *crudService) GetMasalahByID(input int) (*model.MasalahResponse, error){
 	tempInput, err := cs.masalahRepo.GetByID(input)
+	if err != nil {return nil, err}
 	newInput := tempInput.ToResponse()
 	return &newInput, err
 }
@@ -134,21 +247,25 @@ func (cs *crudService) GetMinipapByID(input int) (*model.MiniPAP, error){return 
 func (cs *crudService) GetMonthlyByID(input int) (*model.Monthly, error){return cs.monthlyRepo.GetByID(input)}
 func (cs *crudService) GetProjectByID(input int) (*model.ProjectResponse, error){
 	tempInput, err := cs.projectRepo.GetByID(input)
+	if err != nil {return nil, err}
 	newInput := tempInput.ToResponse()
 	return &newInput, err
 }
 func (cs *crudService) GetResultByID(input int) (*model.ResultResponse, error){
 	tempInput, err := cs.resultRepo.GetByID(input)
+	if err != nil {return nil, err}
 	newInput := tempInput.ToResponse()
 	return &newInput, err
 }
 func (cs *crudService) GetSummaryByID(input int) (*model.SummaryResponse, error){
 	tempInput, err := cs.summaryRepo.GetByID(input)
+	if err != nil {return nil, err}
 	newInput := tempInput.ToResponse()
 	return &newInput, err
 }
 func (cs *crudService) GetYearlyByID(input int) (*model.YearlyResponse, error){
 	tempInput, err := cs.yearlyRepo.GetByID(input)
+	if err != nil {return nil, err}
 	newInput := tempInput.ToResponse()
 	return &newInput, err
 }
