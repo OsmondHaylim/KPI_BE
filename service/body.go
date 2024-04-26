@@ -141,7 +141,7 @@ func NewCrudService(
 
 type ParseService interface {
 	ParseKpi(input multipart.File) (*model.YearlyResponse, error)
-	SaveFile(input multipart.File, header *multipart.FileHeader) error
+	SaveFile(input multipart.File, header *multipart.FileHeader) (*model.UploadFile, error)
 }
 type parseService struct {
 	fileRepo repo.FileRepo

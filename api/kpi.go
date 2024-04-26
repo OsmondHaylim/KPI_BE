@@ -75,7 +75,7 @@ func (ka *kpiAPI) AddAttendance(k *gin.Context) {
 	if model.ErrorCheck(k, err) {return}
 	err = ka.crudService.AddAttendance(&newAttendance)
 	if model.ErrorCheck(k, err) {return}
-	k.JSON(http.StatusOK, model.SuccessResponse{Message: "add Attendance success"})
+	k.JSON(http.StatusCreated, model.SuccessResponse{Message: "add Attendance success"})
 }
 func (ka *kpiAPI) AddFactor(k *gin.Context) {
 	var newFactor model.Factor
@@ -83,7 +83,7 @@ func (ka *kpiAPI) AddFactor(k *gin.Context) {
 	if model.ErrorCheck(k, err) {return}
 	err = ka.crudService.AddFactor(&newFactor)
 	if model.ErrorCheck(k, err) {return}
-	k.JSON(http.StatusOK, model.SuccessResponse{Message: "add Factor success"})
+	k.JSON(http.StatusCreated, model.SuccessResponse{Message: "add Factor success"})
 }
 func (ka *kpiAPI) AddItem(k *gin.Context) {
 	var newItem model.Item
@@ -91,7 +91,7 @@ func (ka *kpiAPI) AddItem(k *gin.Context) {
 	if model.ErrorCheck(k, err) {return}
 	err = ka.crudService.AddItem(&newItem)
 	if model.ErrorCheck(k, err) {return}
-	k.JSON(http.StatusOK, model.SuccessResponse{Message: "add Item success"})
+	k.JSON(http.StatusCreated, model.SuccessResponse{Message: "add Item success"})
 }
 func (ka *kpiAPI) AddMinipap(k *gin.Context) {
 	var newMinipap model.MiniPAP
@@ -99,7 +99,7 @@ func (ka *kpiAPI) AddMinipap(k *gin.Context) {
 	if model.ErrorCheck(k, err) {return}
 	err = ka.crudService.AddMinipap(&newMinipap)
 	if model.ErrorCheck(k, err) {return}
-	k.JSON(http.StatusOK, model.SuccessResponse{Message: "add Minipap success"})
+	k.JSON(http.StatusCreated, model.SuccessResponse{Message: "add Minipap success"})
 }
 func (ka *kpiAPI) AddMonthly(k *gin.Context) {
 	var newMonthly model.Monthly
@@ -108,7 +108,7 @@ func (ka *kpiAPI) AddMonthly(k *gin.Context) {
 	newMonthly = newMonthly.Reseted()
 	err = ka.crudService.AddMonthly(&newMonthly)
 	if model.ErrorCheck(k, err) {return}
-	k.JSON(http.StatusOK, model.SuccessResponse{Message: "add Monthly success"})
+	k.JSON(http.StatusCreated, model.SuccessResponse{Message: "add Monthly success"})
 }
 func (ka *kpiAPI) AddResult(k *gin.Context) {
 	var newResult model.Result
@@ -116,7 +116,7 @@ func (ka *kpiAPI) AddResult(k *gin.Context) {
 	if model.ErrorCheck(k, err) {return}
 	err = ka.crudService.AddResult(&newResult)
 	if model.ErrorCheck(k, err) {return}
-	k.JSON(http.StatusOK, model.SuccessResponse{Message: "add Result success"})
+	k.JSON(http.StatusCreated, model.SuccessResponse{Message: "add Result success"})
 }
 func (ka *kpiAPI) AddYearly(k *gin.Context) {
 	var newYearly model.Yearly
@@ -124,7 +124,7 @@ func (ka *kpiAPI) AddYearly(k *gin.Context) {
 	if model.ErrorCheck(k, err) {return}
 	err = ka.crudService.AddYearly(&newYearly)
 	if model.ErrorCheck(k, err) {return}
-	k.JSON(http.StatusOK, model.SuccessResponse{Message: "add Yearly success"})
+	k.JSON(http.StatusCreated, model.SuccessResponse{Message: "add Yearly success"})
 }
 
 // Add Entire
@@ -134,7 +134,7 @@ func (ka *kpiAPI) AddEntireYearly(k *gin.Context) {
 	if model.ErrorCheck(k, err) {return}
 	err = ka.crudService.AddEntireYearly(&newYearly)
 	if model.ErrorCheck(k, err) {return}
-	k.JSON(http.StatusOK, model.SuccessResponse{Message: "add Entire Yearly success"})
+	k.JSON(http.StatusCreated, model.SuccessResponse{Message: "add Entire Yearly success"})
 }
 func (ka *kpiAPI) AddEntireItem(k *gin.Context) {
 	var response model.ItemResponse
@@ -142,7 +142,7 @@ func (ka *kpiAPI) AddEntireItem(k *gin.Context) {
 	if model.ErrorCheck(k, err) {return}
 	err = ka.crudService.AddEntireItem(&response, nil)
 	if model.ErrorCheck(k, err) {return}
-	k.JSON(http.StatusOK, model.SuccessResponse{Message: "add Entire Item success"})
+	k.JSON(http.StatusCreated, model.SuccessResponse{Message: "add Entire Item success"})
 }
 func (ka *kpiAPI) AddEntireResult(k *gin.Context) {
 	var response model.ResultResponse
@@ -150,7 +150,7 @@ func (ka *kpiAPI) AddEntireResult(k *gin.Context) {
 	if model.ErrorCheck(k, err) {return}
 	err = ka.crudService.AddEntireResult(&response, nil)
 	if model.ErrorCheck(k, err) {return}
-	k.JSON(http.StatusOK, model.SuccessResponse{Message: "add Entire Result success"})
+	k.JSON(http.StatusCreated, model.SuccessResponse{Message: "add Entire Result success"})
 }
 func (ka *kpiAPI) AddEntireFactor(k *gin.Context) {
 	var response model.FactorResponse
@@ -158,7 +158,7 @@ func (ka *kpiAPI) AddEntireFactor(k *gin.Context) {
 	if model.ErrorCheck(k, err) {return}
 	err = ka.crudService.AddEntireFactor(&response, nil)
 	if model.ErrorCheck(k, err){return}
-	k.JSON(http.StatusOK, model.SuccessResponse{Message: "add Entire Factor success"})
+	k.JSON(http.StatusCreated, model.SuccessResponse{Message: "add Entire Factor success"})
 }
 func (ka *kpiAPI) AddEntireAttendance(k *gin.Context) {
 	var response model.AttendanceResponse
@@ -166,7 +166,7 @@ func (ka *kpiAPI) AddEntireAttendance(k *gin.Context) {
 	if model.ErrorCheck(k, err){return}
 	err = ka.crudService.AddEntireAttendance(&response, nil)
 	if model.ErrorCheck(k, err) {return}
-	k.JSON(http.StatusOK, model.SuccessResponse{Message: "add Entire Attendance success"})
+	k.JSON(http.StatusCreated, model.SuccessResponse{Message: "add Entire Attendance success"})
 }
 
 // Update

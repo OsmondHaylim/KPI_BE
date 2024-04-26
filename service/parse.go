@@ -193,7 +193,7 @@ func (ps *parseService) ParseKpi (input multipart.File) (*model.YearlyResponse, 
 					if err != nil {return nil, err}
 
 					if row.Cells[14].Type() == xlsx.CellTypeNumeric {
-						monthly.Jan, err = strconv.ParseFloat(row.Cells[14].Value, 64)
+						monthly.Jun, err = strconv.ParseFloat(row.Cells[14].Value, 64)
 					}else if row.Cells[14].Value != ""{
 						monthly.Jun, err = strconv.ParseFloat(row.Cells[14].Value[:len(row.Cells[14].Value)-1], 64)
 					}
@@ -214,7 +214,7 @@ func (ps *parseService) ParseKpi (input multipart.File) (*model.YearlyResponse, 
 					if err != nil {return nil, err}
 
 					if row.Cells[17].Type() == xlsx.CellTypeNumeric {
-						monthly.Jan, err = strconv.ParseFloat(row.Cells[17].Value, 64)
+						monthly.Sep, err = strconv.ParseFloat(row.Cells[17].Value, 64)
 					}else if row.Cells[17].Value != ""{
 						monthly.Sep, err = strconv.ParseFloat(row.Cells[17].Value[:len(row.Cells[17].Value)-1], 64)
 					}
@@ -264,19 +264,26 @@ func (ps *parseService) ParseKpi (input multipart.File) (*model.YearlyResponse, 
 	return nil, nil
 } 
 
-func (ps *parseService) SaveFile (input multipart.File, header *multipart.FileHeader) error {
+func (ps *parseService) SaveFile (input multipart.File, header *multipart.FileHeader) (*model.UploadFile, error) {
 	if _, err := os.Stat(directory); os.IsNotExist(err) {
 		os.Mkdir(directory, os.ModePerm)
 	}
 
 	// Create a new file in the specified directory
 	newFiles, err := os.Create(directory + header.Filename)
-	if err != nil {return err}
+	if err != nil {return nil, err}
 	defer newFiles.Close()
 
 	// Copy the uploaded file to the newly created file
 	written, err := io.Copy(newFiles, input)
-	if err != nil {return err}
-	if written <= 0 {return errors.New("nothing pasted")}
-	return nil
+	if err != nil {return nil, err}
+	if written <= 0 {return nil, errors.New("nothing pasted")}
+	
+	content, err := io.ReadAll(newFiles)
+	if err != nil {return nil, err}
+	file := model.UploadFile{
+		FileName: header.Filename,
+		File: content,
+	}
+	return &file, nil
 }

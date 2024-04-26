@@ -40,7 +40,7 @@ func (aa *projectAPI) AddProject(k *gin.Context) {
 	if model.ErrorCheck(k, err){return}
 	err = aa.crudService.AddProject(&newProject)
 	if model.ErrorCheck(k, err){return}
-	k.JSON(http.StatusOK, model.SuccessResponse{Message: "add Project success"})
+	k.JSON(http.StatusCreated, model.SuccessResponse{Message: "add Project success"})
 }
 func (aa *projectAPI) AddSummary(k *gin.Context) {
 	var newSummary model.Summary
@@ -48,7 +48,7 @@ func (aa *projectAPI) AddSummary(k *gin.Context) {
 	if model.ErrorCheck(k, err){return}
 	err = aa.crudService.AddSummary(&newSummary)
 	if model.ErrorCheck(k, err){return}
-	k.JSON(http.StatusOK, model.SuccessResponse{Message: "add Summary success"})
+	k.JSON(http.StatusCreated, model.SuccessResponse{Message: "add Summary success"})
 }
 
 func (aa *projectAPI) UpdateProject(k *gin.Context) {
@@ -122,7 +122,7 @@ func (aa *projectAPI) AddEntireSummary(k *gin.Context){
 	if model.ErrorCheck(k, err){return}
 	err = aa.crudService.AddEntireSummary(&newSummary)
 	if model.ErrorCheck(k, err){return}
-	k.JSON(http.StatusOK, model.SuccessResponse{Message: "add Summary success"})
+	k.JSON(http.StatusCreated, model.SuccessResponse{Message: "add Summary success"})
 }
 func (aa *projectAPI) DeleteEntireSummary(k *gin.Context) {
 	KpiID, err := strconv.Atoi(k.Param("id"))

@@ -1,8 +1,9 @@
 package model
 
 import (
-	"strconv"
+	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -151,8 +152,7 @@ func (y Yearly) ToResponse() YearlyResponse{
 	for _, Item := range y.Items{
 		newYear.Items = append(newYear.Items, Item.ToResponse())
 	}
-	zero := 0
-	if y.Attendance != nil && (y.AttendanceID == &zero|| y.AttendanceID == nil){
+	if y.Attendance != nil{
 		newAtt := AttendanceResponse{
 			Year: y.Attendance.Year,
 			Plan: y.Attendance.Plan,
@@ -161,6 +161,7 @@ func (y Yearly) ToResponse() YearlyResponse{
 			Izin: y.Attendance.Izin,
 			Lain: y.Attendance.Lain,
 		}
+		
 		newYear.Attendance = &newAtt
 	}
 	return newYear
@@ -231,8 +232,14 @@ func (m Monthly) Reseted() Monthly{
 
 func ErrorCheck(k *gin.Context, err error) bool {
 	if err != nil {
-		k.JSON(http.StatusInternalServerError, ErrorResponse{Error: err.Error()})
-		return true
+		if err.Error() == "record not found"{
+			k.JSON(http.StatusNotFound, ErrorResponse{Error: err.Error()})
+			return true
+		}else{
+			k.JSON(http.StatusInternalServerError, ErrorResponse{Error: err.Error()})
+			fmt.Print(err.Error())
+			return true
+		}
 	}
 	return false
 }

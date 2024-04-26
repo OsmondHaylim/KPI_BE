@@ -1,8 +1,10 @@
 package service
 
 import (
-	"goreact/model"
 	"errors"
+	"fmt"
+	// "fmt"
+	"goreact/model"
 )
 
 // Create Functions
@@ -14,7 +16,7 @@ func (cs *crudService) AddAttendance(input *model.Attendance) error{
 	if input.CutiID != &zero && (input.Cuti == nil || input.Cuti == &model.Monthly{}){newInput.CutiID = nil}
 	if input.IzinID != &zero && (input.Izin == nil || input.Izin == &model.Monthly{}){newInput.IzinID = nil}
 	if input.LainID != &zero && (input.Lain == nil || input.Lain == &model.Monthly{}){newInput.LainID = nil}
-	return cs.attendanceRepo.Store(input)
+	return cs.attendanceRepo.Store(newInput)
 }
 func (cs *crudService) AddAnalisa(input *model.Analisa) error{return cs.analisaRepo.Store(input)}
 func (cs *crudService) AddFactor(input *model.Factor) error{return cs.factorRepo.Store(input)}
@@ -173,6 +175,7 @@ func (cs *crudService) DeleteMonthly(input int) error{
 			return cs.monthlyRepo.Delete(input)
 		}
 	}
+	fmt.Println("Not Found")
 	return errors.New("not found")
 }
 func (cs *crudService) DeleteProject(input int) error{

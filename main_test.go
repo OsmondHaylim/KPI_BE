@@ -117,7 +117,7 @@ func TestMain(t *testing.T){
 				w := httptest.NewRecorder()
 				router.ServeHTTP(w, req)
 				// getSuccess(w.Body)
-				assert.Equal(t, http.StatusOK, w.Code)
+				assert.Equal(t, http.StatusCreated, w.Code)
 			})
 			t.Run("Get Single", func(t *testing.T){
 				req, _ := http.NewRequest("GET", "/kpi/monthly/1", nil)
@@ -179,13 +179,12 @@ func TestMain(t *testing.T){
 				w := httptest.NewRecorder()
 				router.ServeHTTP(w, req)
 				// getSuccess(w.Body)
-				assert.Equal(t, http.StatusOK, w.Code)
+				assert.Equal(t, http.StatusCreated, w.Code)
 			})
 			t.Run("Add Entire", func(t *testing.T){
 				attendanceBody := `{
 					"Year": 2023,
 					"Planned": {
-						"Monthly_ID": 0,
 						"MiniPAP": null,
 						"January": 0.94,
 						"February": 0.94,
@@ -204,7 +203,6 @@ func TestMain(t *testing.T){
 						"MinipapID": null
 					},
 					"Actual": {
-						"Monthly_ID": 0,
 						"MiniPAP": null,
 						"January": 0.9469,
 						"February": 0.9412,
@@ -223,7 +221,6 @@ func TestMain(t *testing.T){
 						"MinipapID": null
 					},
 					"Cuti": {
-						"Monthly_ID": 0,
 						"MiniPAP": null,
 						"January": 0.0088,
 						"February": 0.0082,
@@ -242,7 +239,6 @@ func TestMain(t *testing.T){
 						"MinipapID": null
 					},
 					"Izin": {
-						"Monthly_ID": 0,
 						"MiniPAP": null,
 						"January": 0.0005,
 						"February": 0.0017,
@@ -261,7 +257,6 @@ func TestMain(t *testing.T){
 						"MinipapID": null
 					},
 					"Lain": {
-						"Monthly_ID": 0,
 						"MiniPAP": null,
 						"January": 0.0005,
 						"February": 0.0012,
@@ -285,7 +280,7 @@ func TestMain(t *testing.T){
 				w := httptest.NewRecorder()
 				router.ServeHTTP(w, req)
 				getSuccess(w.Body)
-				assert.Equal(t, http.StatusOK, w.Code)
+				assert.Equal(t, http.StatusCreated, w.Code)
 			})
 			t.Run("Get Single", func(t *testing.T){
 				req, _ := http.NewRequest("GET", "/kpi/attendance/2000", nil)
@@ -341,7 +336,7 @@ func TestMain(t *testing.T){
 				w := httptest.NewRecorder()
 				router.ServeHTTP(w, req)
 				// getSuccess(w.Body)
-				assert.Equal(t, http.StatusOK, w.Code)
+				assert.Equal(t, http.StatusCreated, w.Code)
 			})
 			t.Run("Get Single", func(t *testing.T){
 				req, _ := http.NewRequest("GET", "/kpi/minipap/1", nil)
@@ -391,7 +386,7 @@ func TestMain(t *testing.T){
 				w := httptest.NewRecorder()
 				router.ServeHTTP(w, req)
 				// getSuccess(w.Body)
-				assert.Equal(t, http.StatusOK, w.Code)
+				assert.Equal(t, http.StatusCreated, w.Code)
 			})
 			t.Run("Add Entire", func(t *testing.T){
 				factorBody := `{
@@ -450,7 +445,7 @@ func TestMain(t *testing.T){
 				w := httptest.NewRecorder()
 				router.ServeHTTP(w, req)
 				getSuccess(w.Body)
-				assert.Equal(t, http.StatusOK, w.Code)
+				assert.Equal(t, http.StatusCreated, w.Code)
 			})
 			t.Run("Get Single", func(t *testing.T){
 				req, _ := http.NewRequest("GET", "/kpi/factor/1", nil)
@@ -508,7 +503,7 @@ func TestMain(t *testing.T){
 				w := httptest.NewRecorder()
 				router.ServeHTTP(w, req)
 				// getSuccess(w.Body)
-				assert.Equal(t, http.StatusOK, w.Code)
+				assert.Equal(t, http.StatusCreated, w.Code)
 			})
 			t.Run("Add Entire", func(t *testing.T){
 				resultBody := `{
@@ -632,7 +627,7 @@ func TestMain(t *testing.T){
 				w := httptest.NewRecorder()
 				router.ServeHTTP(w, req)
 				getSuccess(w.Body)
-				assert.Equal(t, http.StatusOK, w.Code)
+				assert.Equal(t, http.StatusCreated, w.Code)
 			})
 			t.Run("Get Single", func(t *testing.T){
 				req, _ := http.NewRequest("GET", "/kpi/result/1", nil)
@@ -688,7 +683,7 @@ func TestMain(t *testing.T){
 				w := httptest.NewRecorder()
 				router.ServeHTTP(w, req)
 				// getSuccess(w.Body)
-				assert.Equal(t, http.StatusOK, w.Code)
+				assert.Equal(t, http.StatusCreated, w.Code)
 			})
 			t.Run("Add Entire", func(t *testing.T){
 				itemBody := `{
@@ -1160,7 +1155,7 @@ func TestMain(t *testing.T){
 				w := httptest.NewRecorder()
 				router.ServeHTTP(w, req)
 				getSuccess(w.Body)
-				assert.Equal(t, http.StatusOK, w.Code)
+				assert.Equal(t, http.StatusCreated, w.Code)
 			})
 			t.Run("Get Single", func(t *testing.T){
 				req, _ := http.NewRequest("GET", "/kpi/item/1", nil)
@@ -1216,7 +1211,7 @@ func TestMain(t *testing.T){
 				w := httptest.NewRecorder()
 				router.ServeHTTP(w, req)
 				// getSuccess(w.Body)
-				assert.Equal(t, http.StatusOK, w.Code)
+				assert.Equal(t, http.StatusCreated, w.Code)
 			})
 			t.Run("Add Entire", func(t *testing.T){
 				yearlyBody := `{
@@ -3934,7 +3929,7 @@ func TestMain(t *testing.T){
 				w := httptest.NewRecorder()
 				router.ServeHTTP(w, req)
 				getSuccess(w.Body)
-				assert.Equal(t, http.StatusOK, w.Code)
+				assert.Equal(t, http.StatusCreated, w.Code)
 			})
 			t.Run("Get Single", func(t *testing.T){
 				req, _ := http.NewRequest("GET", "/kpi/yearly/2023", nil)
@@ -4002,7 +3997,7 @@ func TestMain(t *testing.T){
 				w := httptest.NewRecorder()
 				router.ServeHTTP(w, req)
 				// getSuccess(w.Body)
-				assert.Equal(t, http.StatusOK, w.Code)
+				assert.Equal(t, http.StatusCreated, w.Code)
 			})
 			t.Run("Get Single", func(t *testing.T){
 				req, _ := http.NewRequest("GET", "/kpi/project/1", nil)
@@ -4063,7 +4058,7 @@ func TestMain(t *testing.T){
 				router.ServeHTTP(w, req)
 				// getSuccess(w.Body)
 				// fmt.Printf(w.Body.String())
-				assert.Equal(t, http.StatusOK, w.Code)
+				assert.Equal(t, http.StatusCreated, w.Code)
 			})
 			t.Run("Add Entire", func(t *testing.T){
 				summaryBody := `{
@@ -4081,7 +4076,7 @@ func TestMain(t *testing.T){
 				router.ServeHTTP(w, req)
 				// getSuccess(w.Body)
 				// fmt.Printf(w.Body.String())
-				assert.Equal(t, http.StatusOK, w.Code)
+				assert.Equal(t, http.StatusCreated, w.Code)
 			})
 			t.Run("Get Single", func(t *testing.T){
 				req, _ := http.NewRequest("GET", "/kpi/summary/1", nil)
@@ -4141,7 +4136,7 @@ func TestMain(t *testing.T){
 				router.ServeHTTP(w, req)
 				// getSuccess(w.Body)
 				// fmt.Printf(w.Body.String())
-				assert.Equal(t, http.StatusOK, w.Code)
+				assert.Equal(t, http.StatusCreated, w.Code)
 			})
 			t.Run("Get Single", func(t *testing.T){
 				req, _ := http.NewRequest("GET", "/kpi/masalah/1", nil)
@@ -4192,7 +4187,7 @@ func TestMain(t *testing.T){
 				router.ServeHTTP(w, req)
 				// getSuccess(w.Body)
 				// fmt.Printf(w.Body.String())
-				assert.Equal(t, http.StatusOK, w.Code)
+				assert.Equal(t, http.StatusCreated, w.Code)
 			})
 			t.Run("Add Entire", func(t *testing.T){
 				analisaBody := `{
@@ -4209,7 +4204,7 @@ func TestMain(t *testing.T){
 				router.ServeHTTP(w, req)
 				// getSuccess(w.Body)
 				// fmt.Printf(w.Body.String())
-				assert.Equal(t, http.StatusOK, w.Code)
+				assert.Equal(t, http.StatusCreated, w.Code)
 			})
 			t.Run("Get Single", func(t *testing.T){
 				req, _ := http.NewRequest("GET", "/kpi/analisa/2023", nil)

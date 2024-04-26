@@ -1,6 +1,7 @@
 package service
 
 import (
+	"fmt"
 	"goreact/model"
 )
 
@@ -99,37 +100,42 @@ func (cs *crudService) AddEntireAttendance(input *model.AttendanceResponse, id *
 	var newAttendance model.Attendance
 	if id != nil {newAttendance.Year = *id} else {newAttendance.Year = input.Year}
 	
-	// Creating monthly from attendance
-	if input.Plan != nil{
-		newMonthly := input.Plan.Reseted()
-		err := cs.AddMonthly(&newMonthly)
-		if err != nil {return err}
-		newAttendance.PlanID = &newMonthly.Monthly_ID
-	}
-	if input.Actual != nil{
-		newMonthly := input.Actual.Reseted()
-		err := cs.AddMonthly(&newMonthly)
-		if err != nil {return err}
-		newAttendance.ActualID = &newMonthly.Monthly_ID
-	}
-	if input.Cuti != nil{
-		newMonthly := input.Cuti.Reseted()
-		err := cs.AddMonthly(&newMonthly)
-		if err != nil {return err}
-		newAttendance.CutiID = &newMonthly.Monthly_ID
-	}
-	if input.Izin != nil{
-		newMonthly := input.Izin.Reseted()
-		err := cs.AddMonthly(&newMonthly)
-		if err != nil {return err}
-		newAttendance.IzinID = &newMonthly.Monthly_ID
-	}
-	if input.Lain != nil{
-		newMonthly := input.Lain.Reseted()
-		err := cs.AddMonthly(&newMonthly)
-		if err != nil {return err}
-		newAttendance.LainID = &newMonthly.Monthly_ID
-	}
+	// // Creating monthly from attendance(apparently the addAttendance already add the monthly)
+	// if input.Plan != nil{
+	// 	newMonthly := input.Plan.Reseted()
+	// 	err := cs.AddMonthly(&newMonthly)
+	// 	if err != nil {return err}
+	// 	newAttendance.PlanID = &newMonthly.Monthly_ID
+	// 	newAttendance.Plan = &newMonthly
+	// }
+	// if input.Actual != nil{
+	// 	newMonthly := input.Actual.Reseted()
+	// 	err := cs.AddMonthly(&newMonthly)
+	// 	if err != nil {return err}
+	// 	newAttendance.ActualID = &newMonthly.Monthly_ID
+	// 	newAttendance.Actual = &newMonthly
+	// }
+	// if input.Cuti != nil{
+	// 	newMonthly := input.Cuti.Reseted()
+	// 	err := cs.AddMonthly(&newMonthly)
+	// 	if err != nil {return err}
+	// 	newAttendance.CutiID = &newMonthly.Monthly_ID
+	// 	newAttendance.Cuti = &newMonthly
+	// }
+	// if input.Izin != nil{
+	// 	newMonthly := input.Izin.Reseted()
+	// 	err := cs.AddMonthly(&newMonthly)
+	// 	if err != nil {return err}
+	// 	newAttendance.IzinID = &newMonthly.Monthly_ID
+	// 	newAttendance.Izin = &newMonthly
+	// }
+	// if input.Lain != nil{
+	// 	newMonthly := input.Lain.Reseted()
+	// 	err := cs.AddMonthly(&newMonthly)
+	// 	if err != nil {return err}
+	// 	newAttendance.LainID = &newMonthly.Monthly_ID
+	// 	newAttendance.Lain = &newMonthly
+	// }
 	// Creating attendance
 	err := cs.AddAttendance(&newAttendance)
 	if err != nil {return err}
@@ -195,13 +201,16 @@ func (cs *crudService) DeleteEntireYearly(input int) error{
 			if err != nil {return err}
 		}
 	}
+	if temp.Attendance != nil {
+		cs.DeleteEntireAttendance(temp.Attendance.Year)
+		fmt.Print("Attendance Detected")
+		if err != nil {return err}
+	}
+	
 	err = cs.DeleteYearly(input)
 	if err != nil {return err}
 
-	if temp.Attendance != nil {
-		cs.DeleteEntireAttendance(temp.Attendance.Year)
-		if err != nil {return err}
-	}
+	
 	return nil
 }
 func (cs *crudService) DeleteEntireItem(input int) error{
@@ -257,11 +266,7 @@ func (cs *crudService) DeleteEntireFactor(input int) error{
 func (cs *crudService) DeleteEntireAttendance(input int) error{
 	temp, err := cs.GetAttendanceByID(input)
 	if err != nil {return err}
-	
-	err = cs.DeleteAttendance(temp.Year)
-	if err != nil {return err}
-
-	if temp.Plan != nil {
+	if temp.Plan != nil{
 		err = cs.DeleteMonthly(temp.Plan.Monthly_ID)
 		if err != nil {return err}
 	}
@@ -281,6 +286,8 @@ func (cs *crudService) DeleteEntireAttendance(input int) error{
 		err = cs.DeleteMonthly(temp.Lain.Monthly_ID)
 		if err != nil {return err}
 	}
+	err = cs.DeleteAttendance(temp.Year)
+	if err != nil {return err}
 	return nil
 }
 func (cs *crudService) DeleteEntireAnalisa(input int) error{

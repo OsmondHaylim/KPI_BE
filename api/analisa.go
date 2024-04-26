@@ -40,7 +40,7 @@ func (aa *analisaAPI) AddAnalisa(k *gin.Context) {
 	if model.ErrorCheck(k, err){return}
 	err = aa.crudService.AddAnalisa(&newAnalisa)
 	if model.ErrorCheck(k, err){return}
-	k.JSON(http.StatusOK, model.SuccessResponse{Message: "add Analisa success"})
+	k.JSON(http.StatusCreated, model.SuccessResponse{Message: "add Analisa success"})
 }
 func (aa *analisaAPI) AddMasalah(k *gin.Context) {
 	var newMasalah model.Masalah
@@ -48,7 +48,7 @@ func (aa *analisaAPI) AddMasalah(k *gin.Context) {
 	if model.ErrorCheck(k, err){return}
 	err = aa.crudService.AddMasalah(&newMasalah)
 	if model.ErrorCheck(k, err){return}
-	k.JSON(http.StatusOK, model.SuccessResponse{Message: "add Masalah success"})
+	k.JSON(http.StatusCreated, model.SuccessResponse{Message: "add Masalah success"})
 }
 
 func (aa *analisaAPI) UpdateAnalisa(k *gin.Context) {
@@ -122,7 +122,7 @@ func (aa *analisaAPI) AddEntireAnalisa(k *gin.Context){
 	if model.ErrorCheck(k, err){return}
 	err = aa.crudService.AddEntireAnalisa(&newAnalisa)
 	if model.ErrorCheck(k, err){return}
-	k.JSON(http.StatusOK, model.SuccessResponse{Message: "add Analisa success"})
+	k.JSON(http.StatusCreated, model.SuccessResponse{Message: "add Analisa success"})
 }
 func (aa *analisaAPI) DeleteEntireAnalisa(k *gin.Context) {
 	KpiID, err := strconv.Atoi(k.Param("id"))
