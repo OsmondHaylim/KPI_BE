@@ -1,7 +1,6 @@
 package service
 
 import (
-	"fmt"
 	"goreact/model"
 )
 
@@ -203,7 +202,6 @@ func (cs *crudService) DeleteEntireYearly(input int) error{
 	}
 	if temp.Attendance != nil {
 		cs.DeleteEntireAttendance(temp.Attendance.Year)
-		fmt.Print("Attendance Detected")
 		if err != nil {return err}
 	}
 	
