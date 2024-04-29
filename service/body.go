@@ -7,7 +7,7 @@ import (
 )
 
 type CrudService interface {
-	//Create independent
+	//Create Independent
 	AddAttendance(input *model.Attendance) error
 	AddAnalisa(input *model.Analisa) error
 	AddFactor(input *model.Factor) error
@@ -30,7 +30,7 @@ type CrudService interface {
 	AddEntireAnalisa(input *model.AnalisaResponse) error
 	AddEntireSummary(input *model.SummaryResponse) error
 
-	//Update
+	//Update Independent
 	UpdateAttendance(id int, input model.Attendance) error
 	UpdateAnalisa(id int, input model.Analisa) error
 	UpdateFactor(id int, input model.Factor) error
@@ -44,8 +44,16 @@ type CrudService interface {
 	UpdateSummary(id int, input model.Summary) error
 	UpdateYearly(id int, input model.Yearly) error
 
+	// // Update Cascade
+	// UpdateEntireAttendance(id int, input model.AttendanceResponse) error
+	// UpdateEntireAnalisa(id int, input model.AnalisaResponse) error
+	// UpdateEntireFactor(id int, input model.FactorResponse) error
+	// UpdateEntireItem(id int, input model.ItemResponse) error
+	// UpdateEntireResult(id int, input model.ResultResponse) error
+	// UpdateEntireSummary(id int, input model.SummaryResponse) error
+	// UpdateEntireYearly(id int, input model.YearlyResponse) error
 
-	//Delete independent
+	//Delete Independent
 	DeleteAttendance(input int) error
 	DeleteAnalisa(input int) error
 	DeleteFile(input int) error
@@ -60,7 +68,7 @@ type CrudService interface {
 	DeleteYearly(input int) error
 
 
-	//Delete cascade
+	//Delete Cascade
 	DeleteEntireYearly(input int) error
 	DeleteEntireItem(input int) error
 	DeleteEntireResult(input int) error
@@ -69,7 +77,7 @@ type CrudService interface {
 	DeleteEntireAnalisa(input int) error
 	DeleteEntireSummary(input int) error
 
-	//Get specified
+	//Get Specified
 	GetAttendanceByID(input int) (*model.AttendanceResponse, error)
 	GetFactorByID(input int) (*model.FactorResponse, error)
 	GetItemByID(input int) (*model.ItemResponse, error)
@@ -83,7 +91,7 @@ type CrudService interface {
 	GetSummaryByID(input int) (*model.SummaryResponse, error)
 	GetFileByID(input int) (*model.UploadFile, error)
 
-	//Get batch
+	//Get Batch
 	GetAttendanceList()(model.AttendanceArrayResponse, error)
 	GetFactorList()(model.FactorArrayResponse, error)
 	GetItemList()(model.ItemArrayResponse, error)

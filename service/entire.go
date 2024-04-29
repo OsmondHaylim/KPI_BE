@@ -4,6 +4,7 @@ import (
 	"goreact/model"
 )
 
+// Add Entire
 func (cs *crudService) AddEntireYearly(input *model.YearlyResponse) error {
 	//Storing Yearlys
 	var newYearly model.Yearly
@@ -191,6 +192,7 @@ func (cs *crudService) AddEntireSummary(input *model.SummaryResponse) error{
 	return nil
 }
 
+// Delete Entire
 func (cs *crudService) DeleteEntireYearly(input int) error{
 	temp, err := cs.GetYearlyByID(input)
 	if err != nil {return err}
@@ -316,3 +318,5 @@ func (cs *crudService) DeleteEntireSummary(input int) error{
 	
 	return nil
 }
+
+// Update Entire
