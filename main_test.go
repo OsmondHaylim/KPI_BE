@@ -45,9 +45,9 @@ func start() (*gin.Engine, *sync.WaitGroup){
 	conn.Migrator().DropTable(&model.Factor{})
 	conn.Migrator().DropTable(&model.Attendance{})
 	conn.Migrator().DropTable(&model.MiniPAP{}, /*&model.Analisa{}, */&model.Summary{})
-	conn.Migrator().DropTable(&model.Monthly{}, /*&model.Masalah{}, */&model.Project{}, &model.UploadFile{})
+	conn.Migrator().DropTable(&model.Monthly{}, /*&model.Masalah{}, */&model.Project{})
 
-	conn.AutoMigrate(&model.Monthly{}, /*&model.Masalah{}, */&model.Project{}, &model.UploadFile{}) 
+	conn.AutoMigrate(&model.Monthly{}, /*&model.Masalah{}, */&model.Project{}) 
 	conn.AutoMigrate(&model.MiniPAP{}, /*&model.Analisa{}, */&model.Summary{})
 	conn.AutoMigrate(&model.Attendance{})
 	conn.AutoMigrate(&model.Factor{})
