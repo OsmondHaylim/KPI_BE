@@ -22,16 +22,16 @@ import (
 type APIHandler struct{
 	KpiAPIHandler		api.KpiAPI
 	FileAPIHandler		api.FileAPI
-	AnalisaAPIHandler	api.AnalisaAPI
+	// AnalisaAPIHandler	api.AnalisaAPI
 	ProjectAPIHandler 	api.ProjectAPI
 }
 
 func RunServer(db *gorm.DB, gin *gin.Engine) *gin.Engine {
-	analisaRepo		:= repository.NewAnalisaRepo(db)
+	// analisaRepo		:= repository.NewAnalisaRepo(db)
 	attendanceRepo 	:= repository.NewAttendanceRepo(db)
 	factorRepo 		:= repository.NewFactorRepo(db)
 	itemRepo 		:= repository.NewItemRepo(db)
-	masalahRepo 	:= repository.NewMasalahRepo(db)
+	// masalahRepo 	:= repository.NewMasalahRepo(db)
 	minipapRepo 	:= repository.NewMiniPAPRepo(db)
 	monthlyRepo 	:= repository.NewMonthlyRepo(db)
 	resultRepo 		:= repository.NewResultRepo(db)
@@ -42,11 +42,11 @@ func RunServer(db *gorm.DB, gin *gin.Engine) *gin.Engine {
 
 	crudService 	:= service.NewCrudService(
 		attendanceRepo,
-		analisaRepo,
+		// analisaRepo,
 		factorRepo,
 		fileRepo,
 		itemRepo,
-		masalahRepo,
+		// masalahRepo,
 		minipapRepo,
 		monthlyRepo,
 		projectRepo,
@@ -62,26 +62,26 @@ func RunServer(db *gorm.DB, gin *gin.Engine) *gin.Engine {
 	
 	kpiAPIHandler := api.NewKpiAPI(crudService)
 	fileAPIHandler := api.NewFileAPI(crudService, parseService)
-	analisaAPIHandler := api.NewAnalisaAPI(crudService)
+	// analisaAPIHandler := api.NewAnalisaAPI(crudService)
 	projectAPIHandler := api.NewProjectAPI(crudService)
 	apiHandler := APIHandler{
 		KpiAPIHandler: kpiAPIHandler,
 		FileAPIHandler: fileAPIHandler,
-		AnalisaAPIHandler: analisaAPIHandler,
+		// AnalisaAPIHandler: analisaAPIHandler,
 		ProjectAPIHandler: projectAPIHandler,
 	}
 	kpi := gin.Group("/kpi")
 	{
-		analisa := kpi.Group("/analisa")
-		{
-			analisa.GET("", apiHandler.AnalisaAPIHandler.GetAnalisaList)
-			analisa.GET("/:id", apiHandler.AnalisaAPIHandler.GetAnalisaByID)
-			analisa.POST("", apiHandler.AnalisaAPIHandler.AddAnalisa)
-			analisa.POST("/entire", apiHandler.AnalisaAPIHandler.AddEntireAnalisa)
-			analisa.PUT("/:id", apiHandler.AnalisaAPIHandler.UpdateAnalisa)
-			analisa.DELETE("/:id", apiHandler.AnalisaAPIHandler.DeleteAnalisa)
-			analisa.DELETE("/entire/:id", apiHandler.AnalisaAPIHandler.DeleteEntireAnalisa)
-		}
+		// analisa := kpi.Group("/analisa")
+		// {
+		// 	analisa.GET("", apiHandler.AnalisaAPIHandler.GetAnalisaList)
+		// 	analisa.GET("/:id", apiHandler.AnalisaAPIHandler.GetAnalisaByID)
+		// 	analisa.POST("", apiHandler.AnalisaAPIHandler.AddAnalisa)
+		// 	analisa.POST("/entire", apiHandler.AnalisaAPIHandler.AddEntireAnalisa)
+		// 	analisa.PUT("/:id", apiHandler.AnalisaAPIHandler.UpdateAnalisa)
+		// 	analisa.DELETE("/:id", apiHandler.AnalisaAPIHandler.DeleteAnalisa)
+		// 	analisa.DELETE("/entire/:id", apiHandler.AnalisaAPIHandler.DeleteEntireAnalisa)
+		// }
 		attendance := kpi.Group("/attendance") //inefficient endpoint
 		{
 			attendance.GET("", apiHandler.KpiAPIHandler.GetAttendanceList)
@@ -112,14 +112,14 @@ func RunServer(db *gorm.DB, gin *gin.Engine) *gin.Engine {
 			item.DELETE("/:id", apiHandler.KpiAPIHandler.DeleteItem)
 			item.DELETE("/entire/:id", apiHandler.KpiAPIHandler.DeleteEntireItem)
 		}
-		masalah := kpi.Group("/masalah")
-		{
-			masalah.GET("", apiHandler.AnalisaAPIHandler.GetMasalahList)
-			masalah.GET("/:id", apiHandler.AnalisaAPIHandler.GetMasalahByID)
-			masalah.POST("", apiHandler.AnalisaAPIHandler.AddMasalah)
-			masalah.PUT("/:id", apiHandler.AnalisaAPIHandler.UpdateMasalah)
-			masalah.DELETE("/:id", apiHandler.AnalisaAPIHandler.DeleteMasalah)
-		}
+		// masalah := kpi.Group("/masalah")
+		// {
+		// 	masalah.GET("", apiHandler.AnalisaAPIHandler.GetMasalahList)
+		// 	masalah.GET("/:id", apiHandler.AnalisaAPIHandler.GetMasalahByID)
+		// 	masalah.POST("", apiHandler.AnalisaAPIHandler.AddMasalah)
+		// 	masalah.PUT("/:id", apiHandler.AnalisaAPIHandler.UpdateMasalah)
+		// 	masalah.DELETE("/:id", apiHandler.AnalisaAPIHandler.DeleteMasalah)
+		// }
 		minipap := kpi.Group("/minipap") //inefficient endpoint
 		{
 			minipap.GET("", apiHandler.KpiAPIHandler.GetMinipapList)
@@ -216,8 +216,8 @@ func main(){
 			panic(err)
 		}
 
-		conn.AutoMigrate(&model.Monthly{}, &model.Masalah{}, &model.Project{}, &model.UploadFile{}) 
-		conn.AutoMigrate(&model.MiniPAP{}, &model.Analisa{}, &model.Summary{})
+		conn.AutoMigrate(&model.Monthly{}, /*&model.Masalah{}, */&model.Project{}, &model.UploadFile{}) 
+		conn.AutoMigrate(&model.MiniPAP{}, /*&model.Analisa{}, */&model.Summary{})
 		conn.AutoMigrate(&model.Attendance{})
 		conn.AutoMigrate(&model.Factor{})
 		conn.AutoMigrate(&model.Result{})

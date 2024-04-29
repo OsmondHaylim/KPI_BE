@@ -44,11 +44,11 @@ func start() (*gin.Engine, *sync.WaitGroup){
 	conn.Migrator().DropTable(&model.Result{})
 	conn.Migrator().DropTable(&model.Factor{})
 	conn.Migrator().DropTable(&model.Attendance{})
-	conn.Migrator().DropTable(&model.MiniPAP{}, &model.Analisa{}, &model.Summary{})
-	conn.Migrator().DropTable(&model.Monthly{}, &model.Masalah{}, &model.Project{}, &model.UploadFile{})
+	conn.Migrator().DropTable(&model.MiniPAP{}, /*&model.Analisa{}, */&model.Summary{})
+	conn.Migrator().DropTable(&model.Monthly{}, /*&model.Masalah{}, */&model.Project{}, &model.UploadFile{})
 
-	conn.AutoMigrate(&model.Monthly{}, &model.Masalah{}, &model.Project{}, &model.UploadFile{}) 
-	conn.AutoMigrate(&model.MiniPAP{}, &model.Analisa{}, &model.Summary{})
+	conn.AutoMigrate(&model.Monthly{}, /*&model.Masalah{}, */&model.Project{}, &model.UploadFile{}) 
+	conn.AutoMigrate(&model.MiniPAP{}, /*&model.Analisa{}, */&model.Summary{})
 	conn.AutoMigrate(&model.Attendance{})
 	conn.AutoMigrate(&model.Factor{})
 	conn.AutoMigrate(&model.Result{})
@@ -4123,134 +4123,134 @@ func TestMain(t *testing.T){
 				assert.Equal(t, http.StatusOK, w.Code)
 			})
 		})
-		t.Run("Masalah", func(t *testing.T){
-			t.Run("Add Single", func(t *testing.T){
-				masalahBody := `{
-					"Masalah": "Test",
-					"Why":["cape","pegel"],
-					"Tindakan":"tiada"
-				}`
-				req, _ := http.NewRequest("POST", "/kpi/masalah", strings.NewReader(masalahBody))
-				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
-				w := httptest.NewRecorder()
-				router.ServeHTTP(w, req)
-				// getSuccess(w.Body)
-				// fmt.Printf(w.Body.String())
-				assert.Equal(t, http.StatusCreated, w.Code)
-			})
-			t.Run("Get Single", func(t *testing.T){
-				req, _ := http.NewRequest("GET", "/kpi/masalah/1", nil)
-				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
-				w := httptest.NewRecorder()
-				router.ServeHTTP(w, req)
-				// getSuccess(w.Body)
-				assert.Equal(t, http.StatusOK, w.Code)
-			})
-			t.Run("Update Single", func(t *testing.T){
-				masalahBody := `{
-					"Masalah": "Tests",
-					"Why":["cape","pegel"],
-					"Tindakan":"tiada"
-				}`
-				req, _ := http.NewRequest("PUT", "/kpi/masalah/1", strings.NewReader(masalahBody))
-				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
-				w := httptest.NewRecorder()
-				router.ServeHTTP(w, req)
-				// getSuccess(w.Body)
-				assert.Equal(t, http.StatusOK, w.Code)
-			})
-			t.Run("Delete Single", func(t *testing.T){
-				req, _ := http.NewRequest("DELETE", "/kpi/masalah/1", nil)
-				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
-				w := httptest.NewRecorder()
-				router.ServeHTTP(w, req)
-				// getSuccess(w.Body)
-				assert.Equal(t, http.StatusOK, w.Code)
-			})
-			t.Run("Get All", func(t *testing.T){
-				req, _ := http.NewRequest("GET", "/kpi/masalah", nil)
-				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
-				w := httptest.NewRecorder()
-				router.ServeHTTP(w, req)
-				// getSuccess(w.Body)
-				assert.Equal(t, http.StatusOK, w.Code)
-			})
-		})
-		t.Run("Analisa", func(t *testing.T){
-			t.Run("Add Single", func(t *testing.T){
-				analisaBody := `{
-					"Year": 2023
-				}`
-				req, _ := http.NewRequest("POST", "/kpi/analisa", strings.NewReader(analisaBody))
-				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
-				w := httptest.NewRecorder()
-				router.ServeHTTP(w, req)
-				// getSuccess(w.Body)
-				// fmt.Printf(w.Body.String())
-				assert.Equal(t, http.StatusCreated, w.Code)
-			})
-			t.Run("Add Entire", func(t *testing.T){
-				analisaBody := `{
-					"Masalah": [{
-						"Masalah": "Test",
-						"Why":["cape","pegel"],
-						"Tindakan":"tiada"
-					}],
-					"Year": 2024
-				}`
-				req, _ := http.NewRequest("POST", "/kpi/analisa/entire", strings.NewReader(analisaBody))
-				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
-				w := httptest.NewRecorder()
-				router.ServeHTTP(w, req)
-				// getSuccess(w.Body)
-				// fmt.Printf(w.Body.String())
-				assert.Equal(t, http.StatusCreated, w.Code)
-			})
-			t.Run("Get Single", func(t *testing.T){
-				req, _ := http.NewRequest("GET", "/kpi/analisa/2023", nil)
-				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
-				w := httptest.NewRecorder()
-				router.ServeHTTP(w, req)
-				// getSuccess(w.Body)
-				assert.Equal(t, http.StatusOK, w.Code)
-			})
-			// t.Run("Update Single", func(t *testing.T){
-			// 	analisaBody := `{
-			// 		"IssuedDate": "2024-02-24T00:00:00Z"
-			// 	}`
-			// 	req, _ := http.NewRequest("PUT", "/kpi/analisa/1", strings.NewReader(analisaBody))
-			// 	// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
-			// 	w := httptest.NewRecorder()
-			// 	router.ServeHTTP(w, req)
-			// 	// getSuccess(w.Body)
-			// 	assert.Equal(t, http.StatusOK, w.Code)
-			// })
-			t.Run("Delete Single", func(t *testing.T){
-				req, _ := http.NewRequest("DELETE", "/kpi/analisa/2023", nil)
-				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
-				w := httptest.NewRecorder()
-				router.ServeHTTP(w, req)
-				// getSuccess(w.Body)
-				assert.Equal(t, http.StatusOK, w.Code)
-			})
-			t.Run("Delete Entire", func(t *testing.T){
-				req, _ := http.NewRequest("DELETE", "/kpi/analisa/entire/2024", nil)
-				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
-				w := httptest.NewRecorder()
-				router.ServeHTTP(w, req)
-				// fmt.Printf(w.Body.String())
-				// getSuccess(w.Body)
-				assert.Equal(t, http.StatusOK, w.Code)
-			})
-			t.Run("Get All", func(t *testing.T){
-				req, _ := http.NewRequest("GET", "/kpi/analisa", nil)
-				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
-				w := httptest.NewRecorder()
-				router.ServeHTTP(w, req)
-				// getSuccess(w.Body)
-				assert.Equal(t, http.StatusOK, w.Code)
-			})
-		})
+		// t.Run("Masalah", func(t *testing.T){
+		// 	t.Run("Add Single", func(t *testing.T){
+		// 		masalahBody := `{
+		// 			"Masalah": "Test",
+		// 			"Why":["cape","pegel"],
+		// 			"Tindakan":"tiada"
+		// 		}`
+		// 		req, _ := http.NewRequest("POST", "/kpi/masalah", strings.NewReader(masalahBody))
+		// 		// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+		// 		w := httptest.NewRecorder()
+		// 		router.ServeHTTP(w, req)
+		// 		// getSuccess(w.Body)
+		// 		// fmt.Printf(w.Body.String())
+		// 		assert.Equal(t, http.StatusCreated, w.Code)
+		// 	})
+		// 	t.Run("Get Single", func(t *testing.T){
+		// 		req, _ := http.NewRequest("GET", "/kpi/masalah/1", nil)
+		// 		// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+		// 		w := httptest.NewRecorder()
+		// 		router.ServeHTTP(w, req)
+		// 		// getSuccess(w.Body)
+		// 		assert.Equal(t, http.StatusOK, w.Code)
+		// 	})
+		// 	t.Run("Update Single", func(t *testing.T){
+		// 		masalahBody := `{
+		// 			"Masalah": "Tests",
+		// 			"Why":["cape","pegel"],
+		// 			"Tindakan":"tiada"
+		// 		}`
+		// 		req, _ := http.NewRequest("PUT", "/kpi/masalah/1", strings.NewReader(masalahBody))
+		// 		// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+		// 		w := httptest.NewRecorder()
+		// 		router.ServeHTTP(w, req)
+		// 		// getSuccess(w.Body)
+		// 		assert.Equal(t, http.StatusOK, w.Code)
+		// 	})
+		// 	t.Run("Delete Single", func(t *testing.T){
+		// 		req, _ := http.NewRequest("DELETE", "/kpi/masalah/1", nil)
+		// 		// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+		// 		w := httptest.NewRecorder()
+		// 		router.ServeHTTP(w, req)
+		// 		// getSuccess(w.Body)
+		// 		assert.Equal(t, http.StatusOK, w.Code)
+		// 	})
+		// 	t.Run("Get All", func(t *testing.T){
+		// 		req, _ := http.NewRequest("GET", "/kpi/masalah", nil)
+		// 		// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+		// 		w := httptest.NewRecorder()
+		// 		router.ServeHTTP(w, req)
+		// 		// getSuccess(w.Body)
+		// 		assert.Equal(t, http.StatusOK, w.Code)
+		// 	})
+		// })
+		// t.Run("Analisa", func(t *testing.T){
+		// 	t.Run("Add Single", func(t *testing.T){
+		// 		analisaBody := `{
+		// 			"Year": 2023
+		// 		}`
+		// 		req, _ := http.NewRequest("POST", "/kpi/analisa", strings.NewReader(analisaBody))
+		// 		// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+		// 		w := httptest.NewRecorder()
+		// 		router.ServeHTTP(w, req)
+		// 		// getSuccess(w.Body)
+		// 		// fmt.Printf(w.Body.String())
+		// 		assert.Equal(t, http.StatusCreated, w.Code)
+		// 	})
+		// 	t.Run("Add Entire", func(t *testing.T){
+		// 		analisaBody := `{
+		// 			"Masalah": [{
+		// 				"Masalah": "Test",
+		// 				"Why":["cape","pegel"],
+		// 				"Tindakan":"tiada"
+		// 			}],
+		// 			"Year": 2024
+		// 		}`
+		// 		req, _ := http.NewRequest("POST", "/kpi/analisa/entire", strings.NewReader(analisaBody))
+		// 		// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+		// 		w := httptest.NewRecorder()
+		// 		router.ServeHTTP(w, req)
+		// 		// getSuccess(w.Body)
+		// 		// fmt.Printf(w.Body.String())
+		// 		assert.Equal(t, http.StatusCreated, w.Code)
+		// 	})
+		// 	t.Run("Get Single", func(t *testing.T){
+		// 		req, _ := http.NewRequest("GET", "/kpi/analisa/2023", nil)
+		// 		// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+		// 		w := httptest.NewRecorder()
+		// 		router.ServeHTTP(w, req)
+		// 		// getSuccess(w.Body)
+		// 		assert.Equal(t, http.StatusOK, w.Code)
+		// 	})
+		// 	// t.Run("Update Single", func(t *testing.T){
+		// 	// 	analisaBody := `{
+		// 	// 		"IssuedDate": "2024-02-24T00:00:00Z"
+		// 	// 	}`
+		// 	// 	req, _ := http.NewRequest("PUT", "/kpi/analisa/1", strings.NewReader(analisaBody))
+		// 	// 	// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+		// 	// 	w := httptest.NewRecorder()
+		// 	// 	router.ServeHTTP(w, req)
+		// 	// 	// getSuccess(w.Body)
+		// 	// 	assert.Equal(t, http.StatusOK, w.Code)
+		// 	// })
+		// 	t.Run("Delete Single", func(t *testing.T){
+		// 		req, _ := http.NewRequest("DELETE", "/kpi/analisa/2023", nil)
+		// 		// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+		// 		w := httptest.NewRecorder()
+		// 		router.ServeHTTP(w, req)
+		// 		// getSuccess(w.Body)
+		// 		assert.Equal(t, http.StatusOK, w.Code)
+		// 	})
+		// 	t.Run("Delete Entire", func(t *testing.T){
+		// 		req, _ := http.NewRequest("DELETE", "/kpi/analisa/entire/2024", nil)
+		// 		// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+		// 		w := httptest.NewRecorder()
+		// 		router.ServeHTTP(w, req)
+		// 		// fmt.Printf(w.Body.String())
+		// 		// getSuccess(w.Body)
+		// 		assert.Equal(t, http.StatusOK, w.Code)
+		// 	})
+		// 	t.Run("Get All", func(t *testing.T){
+		// 		req, _ := http.NewRequest("GET", "/kpi/analisa", nil)
+		// 		// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+		// 		w := httptest.NewRecorder()
+		// 		router.ServeHTTP(w, req)
+		// 		// getSuccess(w.Body)
+		// 		assert.Equal(t, http.StatusOK, w.Code)
+		// 	})
+		// })
 		
 	})
 }

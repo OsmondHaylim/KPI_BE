@@ -96,25 +96,25 @@ func (a Attendance) ToResponse() AttendanceResponse{
 		Lain: a.Lain,
 	}
 }
-func (a Analisa) ToResponse() AnalisaResponse{
-	newAnalisa := AnalisaResponse{
-		Year: a.Year,
-	}
-	for _, masalah := range a.Masalah{
-		newAnalisa.Masalah = append(newAnalisa.Masalah, masalah.ToResponse())
-	}
-	return newAnalisa
-}
-func (m Masalah) ToResponse() MasalahResponse{
-	return MasalahResponse{
-		Masalah_ID: m.Masalah_ID,
-		Masalah: m.Masalah,
-		Why: m.Why,
-		Tindakan: m.Tindakan,
-		Pic: m.Pic,
-		Target: m.Target,
-	}
-}
+// func (a Analisa) ToResponse() AnalisaResponse{
+// 	newAnalisa := AnalisaResponse{
+// 		Year: a.Year,
+// 	}
+// 	for _, masalah := range a.Masalah{
+// 		newAnalisa.Masalah = append(newAnalisa.Masalah, masalah.ToResponse())
+// 	}
+// 	return newAnalisa
+// }
+// func (m Masalah) ToResponse() MasalahResponse{
+// 	return MasalahResponse{
+// 		Masalah_ID: m.Masalah_ID,
+// 		Masalah: m.Masalah,
+// 		Why: m.Why,
+// 		Tindakan: m.Tindakan,
+// 		Pic: m.Pic,
+// 		Target: m.Target,
+// 	}
+// }
 func (f Factor) ToResponse() FactorResponse{
 	return FactorResponse{
 		Factor_ID: f.Factor_ID,
@@ -191,7 +191,7 @@ func (p Project) ToResponse() ProjectResponse{
 func (s Summary) ToResponse() SummaryResponse{
 	newSummary := SummaryResponse{
 		Summary_ID: s.Summary_ID,
-		IssuedDate: s.IssuedDate,
+		// IssuedDate: s.IssuedDate,
 	}
 	for _, Project := range s.Projects{
 		newSummary.Projects = append(newSummary.Projects, Project.ToResponse())

@@ -141,31 +141,29 @@ func (cs *crudService) AddEntireAttendance(input *model.AttendanceResponse, id *
 	if err != nil {return err}
 	return nil
 }
-func (cs *crudService) AddEntireAnalisa(input *model.AnalisaResponse) error{
-	var newAnalisa model.Analisa
-	newAnalisa.Year = input.Year
-
-	err := cs.AddAnalisa(&newAnalisa)
-	if err != nil {return err}
-
-	for _, data := range input.Masalah{
-		var newMasalah = model.Masalah{
-			Masalah: data.Masalah,
-			Why: data.Why,
-			Tindakan: data.Tindakan,
-			Pic: data.Pic,
-			Target: data.Target,
-			Year: &newAnalisa.Year,
-			//Default status here
-		}
-		err = cs.AddMasalah(&newMasalah)
-		if err != nil {return err}
-	}
-	return nil
-}
+// func (cs *crudService) AddEntireAnalisa(input *model.AnalisaResponse) error{
+// 	var newAnalisa model.Analisa
+// 	newAnalisa.Year = input.Year
+// 	err := cs.AddAnalisa(&newAnalisa)
+// 	if err != nil {return err}
+// 	for _, data := range input.Masalah{
+// 		var newMasalah = model.Masalah{
+// 			Masalah: data.Masalah,
+// 			Why: data.Why,
+// 			Tindakan: data.Tindakan,
+// 			Pic: data.Pic,
+// 			Target: data.Target,
+// 			Year: &newAnalisa.Year,
+// 			//Default status here
+// 		}
+// 		err = cs.AddMasalah(&newMasalah)
+// 		if err != nil {return err}
+// 	}
+// 	return nil
+// }
 func (cs *crudService) AddEntireSummary(input *model.SummaryResponse) error{
 	var newSummary = model.Summary{
-		IssuedDate: input.IssuedDate,
+		// IssuedDate: input.IssuedDate,
 	}
 	err := cs.AddSummary(&newSummary)
 	if err != nil {return err}
@@ -290,19 +288,17 @@ func (cs *crudService) DeleteEntireAttendance(input int) error{
 	if err != nil {return err}
 	return nil
 }
-func (cs *crudService) DeleteEntireAnalisa(input int) error{
-	temp, err := cs.GetAnalisaByID(input)
-	if err != nil {return err}
-	
-	err = cs.DeleteAnalisa(temp.Year)
-	if err != nil {return err}
-
-	for _, data := range temp.Masalah{
-		err = cs.DeleteMasalah(data.Masalah_ID)
-		if err != nil {return err}
-	}
-	return nil
-}
+// func (cs *crudService) DeleteEntireAnalisa(input int) error{
+// 	temp, err := cs.GetAnalisaByID(input)
+// 	if err != nil {return err}
+// 	err = cs.DeleteAnalisa(temp.Year)
+// 	if err != nil {return err}
+// 	for _, data := range temp.Masalah{
+// 		err = cs.DeleteMasalah(data.Masalah_ID)
+// 		if err != nil {return err}
+// 	}
+// 	return nil
+// }
 func (cs *crudService) DeleteEntireSummary(input int) error{
 	temp, err := cs.GetSummaryByID(input)
 	if err != nil {return err}

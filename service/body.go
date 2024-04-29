@@ -9,11 +9,11 @@ import (
 type CrudService interface {
 	//Create Independent
 	AddAttendance(input *model.Attendance) error
-	AddAnalisa(input *model.Analisa) error
+	// AddAnalisa(input *model.Analisa) error
 	AddFactor(input *model.Factor) error
 	AddFile(input *model.UploadFile) error
 	AddItem(input *model.Item) error
-	AddMasalah(input *model.Masalah) error
+	// AddMasalah(input *model.Masalah) error
 	AddMinipap(input *model.MiniPAP) error
 	AddMonthly(input *model.Monthly) error
 	AddProject(input *model.Project) error
@@ -27,16 +27,16 @@ type CrudService interface {
 	AddEntireResult(input *model.ResultResponse, id *int) error
 	AddEntireFactor(input *model.FactorResponse, id *int) error
 	AddEntireAttendance(input *model.AttendanceResponse, year *int) error
-	AddEntireAnalisa(input *model.AnalisaResponse) error
+	// AddEntireAnalisa(input *model.AnalisaResponse) error
 	AddEntireSummary(input *model.SummaryResponse) error
 
 	//Update Independent
 	UpdateAttendance(id int, input model.Attendance) error
-	UpdateAnalisa(id int, input model.Analisa) error
+	// UpdateAnalisa(id int, input model.Analisa) error
 	UpdateFactor(id int, input model.Factor) error
 	UpdateFile(id int, input model.UploadFile) error
 	UpdateItem(id int, input model.Item) error
-	UpdateMasalah(id int, input model.Masalah) error
+	// UpdateMasalah(id int, input model.Masalah) error
 	UpdateMinipap(id int, input model.MiniPAP) error
 	UpdateMonthly(id int, input model.Monthly) error
 	UpdateProject(id int, input model.Project) error
@@ -55,11 +55,11 @@ type CrudService interface {
 
 	//Delete Independent
 	DeleteAttendance(input int) error
-	DeleteAnalisa(input int) error
+	// DeleteAnalisa(input int) error
 	DeleteFile(input int) error
 	DeleteFactor(input int) error
 	DeleteItem(input int) error
-	DeleteMasalah(input int) error
+	// DeleteMasalah(input int) error
 	DeleteMinipap(input int) error
 	DeleteMonthly(input int) error
 	DeleteProject(input int) error
@@ -74,7 +74,7 @@ type CrudService interface {
 	DeleteEntireResult(input int) error
 	DeleteEntireFactor(input int) error
 	DeleteEntireAttendance(input int) error
-	DeleteEntireAnalisa(input int) error
+	// DeleteEntireAnalisa(input int) error
 	DeleteEntireSummary(input int) error
 
 	//Get Specified
@@ -85,8 +85,8 @@ type CrudService interface {
 	GetMonthlyByID(input int) (*model.Monthly, error)
 	GetResultByID(input int) (*model.ResultResponse, error)
 	GetYearlyByID(input int) (*model.YearlyResponse, error)
-	GetAnalisaByID(input int) (*model.Analisa, error)
-	GetMasalahByID(input int) (*model.MasalahResponse, error)
+	// GetAnalisaByID(input int) (*model.Analisa, error)
+	// GetMasalahByID(input int) (*model.MasalahResponse, error)
 	GetProjectByID(input int) (*model.ProjectResponse, error)
 	GetSummaryByID(input int) (*model.SummaryResponse, error)
 	GetFileByID(input int) (*model.UploadFile, error)
@@ -99,19 +99,19 @@ type CrudService interface {
 	GetMonthlyList()(model.MonthlyArrayResponse, error)
 	GetResultList()(model.ResultArrayResponse, error)
 	GetYearlyList()(model.YearlyArrayResponse, error)
-	GetAnalisaList()(model.AnalisaArrayResponse, error)
-	GetMasalahList()(model.MasalahArrayResponse, error)
+	// GetAnalisaList()(model.AnalisaArrayResponse, error)
+	// GetMasalahList()(model.MasalahArrayResponse, error)
 	GetProjectList()(model.ProjectArrayResponse, error)
 	GetSummaryList()(model.SummaryArrayResponse, error)
 	GetFileList()([]model.UploadFile, error)
 }
 type crudService struct {
 	attendanceRepo 	repo.AttendanceRepo
-	analisaRepo		repo.AnalisaRepo
+	// analisaRepo		repo.AnalisaRepo
 	factorRepo     	repo.FactorRepo
 	fileRepo 		repo.FileRepo
 	itemRepo       	repo.ItemRepo
-	masalahRepo 	repo.MasalahRepo
+	// masalahRepo 	repo.MasalahRepo
 	minipapRepo    	repo.MiniPAPRepo
 	monthlyRepo    	repo.MonthlyRepo
 	projectRepo		repo.ProjectRepo
@@ -121,11 +121,11 @@ type crudService struct {
 }
 func NewCrudService(
 	attendanceRepo 	repo.AttendanceRepo,
-	analisaRepo 	repo.AnalisaRepo,
+	// analisaRepo 	repo.AnalisaRepo,
 	factorRepo 		repo.FactorRepo,
 	fileRepo		repo.FileRepo,
 	itemRepo 		repo.ItemRepo,
-	masalahRepo 	repo.MasalahRepo,
+	// masalahRepo 	repo.MasalahRepo,
 	minipapRepo 	repo.MiniPAPRepo,
 	monthlyRepo 	repo.MonthlyRepo,
 	projectRepo		repo.ProjectRepo,
@@ -134,11 +134,11 @@ func NewCrudService(
 	yearlyRepo 		repo.YearlyRepo,) *crudService {
 	return &crudService{
 		attendanceRepo,
-		analisaRepo,
+		// analisaRepo,
 		factorRepo,
 		fileRepo,
 		itemRepo,
-		masalahRepo,
+		// masalahRepo,
 		minipapRepo,
 		monthlyRepo,
 		projectRepo,

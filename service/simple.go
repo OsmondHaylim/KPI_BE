@@ -18,11 +18,11 @@ func (cs *crudService) AddAttendance(input *model.Attendance) error{
 	if input.LainID != &zero && (input.Lain == nil || input.Lain == &model.Monthly{}){newInput.LainID = nil}
 	return cs.attendanceRepo.Store(newInput)
 }
-func (cs *crudService) AddAnalisa(input *model.Analisa) error{return cs.analisaRepo.Store(input)}
+// func (cs *crudService) AddAnalisa(input *model.Analisa) error{return cs.analisaRepo.Store(input)}
 func (cs *crudService) AddFactor(input *model.Factor) error{return cs.factorRepo.Store(input)}
 func (cs *crudService) AddFile(input *model.UploadFile) error{return cs.fileRepo.Store(input)}
 func (cs *crudService) AddItem(input *model.Item) error{return cs.itemRepo.Store(input)}
-func (cs *crudService) AddMasalah(input *model.Masalah) error{return cs.masalahRepo.Store(input)}
+// func (cs *crudService) AddMasalah(input *model.Masalah) error{return cs.masalahRepo.Store(input)}
 func (cs *crudService) AddMinipap(input *model.MiniPAP) error{return cs.minipapRepo.Store(input)}
 func (cs *crudService) AddMonthly(input *model.Monthly) error{
 	newInput := input.Reseted()
@@ -40,11 +40,11 @@ func (cs *crudService) UpdateAttendance(id int, input model.Attendance) error{
 	newInput.Year = id
 	return cs.attendanceRepo.Saves(newInput)
 }
-func (cs *crudService) UpdateAnalisa(id int, input model.Analisa) error{
-	newInput := input
-	newInput.Year = id
-	return cs.analisaRepo.Saves(newInput)
-}
+// func (cs *crudService) UpdateAnalisa(id int, input model.Analisa) error{
+// 	newInput := input
+// 	newInput.Year = id
+// 	return cs.analisaRepo.Saves(newInput)
+// }
 func (cs *crudService) UpdateFactor(id int, input model.Factor) error{
 	newInput := input
 	newInput.Factor_ID = id
@@ -60,11 +60,11 @@ func (cs *crudService) UpdateItem(id int, input model.Item) error{
 	newInput.Item_ID = id
 	return cs.itemRepo.Saves(newInput)
 }
-func (cs *crudService) UpdateMasalah(id int, input model.Masalah) error{
-	newInput := input
-	newInput.Masalah_ID = id
-	return cs.masalahRepo.Saves(newInput)
-}
+// func (cs *crudService) UpdateMasalah(id int, input model.Masalah) error{
+// 	newInput := input
+// 	newInput.Masalah_ID = id
+// 	return cs.masalahRepo.Saves(newInput)
+// }
 func (cs *crudService) UpdateMinipap(id int, input model.MiniPAP) error{
 	newInput := input
 	newInput.MiniPAP_ID = id
@@ -107,16 +107,16 @@ func (cs *crudService) DeleteAttendance(input int) error{
 	}
 	return errors.New("not found")
 }
-func (cs *crudService) DeleteAnalisa(input int) error{
-	list, err := cs.analisaRepo.GetList()
-	if err != nil {return err}
-	for _, data := range list{
-		if data.Year == input{
-			return cs.analisaRepo.Delete(input)
-		}
-	}
-	return errors.New("not found")
-}
+// func (cs *crudService) DeleteAnalisa(input int) error{
+// 	list, err := cs.analisaRepo.GetList()
+// 	if err != nil {return err}
+// 	for _, data := range list{
+// 		if data.Year == input{
+// 			return cs.analisaRepo.Delete(input)
+// 		}
+// 	}
+// 	return errors.New("not found")
+// }
 func (cs *crudService) DeleteFactor(input int) error{
 	list, err := cs.factorRepo.GetList()
 	if err != nil {return err}
@@ -147,16 +147,16 @@ func (cs *crudService) DeleteItem(input int) error{
 	}
 	return errors.New("not found")
 }
-func (cs *crudService) DeleteMasalah(input int) error{
-	list, err := cs.masalahRepo.GetList()
-	if err != nil {return err}
-	for _, data := range list{
-		if data.Masalah_ID == input{
-			return cs.masalahRepo.Delete(input)
-		}
-	}
-	return errors.New("not found")
-}
+// func (cs *crudService) DeleteMasalah(input int) error{
+// 	list, err := cs.masalahRepo.GetList()
+// 	if err != nil {return err}
+// 	for _, data := range list{
+// 		if data.Masalah_ID == input{
+// 			return cs.masalahRepo.Delete(input)
+// 		}
+// 	}
+// 	return errors.New("not found")
+// }
 func (cs *crudService) DeleteMinipap(input int) error{
 	list, err := cs.minipapRepo.GetList()
 	if err != nil {return err}
@@ -226,7 +226,7 @@ func (cs *crudService) GetAttendanceByID(input int) (*model.AttendanceResponse, 
 	newInput := tempInput.ToResponse()
 	return &newInput, err
 }
-func (cs *crudService) GetAnalisaByID(input int) (*model.Analisa, error){return cs.analisaRepo.GetByID(input)}
+// func (cs *crudService) GetAnalisaByID(input int) (*model.Analisa, error){return cs.analisaRepo.GetByID(input)}
 func (cs *crudService) GetFactorByID(input int) (*model.FactorResponse, error){
 	tempInput, err := cs.factorRepo.GetByID(input)
 	if err != nil {return nil, err}
@@ -240,12 +240,12 @@ func (cs *crudService) GetItemByID(input int) (*model.ItemResponse, error){
 	newInput := tempInput.ToResponse()
 	return &newInput, err
 }
-func (cs *crudService) GetMasalahByID(input int) (*model.MasalahResponse, error){
-	tempInput, err := cs.masalahRepo.GetByID(input)
-	if err != nil {return nil, err}
-	newInput := tempInput.ToResponse()
-	return &newInput, err
-}
+// func (cs *crudService) GetMasalahByID(input int) (*model.MasalahResponse, error){
+// 	tempInput, err := cs.masalahRepo.GetByID(input)
+// 	if err != nil {return nil, err}
+// 	newInput := tempInput.ToResponse()
+// 	return &newInput, err
+// }
 func (cs *crudService) GetMinipapByID(input int) (*model.MiniPAP, error){return cs.minipapRepo.GetByID(input)}
 func (cs *crudService) GetMonthlyByID(input int) (*model.Monthly, error){return cs.monthlyRepo.GetByID(input)}
 func (cs *crudService) GetProjectByID(input int) (*model.ProjectResponse, error){
@@ -283,12 +283,12 @@ func (cs *crudService) GetAttendanceList() (model.AttendanceArrayResponse, error
 	}
 	return newInput, err
 }
-func (cs *crudService) GetAnalisaList() (model.AnalisaArrayResponse, error){
-	tempInput, err := cs.analisaRepo.GetList()
-	var newInput model.AnalisaArrayResponse
-	newInput.Analisa = append(newInput.Analisa, tempInput...)
-	return newInput, err
-}
+// func (cs *crudService) GetAnalisaList() (model.AnalisaArrayResponse, error){
+// 	tempInput, err := cs.analisaRepo.GetList()
+// 	var newInput model.AnalisaArrayResponse
+// 	newInput.Analisa = append(newInput.Analisa, tempInput...)
+// 	return newInput, err
+// }
 func (cs *crudService) GetFactorList() (model.FactorArrayResponse, error){
 	tempInput, err :=  cs.factorRepo.GetList()
 	var newInput model.FactorArrayResponse
@@ -308,15 +308,15 @@ func (cs *crudService) GetItemList() (model.ItemArrayResponse, error){
 	}
 	return newInput, err
 }
-func (cs *crudService) GetMasalahList() (model.MasalahArrayResponse, error){
-	tempInput, err := cs.masalahRepo.GetList()
-	var newInput model.MasalahArrayResponse
-	newInput.Masalah = []model.MasalahResponse{}
-	for _, temp := range tempInput{
-		newInput.Masalah = append(newInput.Masalah, temp.ToResponse())	
-	}
-	return newInput, err
-}
+// func (cs *crudService) GetMasalahList() (model.MasalahArrayResponse, error){
+// 	tempInput, err := cs.masalahRepo.GetList()
+// 	var newInput model.MasalahArrayResponse
+// 	newInput.Masalah = []model.MasalahResponse{}
+// 	for _, temp := range tempInput{
+// 		newInput.Masalah = append(newInput.Masalah, temp.ToResponse())	
+// 	}
+// 	return newInput, err
+// }
 func (cs *crudService) GetMinipapList() (model.MinipapArrayResponse, error){
 	tempInput, err := cs.minipapRepo.GetList()
 	var newInput model.MinipapArrayResponse

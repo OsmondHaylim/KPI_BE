@@ -1,8 +1,8 @@
 package model
 
 import (
-	"time"
-	"github.com/lib/pq"
+	// "time"
+	// "github.com/lib/pq"
 )
 
 type Monthly struct{
@@ -80,27 +80,27 @@ type Yearly struct{
 	Attendance 		*Attendance		`gorm:"foreignKey:AttendanceID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL" json:"Attendance"`
 }
 
-type Analisa struct{
-	Year 			int				`gorm:"primaryKey;uniqueIndex" json:"Year"`
-	Masalah 		[]Masalah		`gorm:"foreignKey:Year;constraint:OnUpdate:CASCADE,OnDelete:SET NULL" json:"Masalah"`
-}
+// type Analisa struct{
+// 	Year 			int				`gorm:"primaryKey;uniqueIndex" json:"Year"`
+// 	Masalah 		[]Masalah		`gorm:"foreignKey:Year;constraint:OnUpdate:CASCADE,OnDelete:SET NULL" json:"Masalah"`
+// }
 
-type Masalah struct{
-	Masalah_ID		int				`gorm:"primaryKey;autoIncrement;uniqueIndex" json:"Masalah_ID"`
-	Masalah 		string			`gorm:"notNull"`
-	Why				pq.StringArray	`gorm:"type:text[]" json:"Why"`
-	Tindakan		string
-	Pic				string
-	Target			string
-	FolDate			*time.Time
-	Status			string		
-	Year			*int			
-}
+// type Masalah struct{
+// 	Masalah_ID		int				`gorm:"primaryKey;autoIncrement;uniqueIndex" json:"Masalah_ID"`
+// 	Masalah 		string			`gorm:"notNull"`
+// 	Why				pq.StringArray	`gorm:"type:text[]" json:"Why"`
+// 	Tindakan		string
+// 	Pic				string
+// 	Target			string
+// 	FolDate			*time.Time
+// 	Status			string		
+// 	Year			*int			
+// }
 
 type Project struct{
 	Project_ID		int				`gorm:"primaryKey;autoIncrement;uniqueIndex"`
 	Name 			string			`gorm:"notNull" json:"Name"`
-	Summary_ID		*int					
+	Summary_ID		*int			`gorm:"foreignKey:Summary_ID"`
 	INYS			int
 	QNYS			int
 	IDR				int
@@ -118,5 +118,5 @@ type Project struct{
 type Summary struct{
 	Summary_ID		int			`gorm:"primaryKey;autoIncrement;uniqueIndex"`
 	Projects		[]Project	`gorm:"foreignKey:Summary_ID"`
-	IssuedDate		*time.Time
+	// IssuedDate		*time.Time
 }
