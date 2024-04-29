@@ -2,6 +2,7 @@ package service
 
 import (
 	"goreact/model"
+	"sync"
 )
 
 // Add Entire
@@ -17,43 +18,64 @@ func (cs *crudService) AddEntireYearly(input *model.YearlyResponse) error {
 	err = cs.AddYearly(&newYearly)
 	if err != nil {return err}
 	//Storing Items
+	wg := sync.WaitGroup{}
+	errs := make(chan error)
 	for _, item := range input.Items{
-		err = cs.AddEntireItem(&item, &newYearly.Year)
-		if err != nil {return err}
+		wg.Add(1)
+		go cs.AddEntireItem(&wg, &item, &newYearly.Year, errs)
 	}
-	return nil
+	go func() {
+		wg.Wait()
+		close(errs)
+	}()
+	
+	for {
+        select {
+			case err := <-errs:
+				if err != nil {
+					return err // Return the first error encountered
+				}
+			default:
+				return nil // No errors found, return nil
+        }
+    }
 }
-func (cs *crudService) AddEntireItem(input *model.ItemResponse, id *int) error {
+func (cs *crudService) AddEntireItem(wg *sync.WaitGroup, input *model.ItemResponse, id *int, errChan chan error) {
+	defer wg.Done()
 	//Storing Items
 	var newItem model.Item
 	if id != nil {newItem.YearID = id}
 	newItem.Name = input.Name
 	//Creating Items to get id
 	err := cs.AddItem(&newItem)
-	if err != nil {return err}
+	if err != nil {errChan <- err; return}
 	//Storing Results
+	wgs := sync.WaitGroup{}
 	for _, result := range input.Results{
-		err = cs.AddEntireResult(&result, &newItem.Item_ID)
-		if err != nil {return err}
+		wgs.Add(1)
+		go cs.AddEntireResult(&wgs, &result, &newItem.Item_ID, errChan)
 	}
-	return nil
+	wgs.Wait()
 }
-func (cs *crudService) AddEntireResult(input *model.ResultResponse, id *int) error {
+func (cs *crudService) AddEntireResult(wg *sync.WaitGroup, input *model.ResultResponse, id *int, errChan chan error) {
+	defer wg.Done()
 	//Storing Results
 	var newResult model.Result
 	newResult.Name = input.Name
 	if id != nil {newResult.ItemID = id}
 	//Creating Results to get id
 	err := cs.AddResult(&newResult)
-	if err != nil {return err}
+	if err != nil {errChan <- err; return}
 	//Storing Factors
+	wgs := sync.WaitGroup{}
 	for _, factor := range input.Factors{
-		err = cs.AddEntireFactor(&factor, &newResult.Result_ID)
-		if err != nil {return err}
+		wgs.Add(1)
+		go cs.AddEntireFactor(&wgs, &factor, &newResult.Result_ID, errChan)
 	}
-	return nil
+	wgs.Wait()
 }
-func (cs *crudService) AddEntireFactor(input *model.FactorResponse, id *int) error {
+func (cs *crudService) AddEntireFactor(wg *sync.WaitGroup, input *model.FactorResponse, id *int, errChan chan error) {
+	defer wg.Done()
 	var newFactor model.Factor
 	if id != nil {newFactor.ResultID = id}
 	newFactor.Title = input.Title
@@ -64,7 +86,7 @@ func (cs *crudService) AddEntireFactor(input *model.FactorResponse, id *int) err
 		var newMinipap model.MiniPAP
 		//Create MiniPAP to get id
 		err := cs.AddMinipap(&newMinipap)
-		if err != nil {return err}
+		if err != nil {errChan <- err; return}
 		//Connect MiniPAP to Factor
 		newFactor.PlanID = &newMinipap.MiniPAP_ID
 		//Storing Plan Monthly
@@ -72,7 +94,7 @@ func (cs *crudService) AddEntireFactor(input *model.FactorResponse, id *int) err
 			newMonthly := monthly.Reseted()
 			newMonthly.MinipapID = &newMinipap.MiniPAP_ID
 			err := cs.AddMonthly(&newMonthly)
-			if err != nil {return err}
+			if err != nil {errChan <- err; return}
 		}
 	}
 	if input.Actual != nil{
@@ -80,7 +102,7 @@ func (cs *crudService) AddEntireFactor(input *model.FactorResponse, id *int) err
 		var newMinipap model.MiniPAP
 		//Create MiniPAP to get id
 		err := cs.AddMinipap(&newMinipap)
-		if err != nil {return err}
+		if err != nil {errChan <- err; return}
 		//Connect MiniPAP to Factor
 		newFactor.ActualID = &newMinipap.MiniPAP_ID
 		//Storing Actual Monthly
@@ -88,12 +110,11 @@ func (cs *crudService) AddEntireFactor(input *model.FactorResponse, id *int) err
 			newMonthly := monthly.Reseted()
 			newMonthly.MinipapID = &newMinipap.MiniPAP_ID
 			err := cs.AddMonthly(&newMonthly)
-			if err != nil {return err}
+			if err != nil {errChan <- err; return}
 		}
 	}
 	err := cs.AddFactor(&newFactor)
-	if err != nil {return err}
-	return nil
+	if err != nil {errChan <- err; return}
 }
 func (cs *crudService) AddEntireAttendance(input *model.AttendanceResponse, id *int) error{
 	// Storing Attendance

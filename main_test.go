@@ -388,65 +388,65 @@ func TestMain(t *testing.T){
 				// getSuccess(w.Body)
 				assert.Equal(t, http.StatusCreated, w.Code)
 			})
-			t.Run("Add Entire", func(t *testing.T){
-				factorBody := `{
-					"Title": "Zero Fire, Work & Traffic accident",
-					"Unit": "case",
-					"Target": "Zero",
-					"Planned": {
-						"Monthly": [
-							{
-								"Monthly_ID": 0,
-								"MiniPAP": null,
-								"January": 0,
-								"February": 0,
-								"March": 0,
-								"April": 0,
-								"May": 0,
-								"June": 0,
-								"July": 0,
-								"August": 0,
-								"September": 0,
-								"October": 0,
-								"November": 0,
-								"December": 0,
-								"YTD": 0,
-								"Remarks": "",
-								"MinipapID": null
-							}
-						]
-					},
-					"Actual": {
-						"Monthly": [
-							{
-								"Monthly_ID": 0,
-								"MiniPAP": null,
-								"January": 0,
-								"February": 0,
-								"March": 0,
-								"April": 0,
-								"May": 0,
-								"June": 0,
-								"July": 0,
-								"August": 0,
-								"September": 0,
-								"October": 0,
-								"November": 0,
-								"December": 0,
-								"YTD": 0,
-								"Remarks": "",
-								"MinipapID": null
-							}
-						]
-					}
-				}`
-				req, _ := http.NewRequest("POST", "/kpi/factor/entire", strings.NewReader(factorBody))
-				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
-				w := httptest.NewRecorder()
-				router.ServeHTTP(w, req)
-				getSuccess(w.Body)
-				assert.Equal(t, http.StatusCreated, w.Code)
-			})
+			// t.Run("Add Entire", func(t *testing.T){
+			// 	factorBody := `{
+			// 		"Title": "Zero Fire, Work & Traffic accident",
+			// 		"Unit": "case",
+			// 		"Target": "Zero",
+			// 		"Planned": {
+			// 			"Monthly": [
+			// 				{
+			// 					"Monthly_ID": 0,
+			// 					"MiniPAP": null,
+			// 					"January": 0,
+			// 					"February": 0,
+			// 					"March": 0,
+			// 					"April": 0,
+			// 					"May": 0,
+			// 					"June": 0,
+			// 					"July": 0,
+			// 					"August": 0,
+			// 					"September": 0,
+			// 					"October": 0,
+			// 					"November": 0,
+			// 					"December": 0,
+			// 					"YTD": 0,
+			// 					"Remarks": "",
+			// 					"MinipapID": null
+			// 				}
+			// 			]
+			// 		},
+			// 		"Actual": {
+			// 			"Monthly": [
+			// 				{
+			// 					"Monthly_ID": 0,
+			// 					"MiniPAP": null,
+			// 					"January": 0,
+			// 					"February": 0,
+			// 					"March": 0,
+			// 					"April": 0,
+			// 					"May": 0,
+			// 					"June": 0,
+			// 					"July": 0,
+			// 					"August": 0,
+			// 					"September": 0,
+			// 					"October": 0,
+			// 					"November": 0,
+			// 					"December": 0,
+			// 					"YTD": 0,
+			// 					"Remarks": "",
+			// 					"MinipapID": null
+			// 				}
+			// 			]
+			// 		}
+			// 	}`
+			// 	req, _ := http.NewRequest("POST", "/kpi/factor/entire", strings.NewReader(factorBody))
+			// 	// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+			// 	w := httptest.NewRecorder()
+			// 	router.ServeHTTP(w, req)
+			// 	getSuccess(w.Body)
+			// 	assert.Equal(t, http.StatusCreated, w.Code)
+			// })
 			t.Run("Get Single", func(t *testing.T){
 				req, _ := http.NewRequest("GET", "/kpi/factor/1", nil)
 				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
@@ -476,14 +476,14 @@ func TestMain(t *testing.T){
 				// getSuccess(w.Body)
 				assert.Equal(t, http.StatusOK, w.Code)
 			})
-			t.Run("Delete Entire", func(t *testing.T){
-				req, _ := http.NewRequest("DELETE", "/kpi/factor/entire/2", nil)
-				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
-				w := httptest.NewRecorder()
-				router.ServeHTTP(w, req)
-				// getSuccess(w.Body)
-				assert.Equal(t, http.StatusOK, w.Code)
-			})
+			// t.Run("Delete Entire", func(t *testing.T){
+			// 	req, _ := http.NewRequest("DELETE", "/kpi/factor/entire/2", nil)
+			// 	// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+			// 	w := httptest.NewRecorder()
+			// 	router.ServeHTTP(w, req)
+			// 	// getSuccess(w.Body)
+			// 	assert.Equal(t, http.StatusOK, w.Code)
+			// })
 			t.Run("Get All", func(t *testing.T){
 				req, _ := http.NewRequest("GET", "/kpi/factor", nil)
 				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
@@ -505,130 +505,130 @@ func TestMain(t *testing.T){
 				// getSuccess(w.Body)
 				assert.Equal(t, http.StatusCreated, w.Code)
 			})
-			t.Run("Add Entire", func(t *testing.T){
-				resultBody := `{
-                    "Result_ID": 0,
-                    "Name": "2. Safety minded/awareness ",
-                    "Factors": [
-                        {
-                            "Factor_ID": 0,
-                            "Title": "a. LKK",
-                            "Unit": "case",
-                            "Target": "4 /Month",
-                            "Planned": {
-                                "Minipap_ID": 0,
-                                "Monthly": [
-                                    {
-                                        "Monthly_ID": 0,
-                                        "MiniPAP": null,
-                                        "January": 4,
-                                        "February": 4,
-                                        "March": 4,
-                                        "April": 4,
-                                        "May": 4,
-                                        "June": 4,
-                                        "July": 4,
-                                        "August": 4,
-                                        "September": 4,
-                                        "October": 4,
-                                        "November": 4,
-                                        "December": 4,
-                                        "YTD": 0,
-                                        "Remarks": "",
-                                        "MinipapID": null
-                                    }
-                                ]
-                            },
-                            "Actual": {
-                                "Minipap_ID": 0,
-                                "Monthly": [
-                                    {
-                                        "Monthly_ID": 0,
-                                        "MiniPAP": null,
-                                        "January": 9,
-                                        "February": 6,
-                                        "March": 6,
-                                        "April": 5,
-                                        "May": 6,
-                                        "June": 6,
-                                        "July": 7,
-                                        "August": 6,
-                                        "September": 5,
-                                        "October": 4,
-                                        "November": 5,
-                                        "December": 4,
-                                        "YTD": 0,
-                                        "Remarks": "",
-                                        "MinipapID": null
-                                    }
-                                ]
-                            },
-                            "Percentage": null
-                        },
-                        {
-                            "Factor_ID": 0,
-                            "Title": "b. LKBK",
-                            "Unit": "case",
-                            "Target": "14/Month",
-                            "Planned": {
-                                "Minipap_ID": 0,
-                                "Monthly": [
-                                    {
-                                        "Monthly_ID": 0,
-                                        "MiniPAP": null,
-                                        "January": 14,
-                                        "February": 14,
-                                        "March": 14,
-                                        "April": 14,
-                                        "May": 14,
-                                        "June": 14,
-                                        "July": 14,
-                                        "August": 14,
-                                        "September": 14,
-                                        "October": 14,
-                                        "November": 14,
-                                        "December": 14,
-                                        "YTD": 0,
-                                        "Remarks": "",
-                                        "MinipapID": null
-                                    }
-                                ]
-                            },
-                            "Actual": {
-                                "Minipap_ID": 0,
-                                "Monthly": [
-                                    {
-                                        "Monthly_ID": 0,
-                                        "MiniPAP": null,
-                                        "January": 15,
-                                        "February": 16,
-                                        "March": 16,
-                                        "April": 12,
-                                        "May": 13,
-                                        "June": 15,
-                                        "July": 17,
-                                        "August": 14,
-                                        "September": 14,
-                                        "October": 14,
-                                        "November": 14,
-                                        "December": 14,
-                                        "YTD": 0,
-                                        "Remarks": "",
-                                        "MinipapID": null
-                                    }
-                                ]
-                            },
-                            "Percentage": null
-                        }
-                    ]
-                },`
-				req, _ := http.NewRequest("POST", "/kpi/result/entire", strings.NewReader(resultBody))
-				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
-				w := httptest.NewRecorder()
-				router.ServeHTTP(w, req)
-				getSuccess(w.Body)
-				assert.Equal(t, http.StatusCreated, w.Code)
-			})
+			// t.Run("Add Entire", func(t *testing.T){
+			// 	resultBody := `{
+            //         "Result_ID": 0,
+            //         "Name": "2. Safety minded/awareness ",
+            //         "Factors": [
+            //             {
+            //                 "Factor_ID": 0,
+            //                 "Title": "a. LKK",
+            //                 "Unit": "case",
+            //                 "Target": "4 /Month",
+            //                 "Planned": {
+            //                     "Minipap_ID": 0,
+            //                     "Monthly": [
+            //                         {
+            //                             "Monthly_ID": 0,
+            //                             "MiniPAP": null,
+            //                             "January": 4,
+            //                             "February": 4,
+            //                             "March": 4,
+            //                             "April": 4,
+            //                             "May": 4,
+            //                             "June": 4,
+            //                             "July": 4,
+            //                             "August": 4,
+            //                             "September": 4,
+            //                             "October": 4,
+            //                             "November": 4,
+            //                             "December": 4,
+            //                             "YTD": 0,
+            //                             "Remarks": "",
+            //                             "MinipapID": null
+            //                         }
+            //                     ]
+            //                 },
+            //                 "Actual": {
+            //                     "Minipap_ID": 0,
+            //                     "Monthly": [
+            //                         {
+            //                             "Monthly_ID": 0,
+            //                             "MiniPAP": null,
+            //                             "January": 9,
+            //                             "February": 6,
+            //                             "March": 6,
+            //                             "April": 5,
+            //                             "May": 6,
+            //                             "June": 6,
+            //                             "July": 7,
+            //                             "August": 6,
+            //                             "September": 5,
+            //                             "October": 4,
+            //                             "November": 5,
+            //                             "December": 4,
+            //                             "YTD": 0,
+            //                             "Remarks": "",
+            //                             "MinipapID": null
+            //                         }
+            //                     ]
+            //                 },
+            //                 "Percentage": null
+            //             },
+            //             {
+            //                 "Factor_ID": 0,
+            //                 "Title": "b. LKBK",
+            //                 "Unit": "case",
+            //                 "Target": "14/Month",
+            //                 "Planned": {
+            //                     "Minipap_ID": 0,
+            //                     "Monthly": [
+            //                         {
+            //                             "Monthly_ID": 0,
+            //                             "MiniPAP": null,
+            //                             "January": 14,
+            //                             "February": 14,
+            //                             "March": 14,
+            //                             "April": 14,
+            //                             "May": 14,
+            //                             "June": 14,
+            //                             "July": 14,
+            //                             "August": 14,
+            //                             "September": 14,
+            //                             "October": 14,
+            //                             "November": 14,
+            //                             "December": 14,
+            //                             "YTD": 0,
+            //                             "Remarks": "",
+            //                             "MinipapID": null
+            //                         }
+            //                     ]
+            //                 },
+            //                 "Actual": {
+            //                     "Minipap_ID": 0,
+            //                     "Monthly": [
+            //                         {
+            //                             "Monthly_ID": 0,
+            //                             "MiniPAP": null,
+            //                             "January": 15,
+            //                             "February": 16,
+            //                             "March": 16,
+            //                             "April": 12,
+            //                             "May": 13,
+            //                             "June": 15,
+            //                             "July": 17,
+            //                             "August": 14,
+            //                             "September": 14,
+            //                             "October": 14,
+            //                             "November": 14,
+            //                             "December": 14,
+            //                             "YTD": 0,
+            //                             "Remarks": "",
+            //                             "MinipapID": null
+            //                         }
+            //                     ]
+            //                 },
+            //                 "Percentage": null
+            //             }
+            //         ]
+            //     },`
+			// 	req, _ := http.NewRequest("POST", "/kpi/result/entire", strings.NewReader(resultBody))
+			// 	// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+			// 	w := httptest.NewRecorder()
+			// 	router.ServeHTTP(w, req)
+			// 	getSuccess(w.Body)
+			// 	assert.Equal(t, http.StatusCreated, w.Code)
+			// })
 			t.Run("Get Single", func(t *testing.T){
 				req, _ := http.NewRequest("GET", "/kpi/result/1", nil)
 				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
@@ -656,14 +656,14 @@ func TestMain(t *testing.T){
 				// getSuccess(w.Body)
 				assert.Equal(t, http.StatusOK, w.Code)
 			})
-			t.Run("Delete Entire", func(t *testing.T){
-				req, _ := http.NewRequest("DELETE", "/kpi/result/entire/2", nil)
-				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
-				w := httptest.NewRecorder()
-				router.ServeHTTP(w, req)
-				// getSuccess(w.Body)
-				assert.Equal(t, http.StatusOK, w.Code)
-			})
+			// t.Run("Delete Entire", func(t *testing.T){
+			// 	req, _ := http.NewRequest("DELETE", "/kpi/result/entire/2", nil)
+			// 	// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+			// 	w := httptest.NewRecorder()
+			// 	router.ServeHTTP(w, req)
+			// 	// getSuccess(w.Body)
+			// 	assert.Equal(t, http.StatusOK, w.Code)
+			// })
 			t.Run("Get All", func(t *testing.T){
 				req, _ := http.NewRequest("GET", "/kpi/result", nil)
 				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
@@ -685,478 +685,478 @@ func TestMain(t *testing.T){
 				// getSuccess(w.Body)
 				assert.Equal(t, http.StatusCreated, w.Code)
 			})
-			t.Run("Add Entire", func(t *testing.T){
-				itemBody := `{
-					"Item_ID": 0,
-					"Name": "S",
-					"Results": [
-						{
-							"Result_ID": 0,
-							"Name": "1. Fire, Work & Traffic \naccident ",
-							"Factors": [
-								{
-									"Factor_ID": 0,
-									"Title": "Zero Fire, Work & Traffic accident",
-									"Unit": "case",
-									"Target": "Zero",
-									"Planned": {
-										"Minipap_ID": 0,
-										"Monthly": [
-											{
-												"Monthly_ID": 0,
-												"MiniPAP": null,
-												"January": 0,
-												"February": 0,
-												"March": 0,
-												"April": 0,
-												"May": 0,
-												"June": 0,
-												"July": 0,
-												"August": 0,
-												"September": 0,
-												"October": 0,
-												"November": 0,
-												"December": 0,
-												"YTD": 0,
-												"Remarks": "",
-												"MinipapID": null
-											}
-										]
-									},
-									"Actual": {
-										"Minipap_ID": 0,
-										"Monthly": [
-											{
-												"Monthly_ID": 0,
-												"MiniPAP": null,
-												"January": 0,
-												"February": 0,
-												"March": 0,
-												"April": 0,
-												"May": 0,
-												"June": 0,
-												"July": 0,
-												"August": 0,
-												"September": 0,
-												"October": 0,
-												"November": 0,
-												"December": 0,
-												"YTD": 0,
-												"Remarks": "",
-												"MinipapID": null
-											}
-										]
-									},
-									"Percentage": null
-								}
-							]
-						},
-						{
-							"Result_ID": 0,
-							"Name": "2. Safety minded/awareness ",
-							"Factors": [
-								{
-									"Factor_ID": 0,
-									"Title": "a. LKK",
-									"Unit": "case",
-									"Target": "4 /Month",
-									"Planned": {
-										"Minipap_ID": 0,
-										"Monthly": [
-											{
-												"Monthly_ID": 0,
-												"MiniPAP": null,
-												"January": 4,
-												"February": 4,
-												"March": 4,
-												"April": 4,
-												"May": 4,
-												"June": 4,
-												"July": 4,
-												"August": 4,
-												"September": 4,
-												"October": 4,
-												"November": 4,
-												"December": 4,
-												"YTD": 0,
-												"Remarks": "",
-												"MinipapID": null
-											}
-										]
-									},
-									"Actual": {
-										"Minipap_ID": 0,
-										"Monthly": [
-											{
-												"Monthly_ID": 0,
-												"MiniPAP": null,
-												"January": 9,
-												"February": 6,
-												"March": 6,
-												"April": 5,
-												"May": 6,
-												"June": 6,
-												"July": 7,
-												"August": 6,
-												"September": 5,
-												"October": 4,
-												"November": 5,
-												"December": 4,
-												"YTD": 0,
-												"Remarks": "",
-												"MinipapID": null
-											}
-										]
-									},
-									"Percentage": null
-								},
-								{
-									"Factor_ID": 0,
-									"Title": "b. LKBK",
-									"Unit": "case",
-									"Target": "14/Month",
-									"Planned": {
-										"Minipap_ID": 0,
-										"Monthly": [
-											{
-												"Monthly_ID": 0,
-												"MiniPAP": null,
-												"January": 14,
-												"February": 14,
-												"March": 14,
-												"April": 14,
-												"May": 14,
-												"June": 14,
-												"July": 14,
-												"August": 14,
-												"September": 14,
-												"October": 14,
-												"November": 14,
-												"December": 14,
-												"YTD": 0,
-												"Remarks": "",
-												"MinipapID": null
-											}
-										]
-									},
-									"Actual": {
-										"Minipap_ID": 0,
-										"Monthly": [
-											{
-												"Monthly_ID": 0,
-												"MiniPAP": null,
-												"January": 15,
-												"February": 16,
-												"March": 16,
-												"April": 12,
-												"May": 13,
-												"June": 15,
-												"July": 17,
-												"August": 14,
-												"September": 14,
-												"October": 14,
-												"November": 14,
-												"December": 14,
-												"YTD": 0,
-												"Remarks": "",
-												"MinipapID": null
-											}
-										]
-									},
-									"Percentage": null
-								}
-							]
-						},
-						{
-							"Result_ID": 0,
-							"Name": "3. BSFA Activity ",
-							"Factors": [
-								{
-									"Factor_ID": 0,
-									"Title": "a. 3S Activity & Assessment",
-									"Unit": "item",
-									"Target": "As schedule",
-									"Planned": {
-										"Minipap_ID": 0,
-										"Monthly": [
-											{
-												"Monthly_ID": 0,
-												"MiniPAP": null,
-												"January": 1,
-												"February": 1,
-												"March": 1,
-												"April": 1,
-												"May": 1,
-												"June": 1,
-												"July": 1,
-												"August": 1,
-												"September": 1,
-												"October": 1,
-												"November": 1,
-												"December": 1,
-												"YTD": 0,
-												"Remarks": "",
-												"MinipapID": null
-											}
-										]
-									},
-									"Actual": {
-										"Minipap_ID": 0,
-										"Monthly": [
-											{
-												"Monthly_ID": 0,
-												"MiniPAP": null,
-												"January": 1,
-												"February": 1,
-												"March": 1,
-												"April": 1,
-												"May": 1,
-												"June": 1,
-												"July": 1,
-												"August": 1,
-												"September": 1,
-												"October": 1,
-												"November": 1,
-												"December": 1,
-												"YTD": 0,
-												"Remarks": "",
-												"MinipapID": null
-											}
-										]
-									},
-									"Percentage": null
-								},
-								{
-									"Factor_ID": 0,
-									"Title": "b. KY Small group (4 group)",
-									"Unit": "case",
-									"Target": "4/Month",
-									"Planned": {
-										"Minipap_ID": 0,
-										"Monthly": [
-											{
-												"Monthly_ID": 0,
-												"MiniPAP": null,
-												"January": 4,
-												"February": 4,
-												"March": 4,
-												"April": 4,
-												"May": 4,
-												"June": 4,
-												"July": 4,
-												"August": 4,
-												"September": 4,
-												"October": 4,
-												"November": 4,
-												"December": 4,
-												"YTD": 0,
-												"Remarks": "",
-												"MinipapID": null
-											}
-										]
-									},
-									"Actual": {
-										"Minipap_ID": 0,
-										"Monthly": [
-											{
-												"Monthly_ID": 0,
-												"MiniPAP": null,
-												"January": 4,
-												"February": 4,
-												"March": 4,
-												"April": 4,
-												"May": 4,
-												"June": 4,
-												"July": 4,
-												"August": 4,
-												"September": 4,
-												"October": 4,
-												"November": 4,
-												"December": 4,
-												"YTD": 0,
-												"Remarks": "",
-												"MinipapID": null
-											}
-										]
-									},
-									"Percentage": null
-								},
-								{
-									"Factor_ID": 0,
-									"Title": "c. Follow Up Hopper",
-									"Unit": "item",
-									"Target": "As schedule",
-									"Planned": {
-										"Minipap_ID": 0,
-										"Monthly": [
-											{
-												"Monthly_ID": 0,
-												"MiniPAP": null,
-												"January": 20,
-												"February": 15,
-												"March": 0,
-												"April": 18,
-												"May": 2,
-												"June": 0,
-												"July": 0,
-												"August": 0,
-												"September": 0,
-												"October": 0,
-												"November": 0,
-												"December": 0,
-												"YTD": 0,
-												"Remarks": "Finish",
-												"MinipapID": null
-											}
-										]
-									},
-									"Actual": {
-										"Minipap_ID": 0,
-										"Monthly": [
-											{
-												"Monthly_ID": 0,
-												"MiniPAP": null,
-												"January": 27,
-												"February": 7,
-												"March": 0,
-												"April": 6,
-												"May": 0,
-												"June": 15,
-												"July": 0,
-												"August": 0,
-												"September": 0,
-												"October": 0,
-												"November": 0,
-												"December": 0,
-												"YTD": 0,
-												"Remarks": "",
-												"MinipapID": null
-											}
-										]
-									},
-									"Percentage": null
-								},
-								{
-									"Factor_ID": 0,
-									"Title": "d. Follow Up RA Cat III ",
-									"Unit": "item",
-									"Target": "As schedule",
-									"Planned": {
-										"Minipap_ID": 0,
-										"Monthly": [
-											{
-												"Monthly_ID": 0,
-												"MiniPAP": null,
-												"January": 0,
-												"February": 0,
-												"March": 0,
-												"April": 0,
-												"May": 0,
-												"June": 10,
-												"July": 18,
-												"August": 35,
-												"September": 33,
-												"October": 95,
-												"November": 132,
-												"December": 121,
-												"YTD": 0,
-												"Remarks": "",
-												"MinipapID": null
-											}
-										]
-									},
-									"Actual": {
-										"Minipap_ID": 0,
-										"Monthly": [
-											{
-												"Monthly_ID": 0,
-												"MiniPAP": null,
-												"January": 0,
-												"February": 0,
-												"March": 0,
-												"April": 0,
-												"May": 0,
-												"June": 41,
-												"July": 12,
-												"August": 30,
-												"September": 51,
-												"October": 136,
-												"November": 45,
-												"December": 75,
-												"YTD": 0,
-												"Remarks": "",
-												"MinipapID": null
-											}
-										]
-									},
-									"Percentage": null
-								},
-								{
-									"Factor_ID": 0,
-									"Title": "e.  Re-inforcement Building \nStructure",
-									"Unit": "item",
-									"Target": "As schedule",
-									"Planned": {
-										"Minipap_ID": 0,
-										"Monthly": [
-											{
-												"Monthly_ID": 0,
-												"MiniPAP": null,
-												"January": 0,
-												"February": 0,
-												"March": 0,
-												"April": 1,
-												"May": 1,
-												"June": 1,
-												"July": 1,
-												"August": 1,
-												"September": 1,
-												"October": 1,
-												"November": 1,
-												"December": 2,
-												"YTD": 0,
-												"Remarks": "Finish",
-												"MinipapID": null
-											}
-										]
-									},
-									"Actual": {
-										"Minipap_ID": 0,
-										"Monthly": [
-											{
-												"Monthly_ID": 0,
-												"MiniPAP": null,
-												"January": 0,
-												"February": 0,
-												"March": 0,
-												"April": 0,
-												"May": 0,
-												"June": 2,
-												"July": 1,
-												"August": 2,
-												"September": 2,
-												"October": 1,
-												"November": 1,
-												"December": 1,
-												"YTD": 0,
-												"Remarks": "",
-												"MinipapID": null
-											}
-										]
-									},
-									"Percentage": null
-								}
-							]
-						}
-					]
-				}`
-				req, _ := http.NewRequest("POST", "/kpi/item/entire", strings.NewReader(itemBody))
-				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
-				w := httptest.NewRecorder()
-				router.ServeHTTP(w, req)
-				getSuccess(w.Body)
-				assert.Equal(t, http.StatusCreated, w.Code)
-			})
+			// t.Run("Add Entire", func(t *testing.T){
+			// 	itemBody := `{
+			// 		"Item_ID": 0,
+			// 		"Name": "S",
+			// 		"Results": [
+			// 			{
+			// 				"Result_ID": 0,
+			// 				"Name": "1. Fire, Work & Traffic \naccident ",
+			// 				"Factors": [
+			// 					{
+			// 						"Factor_ID": 0,
+			// 						"Title": "Zero Fire, Work & Traffic accident",
+			// 						"Unit": "case",
+			// 						"Target": "Zero",
+			// 						"Planned": {
+			// 							"Minipap_ID": 0,
+			// 							"Monthly": [
+			// 								{
+			// 									"Monthly_ID": 0,
+			// 									"MiniPAP": null,
+			// 									"January": 0,
+			// 									"February": 0,
+			// 									"March": 0,
+			// 									"April": 0,
+			// 									"May": 0,
+			// 									"June": 0,
+			// 									"July": 0,
+			// 									"August": 0,
+			// 									"September": 0,
+			// 									"October": 0,
+			// 									"November": 0,
+			// 									"December": 0,
+			// 									"YTD": 0,
+			// 									"Remarks": "",
+			// 									"MinipapID": null
+			// 								}
+			// 							]
+			// 						},
+			// 						"Actual": {
+			// 							"Minipap_ID": 0,
+			// 							"Monthly": [
+			// 								{
+			// 									"Monthly_ID": 0,
+			// 									"MiniPAP": null,
+			// 									"January": 0,
+			// 									"February": 0,
+			// 									"March": 0,
+			// 									"April": 0,
+			// 									"May": 0,
+			// 									"June": 0,
+			// 									"July": 0,
+			// 									"August": 0,
+			// 									"September": 0,
+			// 									"October": 0,
+			// 									"November": 0,
+			// 									"December": 0,
+			// 									"YTD": 0,
+			// 									"Remarks": "",
+			// 									"MinipapID": null
+			// 								}
+			// 							]
+			// 						},
+			// 						"Percentage": null
+			// 					}
+			// 				]
+			// 			},
+			// 			{
+			// 				"Result_ID": 0,
+			// 				"Name": "2. Safety minded/awareness ",
+			// 				"Factors": [
+			// 					{
+			// 						"Factor_ID": 0,
+			// 						"Title": "a. LKK",
+			// 						"Unit": "case",
+			// 						"Target": "4 /Month",
+			// 						"Planned": {
+			// 							"Minipap_ID": 0,
+			// 							"Monthly": [
+			// 								{
+			// 									"Monthly_ID": 0,
+			// 									"MiniPAP": null,
+			// 									"January": 4,
+			// 									"February": 4,
+			// 									"March": 4,
+			// 									"April": 4,
+			// 									"May": 4,
+			// 									"June": 4,
+			// 									"July": 4,
+			// 									"August": 4,
+			// 									"September": 4,
+			// 									"October": 4,
+			// 									"November": 4,
+			// 									"December": 4,
+			// 									"YTD": 0,
+			// 									"Remarks": "",
+			// 									"MinipapID": null
+			// 								}
+			// 							]
+			// 						},
+			// 						"Actual": {
+			// 							"Minipap_ID": 0,
+			// 							"Monthly": [
+			// 								{
+			// 									"Monthly_ID": 0,
+			// 									"MiniPAP": null,
+			// 									"January": 9,
+			// 									"February": 6,
+			// 									"March": 6,
+			// 									"April": 5,
+			// 									"May": 6,
+			// 									"June": 6,
+			// 									"July": 7,
+			// 									"August": 6,
+			// 									"September": 5,
+			// 									"October": 4,
+			// 									"November": 5,
+			// 									"December": 4,
+			// 									"YTD": 0,
+			// 									"Remarks": "",
+			// 									"MinipapID": null
+			// 								}
+			// 							]
+			// 						},
+			// 						"Percentage": null
+			// 					},
+			// 					{
+			// 						"Factor_ID": 0,
+			// 						"Title": "b. LKBK",
+			// 						"Unit": "case",
+			// 						"Target": "14/Month",
+			// 						"Planned": {
+			// 							"Minipap_ID": 0,
+			// 							"Monthly": [
+			// 								{
+			// 									"Monthly_ID": 0,
+			// 									"MiniPAP": null,
+			// 									"January": 14,
+			// 									"February": 14,
+			// 									"March": 14,
+			// 									"April": 14,
+			// 									"May": 14,
+			// 									"June": 14,
+			// 									"July": 14,
+			// 									"August": 14,
+			// 									"September": 14,
+			// 									"October": 14,
+			// 									"November": 14,
+			// 									"December": 14,
+			// 									"YTD": 0,
+			// 									"Remarks": "",
+			// 									"MinipapID": null
+			// 								}
+			// 							]
+			// 						},
+			// 						"Actual": {
+			// 							"Minipap_ID": 0,
+			// 							"Monthly": [
+			// 								{
+			// 									"Monthly_ID": 0,
+			// 									"MiniPAP": null,
+			// 									"January": 15,
+			// 									"February": 16,
+			// 									"March": 16,
+			// 									"April": 12,
+			// 									"May": 13,
+			// 									"June": 15,
+			// 									"July": 17,
+			// 									"August": 14,
+			// 									"September": 14,
+			// 									"October": 14,
+			// 									"November": 14,
+			// 									"December": 14,
+			// 									"YTD": 0,
+			// 									"Remarks": "",
+			// 									"MinipapID": null
+			// 								}
+			// 							]
+			// 						},
+			// 						"Percentage": null
+			// 					}
+			// 				]
+			// 			},
+			// 			{
+			// 				"Result_ID": 0,
+			// 				"Name": "3. BSFA Activity ",
+			// 				"Factors": [
+			// 					{
+			// 						"Factor_ID": 0,
+			// 						"Title": "a. 3S Activity & Assessment",
+			// 						"Unit": "item",
+			// 						"Target": "As schedule",
+			// 						"Planned": {
+			// 							"Minipap_ID": 0,
+			// 							"Monthly": [
+			// 								{
+			// 									"Monthly_ID": 0,
+			// 									"MiniPAP": null,
+			// 									"January": 1,
+			// 									"February": 1,
+			// 									"March": 1,
+			// 									"April": 1,
+			// 									"May": 1,
+			// 									"June": 1,
+			// 									"July": 1,
+			// 									"August": 1,
+			// 									"September": 1,
+			// 									"October": 1,
+			// 									"November": 1,
+			// 									"December": 1,
+			// 									"YTD": 0,
+			// 									"Remarks": "",
+			// 									"MinipapID": null
+			// 								}
+			// 							]
+			// 						},
+			// 						"Actual": {
+			// 							"Minipap_ID": 0,
+			// 							"Monthly": [
+			// 								{
+			// 									"Monthly_ID": 0,
+			// 									"MiniPAP": null,
+			// 									"January": 1,
+			// 									"February": 1,
+			// 									"March": 1,
+			// 									"April": 1,
+			// 									"May": 1,
+			// 									"June": 1,
+			// 									"July": 1,
+			// 									"August": 1,
+			// 									"September": 1,
+			// 									"October": 1,
+			// 									"November": 1,
+			// 									"December": 1,
+			// 									"YTD": 0,
+			// 									"Remarks": "",
+			// 									"MinipapID": null
+			// 								}
+			// 							]
+			// 						},
+			// 						"Percentage": null
+			// 					},
+			// 					{
+			// 						"Factor_ID": 0,
+			// 						"Title": "b. KY Small group (4 group)",
+			// 						"Unit": "case",
+			// 						"Target": "4/Month",
+			// 						"Planned": {
+			// 							"Minipap_ID": 0,
+			// 							"Monthly": [
+			// 								{
+			// 									"Monthly_ID": 0,
+			// 									"MiniPAP": null,
+			// 									"January": 4,
+			// 									"February": 4,
+			// 									"March": 4,
+			// 									"April": 4,
+			// 									"May": 4,
+			// 									"June": 4,
+			// 									"July": 4,
+			// 									"August": 4,
+			// 									"September": 4,
+			// 									"October": 4,
+			// 									"November": 4,
+			// 									"December": 4,
+			// 									"YTD": 0,
+			// 									"Remarks": "",
+			// 									"MinipapID": null
+			// 								}
+			// 							]
+			// 						},
+			// 						"Actual": {
+			// 							"Minipap_ID": 0,
+			// 							"Monthly": [
+			// 								{
+			// 									"Monthly_ID": 0,
+			// 									"MiniPAP": null,
+			// 									"January": 4,
+			// 									"February": 4,
+			// 									"March": 4,
+			// 									"April": 4,
+			// 									"May": 4,
+			// 									"June": 4,
+			// 									"July": 4,
+			// 									"August": 4,
+			// 									"September": 4,
+			// 									"October": 4,
+			// 									"November": 4,
+			// 									"December": 4,
+			// 									"YTD": 0,
+			// 									"Remarks": "",
+			// 									"MinipapID": null
+			// 								}
+			// 							]
+			// 						},
+			// 						"Percentage": null
+			// 					},
+			// 					{
+			// 						"Factor_ID": 0,
+			// 						"Title": "c. Follow Up Hopper",
+			// 						"Unit": "item",
+			// 						"Target": "As schedule",
+			// 						"Planned": {
+			// 							"Minipap_ID": 0,
+			// 							"Monthly": [
+			// 								{
+			// 									"Monthly_ID": 0,
+			// 									"MiniPAP": null,
+			// 									"January": 20,
+			// 									"February": 15,
+			// 									"March": 0,
+			// 									"April": 18,
+			// 									"May": 2,
+			// 									"June": 0,
+			// 									"July": 0,
+			// 									"August": 0,
+			// 									"September": 0,
+			// 									"October": 0,
+			// 									"November": 0,
+			// 									"December": 0,
+			// 									"YTD": 0,
+			// 									"Remarks": "Finish",
+			// 									"MinipapID": null
+			// 								}
+			// 							]
+			// 						},
+			// 						"Actual": {
+			// 							"Minipap_ID": 0,
+			// 							"Monthly": [
+			// 								{
+			// 									"Monthly_ID": 0,
+			// 									"MiniPAP": null,
+			// 									"January": 27,
+			// 									"February": 7,
+			// 									"March": 0,
+			// 									"April": 6,
+			// 									"May": 0,
+			// 									"June": 15,
+			// 									"July": 0,
+			// 									"August": 0,
+			// 									"September": 0,
+			// 									"October": 0,
+			// 									"November": 0,
+			// 									"December": 0,
+			// 									"YTD": 0,
+			// 									"Remarks": "",
+			// 									"MinipapID": null
+			// 								}
+			// 							]
+			// 						},
+			// 						"Percentage": null
+			// 					},
+			// 					{
+			// 						"Factor_ID": 0,
+			// 						"Title": "d. Follow Up RA Cat III ",
+			// 						"Unit": "item",
+			// 						"Target": "As schedule",
+			// 						"Planned": {
+			// 							"Minipap_ID": 0,
+			// 							"Monthly": [
+			// 								{
+			// 									"Monthly_ID": 0,
+			// 									"MiniPAP": null,
+			// 									"January": 0,
+			// 									"February": 0,
+			// 									"March": 0,
+			// 									"April": 0,
+			// 									"May": 0,
+			// 									"June": 10,
+			// 									"July": 18,
+			// 									"August": 35,
+			// 									"September": 33,
+			// 									"October": 95,
+			// 									"November": 132,
+			// 									"December": 121,
+			// 									"YTD": 0,
+			// 									"Remarks": "",
+			// 									"MinipapID": null
+			// 								}
+			// 							]
+			// 						},
+			// 						"Actual": {
+			// 							"Minipap_ID": 0,
+			// 							"Monthly": [
+			// 								{
+			// 									"Monthly_ID": 0,
+			// 									"MiniPAP": null,
+			// 									"January": 0,
+			// 									"February": 0,
+			// 									"March": 0,
+			// 									"April": 0,
+			// 									"May": 0,
+			// 									"June": 41,
+			// 									"July": 12,
+			// 									"August": 30,
+			// 									"September": 51,
+			// 									"October": 136,
+			// 									"November": 45,
+			// 									"December": 75,
+			// 									"YTD": 0,
+			// 									"Remarks": "",
+			// 									"MinipapID": null
+			// 								}
+			// 							]
+			// 						},
+			// 						"Percentage": null
+			// 					},
+			// 					{
+			// 						"Factor_ID": 0,
+			// 						"Title": "e.  Re-inforcement Building \nStructure",
+			// 						"Unit": "item",
+			// 						"Target": "As schedule",
+			// 						"Planned": {
+			// 							"Minipap_ID": 0,
+			// 							"Monthly": [
+			// 								{
+			// 									"Monthly_ID": 0,
+			// 									"MiniPAP": null,
+			// 									"January": 0,
+			// 									"February": 0,
+			// 									"March": 0,
+			// 									"April": 1,
+			// 									"May": 1,
+			// 									"June": 1,
+			// 									"July": 1,
+			// 									"August": 1,
+			// 									"September": 1,
+			// 									"October": 1,
+			// 									"November": 1,
+			// 									"December": 2,
+			// 									"YTD": 0,
+			// 									"Remarks": "Finish",
+			// 									"MinipapID": null
+			// 								}
+			// 							]
+			// 						},
+			// 						"Actual": {
+			// 							"Minipap_ID": 0,
+			// 							"Monthly": [
+			// 								{
+			// 									"Monthly_ID": 0,
+			// 									"MiniPAP": null,
+			// 									"January": 0,
+			// 									"February": 0,
+			// 									"March": 0,
+			// 									"April": 0,
+			// 									"May": 0,
+			// 									"June": 2,
+			// 									"July": 1,
+			// 									"August": 2,
+			// 									"September": 2,
+			// 									"October": 1,
+			// 									"November": 1,
+			// 									"December": 1,
+			// 									"YTD": 0,
+			// 									"Remarks": "",
+			// 									"MinipapID": null
+			// 								}
+			// 							]
+			// 						},
+			// 						"Percentage": null
+			// 					}
+			// 				]
+			// 			}
+			// 		]
+			// 	}`
+			// 	req, _ := http.NewRequest("POST", "/kpi/item/entire", strings.NewReader(itemBody))
+			// 	// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+			// 	w := httptest.NewRecorder()
+			// 	router.ServeHTTP(w, req)
+			// 	getSuccess(w.Body)
+			// 	assert.Equal(t, http.StatusCreated, w.Code)
+			// })
 			t.Run("Get Single", func(t *testing.T){
 				req, _ := http.NewRequest("GET", "/kpi/item/1", nil)
 				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
@@ -1184,14 +1184,14 @@ func TestMain(t *testing.T){
 				// getSuccess(w.Body)
 				assert.Equal(t, http.StatusOK, w.Code)
 			})
-			t.Run("Delete Entire", func(t *testing.T){
-				req, _ := http.NewRequest("DELETE", "/kpi/item/entire/2", nil)
-				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
-				w := httptest.NewRecorder()
-				router.ServeHTTP(w, req)
-				// getSuccess(w.Body)
-				assert.Equal(t, http.StatusOK, w.Code)
-			})
+			// t.Run("Delete Entire", func(t *testing.T){
+			// 	req, _ := http.NewRequest("DELETE", "/kpi/item/entire/2", nil)
+			// 	// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+			// 	w := httptest.NewRecorder()
+			// 	router.ServeHTTP(w, req)
+			// 	// getSuccess(w.Body)
+			// 	assert.Equal(t, http.StatusOK, w.Code)
+			// })
 			t.Run("Get All", func(t *testing.T){
 				req, _ := http.NewRequest("GET", "/kpi/item", nil)
 				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)

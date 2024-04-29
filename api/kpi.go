@@ -20,9 +20,9 @@ type KpiAPI interface {
 	AddYearly(k *gin.Context)
 
 	AddEntireYearly(k *gin.Context)
-	AddEntireItem(k *gin.Context)
-	AddEntireResult(k *gin.Context)
-	AddEntireFactor(k *gin.Context)
+	// AddEntireItem(k *gin.Context)
+	// AddEntireResult(k *gin.Context)
+	// AddEntireFactor(k *gin.Context)
 	AddEntireAttendance(k *gin.Context)
 
 	UpdateAttendance(k *gin.Context)
@@ -136,30 +136,30 @@ func (ka *kpiAPI) AddEntireYearly(k *gin.Context) {
 	if model.ErrorCheck(k, err) {return}
 	k.JSON(http.StatusCreated, model.SuccessResponse{Message: "add Entire Yearly success"})
 }
-func (ka *kpiAPI) AddEntireItem(k *gin.Context) {
-	var response model.ItemResponse
-	err := k.ShouldBindJSON(&response)
-	if model.ErrorCheck(k, err) {return}
-	err = ka.crudService.AddEntireItem(&response, nil)
-	if model.ErrorCheck(k, err) {return}
-	k.JSON(http.StatusCreated, model.SuccessResponse{Message: "add Entire Item success"})
-}
-func (ka *kpiAPI) AddEntireResult(k *gin.Context) {
-	var response model.ResultResponse
-	err := k.ShouldBindJSON(&response) 
-	if model.ErrorCheck(k, err) {return}
-	err = ka.crudService.AddEntireResult(&response, nil)
-	if model.ErrorCheck(k, err) {return}
-	k.JSON(http.StatusCreated, model.SuccessResponse{Message: "add Entire Result success"})
-}
-func (ka *kpiAPI) AddEntireFactor(k *gin.Context) {
-	var response model.FactorResponse
-	err := k.ShouldBindJSON(&response) 
-	if model.ErrorCheck(k, err) {return}
-	err = ka.crudService.AddEntireFactor(&response, nil)
-	if model.ErrorCheck(k, err){return}
-	k.JSON(http.StatusCreated, model.SuccessResponse{Message: "add Entire Factor success"})
-}
+// func (ka *kpiAPI) AddEntireItem(k *gin.Context) {
+// 	var response model.ItemResponse
+// 	err := k.ShouldBindJSON(&response)
+// 	if model.ErrorCheck(k, err) {return}
+// 	err = ka.crudService.AddEntireItem(&response, nil)
+// 	if model.ErrorCheck(k, err) {return}
+// 	k.JSON(http.StatusCreated, model.SuccessResponse{Message: "add Entire Item success"})
+// }
+// func (ka *kpiAPI) AddEntireResult(k *gin.Context) {
+// 	var response model.ResultResponse
+// 	err := k.ShouldBindJSON(&response) 
+// 	if model.ErrorCheck(k, err) {return}
+// 	err = ka.crudService.AddEntireResult(&response, nil)
+// 	if model.ErrorCheck(k, err) {return}
+// 	k.JSON(http.StatusCreated, model.SuccessResponse{Message: "add Entire Result success"})
+// }
+// func (ka *kpiAPI) AddEntireFactor(k *gin.Context) {
+// 	var response model.FactorResponse
+// 	err := k.ShouldBindJSON(&response) 
+// 	if model.ErrorCheck(k, err) {return}
+// 	err = ka.crudService.AddEntireFactor(&response, nil)
+// 	if model.ErrorCheck(k, err){return}
+// 	k.JSON(http.StatusCreated, model.SuccessResponse{Message: "add Entire Factor success"})
+// }
 func (ka *kpiAPI) AddEntireAttendance(k *gin.Context) {
 	var response model.AttendanceResponse
 	err := k.ShouldBindJSON(&response)

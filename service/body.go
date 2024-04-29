@@ -4,6 +4,7 @@ import (
 	"goreact/model"
 	repo "goreact/repository"
 	"mime/multipart"
+	"sync"
 )
 
 type CrudService interface {
@@ -23,9 +24,9 @@ type CrudService interface {
 
 	//Create cascade
 	AddEntireYearly(input *model.YearlyResponse) error
-	AddEntireItem(input *model.ItemResponse, id *int) error
-	AddEntireResult(input *model.ResultResponse, id *int) error
-	AddEntireFactor(input *model.FactorResponse, id *int) error
+	AddEntireItem(wg *sync.WaitGroup, input *model.ItemResponse, id *int, errs chan error)
+	AddEntireResult(wg *sync.WaitGroup, input *model.ResultResponse, id *int, errs chan error)
+	AddEntireFactor(wg *sync.WaitGroup, input *model.FactorResponse, id *int, errs chan error)
 	AddEntireAttendance(input *model.AttendanceResponse, year *int) error
 	AddEntireAnalisa(input *model.AnalisaResponse) error
 	AddEntireSummary(input *model.SummaryResponse) error
