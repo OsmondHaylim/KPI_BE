@@ -7,6 +7,7 @@ import (
 
 // Add Entire
 func (cs *crudService) AddEntireYearly(input *model.YearlyResponse) error {
+	wg, errs := model.GoRoutineInit()
 	//Storing Yearlys
 	var newYearly model.Yearly
 	newYearly.Year = input.Year
@@ -18,27 +19,11 @@ func (cs *crudService) AddEntireYearly(input *model.YearlyResponse) error {
 	err = cs.AddYearly(&newYearly)
 	if err != nil {return err}
 	//Storing Items
-	wg := sync.WaitGroup{}
-	errs := make(chan error)
 	for _, item := range input.Items{
 		wg.Add(1)
 		go cs.AddEntireItem(&wg, &item, &newYearly.Year, errs)
 	}
-	go func() {
-		wg.Wait()
-		close(errs)
-	}()
-	
-	for {
-        select {
-			case err := <-errs:
-				if err != nil {
-					return err // Return the first error encountered
-				}
-			default:
-				return nil // No errors found, return nil
-        }
-    }
+	return model.SimpleErrorChanCheck(&wg, errs)
 }
 func (cs *crudService) AddEntireItem(wg *sync.WaitGroup, input *model.ItemResponse, id *int, errChan chan error) {
 	defer wg.Done()
@@ -169,20 +154,25 @@ func (cs *crudService) AddEntireAnalisa(input *model.AnalisaResponse) error{
 	err := cs.AddAnalisa(&newAnalisa)
 	if err != nil {return err}
 
+	wg, errs := model.GoRoutineInit()
+
 	for _, data := range input.Masalah{
-		var newMasalah = model.Masalah{
-			Masalah: data.Masalah,
-			Why: data.Why,
-			Tindakan: data.Tindakan,
-			Pic: data.Pic,
-			Target: data.Target,
-			Year: &newAnalisa.Year,
-			//Default status here
-		}
-		err = cs.AddMasalah(&newMasalah)
-		if err != nil {return err}
+		wg.Add(1)
+		go func(data model.MasalahResponse){
+			var newMasalah = model.Masalah{
+				Masalah: data.Masalah,
+				Why: data.Why,
+				Tindakan: data.Tindakan,
+				Pic: data.Pic,
+				Target: data.Target,
+				Year: &newAnalisa.Year,
+				//Default status here
+			}
+			err = cs.AddMasalah(&newMasalah)
+			if err != nil {errs <- err}
+		}(data)
 	}
-	return nil
+	return model.SimpleErrorChanCheck(&wg, errs)
 }
 func (cs *crudService) AddEntireSummary(input *model.SummaryResponse) error{
 	var newSummary = model.Summary{
@@ -190,27 +180,31 @@ func (cs *crudService) AddEntireSummary(input *model.SummaryResponse) error{
 	}
 	err := cs.AddSummary(&newSummary)
 	if err != nil {return err}
+	wg, errs := model.GoRoutineInit()
 	for _, data := range input.Projects{
-		var newProject = model.Project{
-			Name: data.Name,
-			Summary_ID: &newSummary.Summary_ID,
-			INYS: data.Item["Not Yet Start Issued FR"],
-			QNYS: data.Quantity["Not Yet Start Issued FR"],
-			IDR: data.Item["DR"],
-			QDR: data.Quantity["DR"],
-			IPR: data.Item["PR to PO"],
-			QPR: data.Quantity["PR to PO"],
-			II: data.Item["Install"],
-			QI: data.Quantity["Install"],
-			IF: data.Item["Finish"],
-			QF: data.Quantity["Finish"],
-			IC: data.Item["Cancelled"],
-			QC: data.Quantity["Cancelled"],
-		}
-		err = cs.AddProject(&newProject)
-		if err != nil {return err}
+		wg.Add(1)
+		go func(data model.ProjectResponse){
+			var newProject = model.Project{
+				Name: data.Name,
+				Summary_ID: &newSummary.Summary_ID,
+				INYS: data.Item["Not Yet Start Issued FR"],
+				QNYS: data.Quantity["Not Yet Start Issued FR"],
+				IDR: data.Item["DR"],
+				QDR: data.Quantity["DR"],
+				IPR: data.Item["PR to PO"],
+				QPR: data.Quantity["PR to PO"],
+				II: data.Item["Install"],
+				QI: data.Quantity["Install"],
+				IF: data.Item["Finish"],
+				QF: data.Quantity["Finish"],
+				IC: data.Item["Cancelled"],
+				QC: data.Quantity["Cancelled"],
+			}
+			err := cs.AddProject(&newProject)
+			if err != nil {errs <- err}
+		}(data)	
 	}
-	return nil
+	return model.SimpleErrorChanCheck(&wg, errs)
 }
 
 // Delete Entire

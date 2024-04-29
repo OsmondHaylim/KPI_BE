@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"sync"
 
 	"github.com/gin-gonic/gin"
 )
@@ -242,4 +243,38 @@ func ErrorCheck(k *gin.Context, err error) bool {
 		}
 	}
 	return false
+}
+func ErrorChanCheck(k *gin.Context, errChan chan error) bool{
+	for {
+        select {
+			case err := <-errChan:
+				if err.Error() == "record not found"{
+					k.JSON(http.StatusNotFound, ErrorResponse{Error: err.Error()})
+					return true
+				}else{
+					k.JSON(http.StatusInternalServerError, ErrorResponse{Error: err.Error()})
+					fmt.Print(err.Error())
+					return true
+				}
+			default:
+				return false
+        }
+    }
+}
+func SimpleErrorChanCheck(wg *sync.WaitGroup, errChan chan error) error{
+	go func() {
+		wg.Wait()
+		close(errChan)
+	}()
+	for {
+        select {
+			case err := <-errChan:
+				return err
+			default:
+				return nil
+        }
+    }
+}
+func GoRoutineInit() (sync.WaitGroup, chan error){
+	return sync.WaitGroup{}, make(chan error)
 }
