@@ -2,6 +2,7 @@ package model
 
 import (
 	"fmt"
+	"math"
 	"net/http"
 	"strconv"
 	"sync"
@@ -59,6 +60,35 @@ func (p Factor) ToPercentage() [][]Monthly{
 	return percentMonthly
 }
 
+func (s Summary) Comparison() []Project{
+	result := []Project{}
+	
+	if len(s.Projects) > 1{
+		first := s.Projects[0]
+		for i, data := range s.Projects{
+			if i == 0 {continue}
+			temp := Project{
+				Name: first.Name + " vs " + data.Name,
+				Summary_ID: &s.Summary_ID,
+				INYS: int(math.Abs(float64(first.INYS - data.INYS))),
+				QNYS: int(math.Abs(float64(first.QNYS - data.QNYS))),
+				IDR: int(math.Abs(float64(first.IDR - data.IDR))),
+				QDR: int(math.Abs(float64(first.QDR - data.QDR))),
+				IPR: int(math.Abs(float64(first.IPR - data.IPR))),
+				QPR: int(math.Abs(float64(first.QPR - data.QPR))),
+				II: int(math.Abs(float64(first.II - data.II))),
+				QI: int(math.Abs(float64(first.QI - data.QI))),
+				IF: int(math.Abs(float64(first.IF - data.IF))),
+				QF: int(math.Abs(float64(first.QF - data.QF))),
+				IC: int(math.Abs(float64(first.IC - data.IC))),
+				QC: int(math.Abs(float64(first.QC - data.QC))),
+			}
+			result = append(result, temp)
+		}
+	}
+	return result
+}
+
 
 
 // func PercentParse(a float64, v string, err error) error {
@@ -97,6 +127,17 @@ func (a Attendance) ToResponse() AttendanceResponse{
 		Lain: a.Lain,
 	}
 }
+func (a AttendanceResponse) Back() Attendance{
+	return Attendance{
+		Year: a.Year,
+		Plan: a.Plan,
+		Actual: a.Actual,
+		Cuti: a.Cuti,
+		Izin: a.Izin,
+		Lain: a.Lain,
+	}
+}
+
 func (a Analisa) ToResponse() AnalisaResponse{
 	newAnalisa := AnalisaResponse{
 		Year: a.Year,
@@ -106,6 +147,16 @@ func (a Analisa) ToResponse() AnalisaResponse{
 	}
 	return newAnalisa
 }
+func (a AnalisaResponse) Back() Analisa{
+	newAnalisa := Analisa{
+		Year: a.Year,
+	}
+	for _, masalah := range a.Masalah{
+		newAnalisa.Masalah = append(newAnalisa.Masalah, masalah.Back())
+	}
+	return newAnalisa
+}
+
 func (m Masalah) ToResponse() MasalahResponse{
 	return MasalahResponse{
 		Masalah_ID: m.Masalah_ID,
@@ -116,7 +167,19 @@ func (m Masalah) ToResponse() MasalahResponse{
 		Target: m.Target,
 	}
 }
-func (f Factor) ToResponse() FactorResponse{
+func (m MasalahResponse) Back() Masalah{
+	return Masalah{
+		Masalah_ID: m.Masalah_ID,
+		Masalah: m.Masalah,
+		Why: m.Why,
+		Tindakan: m.Tindakan,
+		Pic: m.Pic,
+		Target: m.Target,
+	}
+}
+
+
+func (f Factor) ToResponse() FactorResponse {
 	return FactorResponse{
 		Factor_ID: f.Factor_ID,
 		Title: f.Title,
@@ -124,8 +187,20 @@ func (f Factor) ToResponse() FactorResponse{
 		Target: f.Target,
 		Plan: f.Plan,
 		Actual: f.Actual,
-		Percentage: f.ToPercentage(),	}
+		Percentage: f.ToPercentage(),	
+	}
 }
+func (f FactorResponse) Back() Factor{
+	return Factor{
+		Factor_ID: f.Factor_ID,
+		Title: f.Title,
+		Unit: f.Unit,
+		Target: f.Target,
+		Plan: f.Plan,
+		Actual: f.Actual,
+	}
+}
+
 func (r Result) ToResponse() ResultResponse{
 	newRes := ResultResponse{
 		Result_ID: r.Result_ID,
@@ -136,6 +211,19 @@ func (r Result) ToResponse() ResultResponse{
 	}
 	return newRes
 }
+func (r ResultResponse) Back() Result{
+	newRes := Result{
+		Result_ID: r.Result_ID,
+		Name: r.Name,
+	}
+	for _, data := range r.Factors{
+		temp := data.Back()
+		temp.ResultID = &r.Result_ID
+		newRes.Factors = append(newRes.Factors, temp)
+	}
+	return newRes
+}
+
 func (i Item) ToResponse() ItemResponse{
 	newItem := ItemResponse{
 		Item_ID: i.Item_ID,
@@ -146,6 +234,19 @@ func (i Item) ToResponse() ItemResponse{
 	}
 	return newItem
 }
+func (i ItemResponse) Back() Item{
+	newItem := Item{
+		Item_ID: i.Item_ID,
+		Name: i.Name,
+	}
+	for _, Result := range i.Results{	
+		temp := Result.Back()	
+		temp.ItemID = &i.Item_ID
+		newItem.Results = append(newItem.Results, temp)
+	}
+	return newItem
+}
+
 func (y Yearly) ToResponse() YearlyResponse{
 	newYear := YearlyResponse{
 		Year: y.Year,
@@ -154,19 +255,27 @@ func (y Yearly) ToResponse() YearlyResponse{
 		newYear.Items = append(newYear.Items, Item.ToResponse())
 	}
 	if y.Attendance != nil{
-		newAtt := AttendanceResponse{
-			Year: y.Attendance.Year,
-			Plan: y.Attendance.Plan,
-			Actual: y.Attendance.Actual,
-			Cuti: y.Attendance.Cuti,
-			Izin: y.Attendance.Izin,
-			Lain: y.Attendance.Lain,
-		}
-		
+		newAtt := y.Attendance.ToResponse()
 		newYear.Attendance = &newAtt
 	}
 	return newYear
 }
+func (y YearlyResponse) Back() Yearly{
+	newYear := Yearly{
+		Year: y.Year,
+	}
+	for _, Item := range y.Items{
+		temp := Item.Back()
+		temp.YearID = &y.Year
+		newYear.Items = append(newYear.Items, temp)
+	}
+	if y.Attendance != nil{
+		newAtt := y.Attendance.Back()
+		newYear.Attendance = &newAtt
+	}
+	return newYear
+}
+
 func (p Project) ToResponse() ProjectResponse{
 	return ProjectResponse{
 		Project_ID: p.Project_ID,				
@@ -189,6 +298,25 @@ func (p Project) ToResponse() ProjectResponse{
 		},
 	}
 }
+func (p ProjectResponse) Back() Project{
+	return Project{
+		Project_ID: p.Project_ID,				
+		Name: p.Name,	
+		INYS: p.Item["Not Yet Start Issued FR"],
+		QNYS: p.Quantity["Not Yet Start Issued FR"],
+		IDR: p.Item["DR"],
+		QDR: p.Quantity["DR"],
+		IPR: p.Item["PR to PO"],
+		QPR: p.Quantity["PR to PO"],
+		II: p.Item["Install"],
+		QI: p.Quantity["Install"],
+		IF: p.Item["Finish"],
+		QF: p.Quantity["Finish"],
+		IC: p.Item["Cancelled"],
+		QC: p.Quantity["Cancelled"],
+	}
+}
+
 func (s Summary) ToResponse() SummaryResponse{
 	newSummary := SummaryResponse{
 		Summary_ID: s.Summary_ID,
@@ -196,6 +324,18 @@ func (s Summary) ToResponse() SummaryResponse{
 	}
 	for _, Project := range s.Projects{
 		newSummary.Projects = append(newSummary.Projects, Project.ToResponse())
+	}
+	return newSummary
+}
+func (s SummaryResponse) Back() Summary{
+	newSummary := Summary{
+		Summary_ID: s.Summary_ID,
+		IssuedDate: s.IssuedDate,
+	}
+	for _, Project := range s.Projects{
+		temp := Project.Back()
+		temp.Summary_ID = &s.Summary_ID
+		newSummary.Projects = append(newSummary.Projects, temp)
 	}
 	return newSummary
 }

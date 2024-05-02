@@ -28,6 +28,7 @@ type AnalisaAPI interface {
 	GetMasalahList(k *gin.Context)
 
 	AddEntireAnalisa(k *gin.Context)
+	UpdateEntireAnalisa(k *gin.Context)
 	DeleteEntireAnalisa(k *gin.Context)
 }
 type analisaAPI struct {crudService service.CrudService}
@@ -123,6 +124,16 @@ func (aa *analisaAPI) AddEntireAnalisa(k *gin.Context){
 	err = aa.crudService.AddEntireAnalisa(&newAnalisa)
 	if model.ErrorCheck(k, err){return}
 	k.JSON(http.StatusCreated, model.SuccessResponse{Message: "add Analisa success"})
+}
+func (aa *analisaAPI) UpdateEntireAnalisa(k *gin.Context){
+	var newAnalisa model.Analisa
+	err := k.ShouldBindJSON(&newAnalisa)
+	if model.ErrorCheck(k, err){return}
+	KpiID, err := strconv.Atoi(k.Param("id"))
+	if model.ErrorCheck(k, err){return}
+	err = aa.crudService.UpdateAnalisa(KpiID, newAnalisa)
+	if model.ErrorCheck(k, err){return}
+	k.JSON(http.StatusOK, model.SuccessResponse{Message: "Analisa update success"})
 }
 func (aa *analisaAPI) DeleteEntireAnalisa(k *gin.Context) {
 	KpiID, err := strconv.Atoi(k.Param("id"))

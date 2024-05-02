@@ -5,8 +5,6 @@ import (
 	"goreact/service"
 	"net/http"
 	"strconv"
-	"sync"
-
 	// "strings"
 
 	"github.com/gin-gonic/gin"
@@ -34,6 +32,12 @@ type KpiAPI interface {
 	UpdateMonthly(k *gin.Context)
 	UpdateResult(k *gin.Context)
 	UpdateYearly(k *gin.Context)
+
+	UpdateEntireAttendance(k *gin.Context)
+	UpdateEntireFactor(k *gin.Context)
+	UpdateEntireItem(k *gin.Context)
+	UpdateEntireResult(k *gin.Context)
+	UpdateEntireYearly(k *gin.Context)
 
 	DeleteAttendance(k *gin.Context)
 	DeleteFactor(k *gin.Context)
@@ -142,10 +146,9 @@ func (ka *kpiAPI) AddEntireItem(k *gin.Context) {
 	var response model.ItemResponse
 	err := k.ShouldBindJSON(&response)
 	if model.ErrorCheck(k, err) {return}
-	wg := sync.WaitGroup{}
-	errs := make(chan error)
+	wg, errs := model.GoRoutineInit()
 	wg.Add(1)
-	ka.crudService.AddEntireItem(&wg, &response, nil, errs)
+	go ka.crudService.AddEntireItem(&wg, &response, nil, errs)
 	wg.Wait()
 	if model.ErrorChanCheck(k, errs) {return}
 	k.JSON(http.StatusCreated, model.SuccessResponse{Message: "add Entire Item success"})
@@ -154,10 +157,9 @@ func (ka *kpiAPI) AddEntireResult(k *gin.Context) {
 	var response model.ResultResponse
 	err := k.ShouldBindJSON(&response) 
 	if model.ErrorCheck(k, err) {return}
-	wg := sync.WaitGroup{}
-	errs := make(chan error)
+	wg, errs := model.GoRoutineInit()
 	wg.Add(1)
-	ka.crudService.AddEntireResult(&wg, &response, nil, errs)
+	go ka.crudService.AddEntireResult(&wg, &response, nil, errs)
 	wg.Wait()
 	if model.ErrorChanCheck(k, errs) {return}
 	k.JSON(http.StatusCreated, model.SuccessResponse{Message: "add Entire Result success"})
@@ -166,10 +168,9 @@ func (ka *kpiAPI) AddEntireFactor(k *gin.Context) {
 	var response model.FactorResponse
 	err := k.ShouldBindJSON(&response) 
 	if model.ErrorCheck(k, err) {return}
-	wg := sync.WaitGroup{}
-	errs := make(chan error)
+	wg, errs := model.GoRoutineInit()
 	wg.Add(1)
-	ka.crudService.AddEntireFactor(&wg, &response, nil, errs)
+	go ka.crudService.AddEntireFactor(&wg, &response, nil, errs)
 	wg.Wait()
 	if model.ErrorChanCheck(k, errs) {return}
 	k.JSON(http.StatusCreated, model.SuccessResponse{Message: "add Entire Factor success"})
@@ -255,6 +256,58 @@ func (ka *kpiAPI) UpdateYearly(k *gin.Context) {
 	k.JSON(http.StatusOK, model.SuccessResponse{Message: "Yearly update success"})
 }
 
+// Update Entire
+func (ka *kpiAPI) UpdateEntireAttendance(k *gin.Context) {
+	var newAttendance model.AttendanceResponse
+	err := k.ShouldBindJSON(&newAttendance)
+	if model.ErrorCheck(k, err){return}
+	KpiID, err := strconv.Atoi(k.Param("id"))
+	if model.ErrorCheck(k, err){return}
+	err = ka.crudService.UpdateEntireAttendance(KpiID, newAttendance)
+	if model.ErrorCheck(k, err) {return}
+	k.JSON(http.StatusOK, model.SuccessResponse{Message: "Attendance update success"})
+}
+func (ka *kpiAPI) UpdateEntireFactor(k *gin.Context) {
+	var newFactor model.FactorResponse
+	err := k.ShouldBindJSON(&newFactor)
+	if model.ErrorCheck(k, err){return}
+	KpiID, err := strconv.Atoi(k.Param("id"))
+	if model.ErrorCheck(k, err){return}
+	err = ka.crudService.UpdateEntireFactor(KpiID, newFactor)
+	if model.ErrorCheck(k, err) {return}
+	k.JSON(http.StatusOK, model.SuccessResponse{Message: "Factor update success"})
+}
+func (ka *kpiAPI) UpdateEntireItem(k *gin.Context) {
+	var newItem model.ItemResponse
+	err := k.ShouldBindJSON(&newItem)
+	if model.ErrorCheck(k, err){return}
+	KpiID, err := strconv.Atoi(k.Param("id"))
+	if model.ErrorCheck(k, err){return}
+	err = ka.crudService.UpdateEntireItem(KpiID, newItem)	
+	if model.ErrorCheck(k, err) {return}
+	k.JSON(http.StatusOK, model.SuccessResponse{Message: "Item update success"})
+}
+func (ka *kpiAPI) UpdateEntireResult(k *gin.Context) {
+	var newResult model.ResultResponse
+	err := k.ShouldBindJSON(&newResult)
+	if model.ErrorCheck(k, err){return}
+	KpiID, err := strconv.Atoi(k.Param("id"))
+	if model.ErrorCheck(k, err){return}
+	err = ka.crudService.UpdateEntireResult(KpiID, newResult)	
+	if model.ErrorCheck(k, err) {return}
+	k.JSON(http.StatusOK, model.SuccessResponse{Message: "Result update success"})
+}
+func (ka *kpiAPI) UpdateEntireYearly(k *gin.Context) {
+	var newYearly model.YearlyResponse
+	err := k.ShouldBindJSON(&newYearly)
+	if model.ErrorCheck(k, err){return}
+	KpiID, err := strconv.Atoi(k.Param("id"))
+	if model.ErrorCheck(k, err){return}
+	err = ka.crudService.UpdateEntireYearly(KpiID, newYearly)	
+	if model.ErrorCheck(k, err) {return}
+	k.JSON(http.StatusOK, model.SuccessResponse{Message: "Yearly update success"})
+}
+
 // Delete
 func (ka *kpiAPI) DeleteAttendance(k *gin.Context) {
 	KpiID, err := strconv.Atoi(k.Param("id"))
@@ -317,22 +370,31 @@ func (ka *kpiAPI) DeleteEntireYearly(k *gin.Context) {
 func (ka *kpiAPI) DeleteEntireItem(k *gin.Context) {
 	KpiID, err := strconv.Atoi(k.Param("id"))
 	if model.ErrorCheck(k, err){return}
-	err = ka.crudService.DeleteEntireItem(KpiID)
-	if model.ErrorCheck(k, err) {return}
+	wg, errs := model.GoRoutineInit()
+	wg.Add(1)
+	go ka.crudService.DeleteEntireItem(&wg, KpiID, errs)
+	wg.Wait()
+	if model.ErrorChanCheck(k, errs) {return}
 	k.JSON(http.StatusOK, model.SuccessResponse{Message: "delete Entire Item success"})
 }
 func (ka *kpiAPI) DeleteEntireResult(k *gin.Context) {
 	KpiID, err := strconv.Atoi(k.Param("id"))
 	if model.ErrorCheck(k, err){return}
-	err = ka.crudService.DeleteEntireResult(KpiID)
-	if model.ErrorCheck(k, err) {return}
+	wg, errs := model.GoRoutineInit()
+	wg.Add(1)
+	go ka.crudService.DeleteEntireResult(&wg, KpiID, errs)
+	wg.Wait()
+	if model.ErrorChanCheck(k, errs) {return}
 	k.JSON(http.StatusOK, model.SuccessResponse{Message: "delete Entire Result success"})
 }
 func (ka *kpiAPI) DeleteEntireFactor(k *gin.Context) {
 	KpiID, err := strconv.Atoi(k.Param("id"))
 	if model.ErrorCheck(k, err){return}
-	err = ka.crudService.DeleteEntireFactor(KpiID)
-	if model.ErrorCheck(k, err) {return}
+	wg, errs := model.GoRoutineInit()
+	wg.Add(1)
+	go ka.crudService.DeleteEntireFactor(&wg, KpiID, errs)
+	wg.Wait()
+	if model.ErrorChanCheck(k, errs) {return}
 	k.JSON(http.StatusOK, model.SuccessResponse{Message: "delete Entire Factor success"})
 }
 func (ka *kpiAPI) DeleteEntireAttendance(k *gin.Context) {

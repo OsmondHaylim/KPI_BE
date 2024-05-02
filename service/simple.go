@@ -36,19 +36,37 @@ func (cs *crudService) AddYearly(input *model.Yearly) error{return cs.yearlyRepo
 
 // Update Functions
 func (cs *crudService) UpdateAttendance(id int, input model.Attendance) error{
-	newInput := input
-	newInput.Year = id
-	return cs.attendanceRepo.Saves(newInput)
+	list, err := cs.attendanceRepo.GetList()
+	if err != nil {return err}
+	for _, data := range list{
+		if data.Year == id{
+			input.Year = id
+			return cs.attendanceRepo.Saves(input)
+		}
+	}
+	return errors.New("not found")
 }
 func (cs *crudService) UpdateAnalisa(id int, input model.Analisa) error{
-	newInput := input
-	newInput.Year = id
-	return cs.analisaRepo.Saves(newInput)
+	list, err := cs.analisaRepo.GetList()
+	if err != nil {return err}
+	for _, data := range list{
+		if data.Year == id{
+			input.Year = id
+			return cs.analisaRepo.Saves(input)
+		}
+	}
+	return errors.New("not found")
 }
 func (cs *crudService) UpdateFactor(id int, input model.Factor) error{
-	newInput := input
-	newInput.Factor_ID = id
-	return cs.factorRepo.Saves(newInput)
+	list, err := cs.factorRepo.GetList()
+	if err != nil {return err}
+	for _, data := range list{
+		if data.Factor_ID == id{
+			input.Factor_ID = id
+			return cs.factorRepo.Saves(input)
+		}
+	}
+	return errors.New("not found")
 }
 func (cs *crudService) UpdateFile(id int, input model.UploadFile) error{
 	newInput := input
@@ -56,44 +74,92 @@ func (cs *crudService) UpdateFile(id int, input model.UploadFile) error{
 	return cs.fileRepo.Saves(newInput)
 }
 func (cs *crudService) UpdateItem(id int, input model.Item) error{
-	newInput := input
-	newInput.Item_ID = id
-	return cs.itemRepo.Saves(newInput)
+	list, err := cs.itemRepo.GetList()
+	if err != nil {return err}
+	for _, data := range list{
+		if data.Item_ID == id{
+			input.Item_ID = id
+			return cs.itemRepo.Saves(input)
+		}
+	}
+	return errors.New("not found")
 }
 func (cs *crudService) UpdateMasalah(id int, input model.Masalah) error{
-	newInput := input
-	newInput.Masalah_ID = id
-	return cs.masalahRepo.Saves(newInput)
+	list, err := cs.masalahRepo.GetList()
+	if err != nil {return err}
+	for _, data := range list{
+		if data.Masalah_ID == id{
+			input.Masalah_ID = id
+			return cs.masalahRepo.Saves(input)
+		}
+	}
+	return errors.New("not found")
 }
 func (cs *crudService) UpdateMinipap(id int, input model.MiniPAP) error{
-	newInput := input
-	newInput.MiniPAP_ID = id
-	return cs.minipapRepo.Saves(newInput)
+	list, err := cs.minipapRepo.GetList()
+	if err != nil {return err}
+	for _, data := range list{
+		if data.MiniPAP_ID == id{
+			input.MiniPAP_ID = id
+			return cs.minipapRepo.Saves(input)
+		}
+	}
+	return errors.New("not found")
 }
 func (cs *crudService) UpdateMonthly(id int, input model.Monthly) error{
-	newInput := input
-	newInput.Monthly_ID = id
-	return cs.monthlyRepo.Saves(newInput)
+	list, err := cs.monthlyRepo.GetList()
+	if err != nil {return err}
+	for _, data := range list{
+		if data.Monthly_ID == id{
+			input.Monthly_ID = id
+			return cs.monthlyRepo.Saves(input)
+		}
+	}
+	return errors.New("not found")
 }
 func (cs *crudService) UpdateProject(id int, input model.Project) error{
-	newInput := input
-	newInput.Project_ID = id
-	return cs.projectRepo.Saves(newInput)
+	list, err := cs.projectRepo.GetList()
+	if err != nil {return err}
+	for _, data := range list{
+		if data.Project_ID == id{
+			input.Project_ID = id
+			return cs.projectRepo.Saves(input)
+		}
+	}
+	return errors.New("not found")
 }
 func (cs *crudService) UpdateResult(id int, input model.Result) error{
-	newInput := input
-	newInput.Result_ID = id
-	return cs.resultRepo.Saves(newInput)
+	list, err := cs.resultRepo.GetList()
+	if err != nil {return err}
+	for _, data := range list{
+		if data.Result_ID == id{
+			input.Result_ID = id
+			return cs.resultRepo.Saves(input)
+		}
+	}
+	return errors.New("not found")
 }
 func (cs *crudService) UpdateSummary(id int, input model.Summary) error{
-	newInput := input
-	newInput.Summary_ID = id
-	return cs.summaryRepo.Saves(newInput)
+	list, err := cs.summaryRepo.GetList()
+	if err != nil {return err}
+	for _, data := range list{
+		if data.Summary_ID == id{
+			input.Summary_ID = id
+			return cs.summaryRepo.Saves(input)
+		}
+	}
+	return errors.New("not found")
 }
 func (cs *crudService) UpdateYearly(id int, input model.Yearly) error{
-	newInput := input
-	newInput.Year = id
-	return cs.yearlyRepo.Saves(newInput)
+	list, err := cs.yearlyRepo.GetList()
+	if err != nil {return err}
+	for _, data := range list{
+		if data.Year == id{
+			input.Year = id
+			return cs.yearlyRepo.Saves(input)
+		}
+	}
+	return errors.New("not found")
 }
 
 // Delete Functions

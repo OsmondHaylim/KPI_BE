@@ -29,8 +29,8 @@ func start() (*gin.Engine, *sync.WaitGroup){
 	config := &db.Config{
 		Host:     "aws-0-ap-southeast-1.pooler.supabase.com",
 		Port:     "5432",
-		Password: "kalomaugenerikaja",
-		User:     "postgres.kkmkegheitaqvhygnixh",
+		Password: "Technosport@2024",
+		User:     "postgres.mjmfiwrmndhoitdltbud",
 		SSLMode:  "disable",
 		DBName:   "postgres",
 	}

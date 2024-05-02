@@ -45,14 +45,14 @@ type CrudService interface {
 	UpdateSummary(id int, input model.Summary) error
 	UpdateYearly(id int, input model.Yearly) error
 
-	// // Update Cascade
-	// UpdateEntireAttendance(id int, input model.AttendanceResponse) error
-	// UpdateEntireAnalisa(id int, input model.AnalisaResponse) error
-	// UpdateEntireFactor(id int, input model.FactorResponse) error
-	// UpdateEntireItem(id int, input model.ItemResponse) error
-	// UpdateEntireResult(id int, input model.ResultResponse) error
-	// UpdateEntireSummary(id int, input model.SummaryResponse) error
-	// UpdateEntireYearly(id int, input model.YearlyResponse) error
+	// Update Cascade
+	UpdateEntireAttendance(id int, input model.AttendanceResponse) error
+	UpdateEntireAnalisa(id int, input model.AnalisaResponse) error
+	UpdateEntireFactor(id int, input model.FactorResponse) error
+	UpdateEntireItem(id int, input model.ItemResponse) error
+	UpdateEntireResult(id int, input model.ResultResponse) error
+	UpdateEntireSummary(id int, input model.SummaryResponse) error
+	UpdateEntireYearly(id int, input model.YearlyResponse) error
 
 	//Delete Independent
 	DeleteAttendance(input int) error
@@ -71,9 +71,9 @@ type CrudService interface {
 
 	//Delete Cascade
 	DeleteEntireYearly(input int) error
-	DeleteEntireItem(input int) error
-	DeleteEntireResult(input int) error
-	DeleteEntireFactor(input int) error
+	DeleteEntireItem(wg *sync.WaitGroup, input int, errs chan error)
+	DeleteEntireResult(wg *sync.WaitGroup, input int, errs chan error)
+	DeleteEntireFactor(wg *sync.WaitGroup, input int, errs chan error)
 	DeleteEntireAttendance(input int) error
 	DeleteEntireAnalisa(input int) error
 	DeleteEntireSummary(input int) error
