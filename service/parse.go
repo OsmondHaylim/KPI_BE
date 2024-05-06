@@ -143,6 +143,7 @@ func (ps *parseService) ParseKpi (input multipart.File) (*model.YearlyResponse, 
 						if err != nil {return nil, err}
 						monthly.Remarks = &remarks
 						//Inputting MiniPAP & Monthly
+						if strings.Contains(row.Cells[6].String(), "vs"){continue}
 						switch row.Cells[6].String()[0]{
 						case 'P':
 							if tempFactor.Plan == nil{
