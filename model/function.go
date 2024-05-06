@@ -178,7 +178,6 @@ func (m MasalahResponse) Back() Masalah{
 	}
 }
 
-
 func (f Factor) ToResponse() FactorResponse {
 	return FactorResponse{
 		Factor_ID: f.Factor_ID,
@@ -417,4 +416,23 @@ func SimpleErrorChanCheck(wg *sync.WaitGroup, errChan chan error) error{
 }
 func GoRoutineInit() (sync.WaitGroup, chan error){
 	return sync.WaitGroup{}, make(chan error)
+}
+
+func (u User) ToCompact() User_compact{
+	return User_compact{
+		ID: 		u.ID,
+		Username: 	u.Username,
+		Email:		u.Email,
+		Role:		u.Role,
+	}
+}
+func NewErrorResponse(msg string) ErrorResponse {
+	return ErrorResponse{
+		Error: msg,
+	}
+}
+func NewSuccessResponse(msg string) SuccessResponse {
+	return SuccessResponse{
+		Message: msg,
+	}
 }

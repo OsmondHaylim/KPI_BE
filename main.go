@@ -6,6 +6,7 @@ import (
 	"goreact/model"
 	"goreact/repository"
 	"goreact/service"
+	"goreact/middleware"
 
 	_ "embed"
 	"fmt"
@@ -76,6 +77,7 @@ func RunServer(db *gorm.DB, gin *gin.Engine) *gin.Engine {
 		{
 			analisa.GET("", apiHandler.AnalisaAPIHandler.GetAnalisaList)
 			analisa.GET("/:id", apiHandler.AnalisaAPIHandler.GetAnalisaByID)
+			analisa.Use(middleware.Auth())
 			analisa.POST("", apiHandler.AnalisaAPIHandler.AddAnalisa)
 			analisa.POST("/entire", apiHandler.AnalisaAPIHandler.AddEntireAnalisa)
 			analisa.PUT("/:id", apiHandler.AnalisaAPIHandler.UpdateAnalisa)
@@ -86,6 +88,7 @@ func RunServer(db *gorm.DB, gin *gin.Engine) *gin.Engine {
 		{
 			attendance.GET("", apiHandler.KpiAPIHandler.GetAttendanceList)
 			attendance.GET("/:id", apiHandler.KpiAPIHandler.GetAttendanceByID)
+			attendance.Use(middleware.Auth())
 			attendance.POST("", apiHandler.KpiAPIHandler.AddAttendance)
 			attendance.POST("/entire", apiHandler.KpiAPIHandler.AddEntireAttendance)
 			attendance.PUT("/:id", apiHandler.KpiAPIHandler.UpdateAttendance)
@@ -96,6 +99,7 @@ func RunServer(db *gorm.DB, gin *gin.Engine) *gin.Engine {
 		{
 			factor.GET("", apiHandler.KpiAPIHandler.GetFactorList)
 			factor.GET("/:id", apiHandler.KpiAPIHandler.GetFactorByID)
+			factor.Use(middleware.Auth())
 			factor.POST("", apiHandler.KpiAPIHandler.AddFactor)
 			factor.POST("/entire", apiHandler.KpiAPIHandler.AddEntireFactor)
 			factor.PUT("/:id", apiHandler.KpiAPIHandler.UpdateFactor)
@@ -106,6 +110,7 @@ func RunServer(db *gorm.DB, gin *gin.Engine) *gin.Engine {
 		{
 			item.GET("", apiHandler.KpiAPIHandler.GetItemList)
 			item.GET("/:id", apiHandler.KpiAPIHandler.GetItemByID)
+			item.Use(middleware.Auth())
 			item.POST("", apiHandler.KpiAPIHandler.AddItem)
 			item.POST("/entire", apiHandler.KpiAPIHandler.AddEntireItem)
 			item.PUT("/:id", apiHandler.KpiAPIHandler.UpdateItem)
@@ -116,6 +121,7 @@ func RunServer(db *gorm.DB, gin *gin.Engine) *gin.Engine {
 		{
 			masalah.GET("", apiHandler.AnalisaAPIHandler.GetMasalahList)
 			masalah.GET("/:id", apiHandler.AnalisaAPIHandler.GetMasalahByID)
+			masalah.Use(middleware.Auth())
 			masalah.POST("", apiHandler.AnalisaAPIHandler.AddMasalah)
 			masalah.PUT("/:id", apiHandler.AnalisaAPIHandler.UpdateMasalah)
 			masalah.DELETE("/:id", apiHandler.AnalisaAPIHandler.DeleteMasalah)
@@ -124,6 +130,7 @@ func RunServer(db *gorm.DB, gin *gin.Engine) *gin.Engine {
 		{
 			minipap.GET("", apiHandler.KpiAPIHandler.GetMinipapList)
 			minipap.GET("/:id", apiHandler.KpiAPIHandler.GetMinipapByID)
+			minipap.Use(middleware.Auth())
 			minipap.POST("", apiHandler.KpiAPIHandler.AddMinipap)
 			minipap.PUT("/:id", apiHandler.KpiAPIHandler.UpdateMinipap)
 			minipap.DELETE("/:id", apiHandler.KpiAPIHandler.DeleteMinipap)
@@ -132,6 +139,7 @@ func RunServer(db *gorm.DB, gin *gin.Engine) *gin.Engine {
 		{
 			monthly.GET("", apiHandler.KpiAPIHandler.GetMonthlyList)
 			monthly.GET("/:id", apiHandler.KpiAPIHandler.GetMonthlyByID)
+			monthly.Use(middleware.Auth())
 			monthly.POST("", apiHandler.KpiAPIHandler.AddMonthly)
 			monthly.PUT("/:id", apiHandler.KpiAPIHandler.UpdateMonthly)
 			monthly.DELETE("/:id", apiHandler.KpiAPIHandler.DeleteMonthly)
@@ -140,6 +148,7 @@ func RunServer(db *gorm.DB, gin *gin.Engine) *gin.Engine {
 		{
 			project.GET("", apiHandler.ProjectAPIHandler.GetProjectList)
 			project.GET("/:id", apiHandler.ProjectAPIHandler.GetProjectByID)
+			project.Use(middleware.Auth())
 			project.POST("", apiHandler.ProjectAPIHandler.AddProject)
 			project.PUT("/:id", apiHandler.ProjectAPIHandler.UpdateProject)
 			project.DELETE("/:id", apiHandler.ProjectAPIHandler.DeleteProject)
@@ -148,6 +157,7 @@ func RunServer(db *gorm.DB, gin *gin.Engine) *gin.Engine {
 		{
 			result.GET("", apiHandler.KpiAPIHandler.GetResultList)
 			result.GET("/:id", apiHandler.KpiAPIHandler.GetResultByID)
+			result.Use(middleware.Auth())
 			result.POST("", apiHandler.KpiAPIHandler.AddResult)
 			result.POST("/entire", apiHandler.KpiAPIHandler.AddEntireResult)
 			result.PUT("/:id", apiHandler.KpiAPIHandler.UpdateResult)
@@ -158,6 +168,7 @@ func RunServer(db *gorm.DB, gin *gin.Engine) *gin.Engine {
 		{
 			summary.GET("", apiHandler.ProjectAPIHandler.GetSummaryList)
 			summary.GET("/:id", apiHandler.ProjectAPIHandler.GetSummaryByID)
+			summary.Use(middleware.Auth())
 			summary.POST("", apiHandler.ProjectAPIHandler.AddSummary)
 			summary.POST("/entire", apiHandler.ProjectAPIHandler.AddEntireSummary)
 			summary.PUT("/:id", apiHandler.ProjectAPIHandler.UpdateSummary)
@@ -168,13 +179,14 @@ func RunServer(db *gorm.DB, gin *gin.Engine) *gin.Engine {
 		{
 			yearly.GET("", apiHandler.KpiAPIHandler.GetYearlyList)
 			yearly.GET("/:id", apiHandler.KpiAPIHandler.GetYearlyByID)
+			yearly.Use(middleware.Auth())
 			yearly.POST("", apiHandler.KpiAPIHandler.AddYearly)
 			yearly.PUT("/:id", apiHandler.KpiAPIHandler.UpdateYearly)
 			yearly.DELETE("/:id", apiHandler.KpiAPIHandler.DeleteYearly)
 			yearly.POST("/entire", apiHandler.KpiAPIHandler.AddEntireYearly)
 			yearly.DELETE("/entire/:id", apiHandler.KpiAPIHandler.DeleteEntireYearly)
 		}
-		file := kpi.Group("/file")
+		file := kpi.Group("/file", middleware.Auth())
 		{
 			file.POST("", apiHandler.FileAPIHandler.KpiFileUpload)
 			file.POST("/save", apiHandler.FileAPIHandler.SaveFile)

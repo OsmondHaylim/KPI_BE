@@ -15,22 +15,18 @@ import (
 func Auth() gin.HandlerFunc {
 	return gin.HandlerFunc(func(ctx *gin.Context) {
 		res := strings.Split(ctx.GetHeader("Authorization"), " ")
-
 		if len(res) != 2 || res[0] != "Bearer" {
-			ctx.AbortWithStatusJSON(http.StatusUnauthorized, model.ErrorResponse{Error: "ga valid bang"})
+			ctx.AbortWithStatusJSON(http.StatusUnauthorized, model.ErrorResponse{Error: "invalid"})
 			return
 		}
-
 		claims := &model.Claims{}
 		tkn, err := jwt.ParseWithClaims(res[1], claims, func(token *jwt.Token) (interface{}, error) {
             return model.JwtKey, nil
         })
-
         if err != nil || !tkn.Valid {
 			ctx.AbortWithStatusJSON(http.StatusUnauthorized, model.ErrorResponse{Error: "ga valid bang"})
             return
         }
-
 		ctx.Set("email", claims.Email)
 		ctx.Next()
 	})
@@ -39,28 +35,23 @@ func Auth() gin.HandlerFunc {
 func AuthAdmin(db *gorm.DB) gin.HandlerFunc {
 	return gin.HandlerFunc(func(ctx *gin.Context) {
 		res := strings.Split(ctx.GetHeader("Authorization"), " ")
-
 		if len(res) != 2 || res[0] != "Bearer" {
 			ctx.AbortWithStatusJSON(http.StatusUnauthorized, model.ErrorResponse{Error: "coba lagi bang"})
 			return
 		}
-
 		claims := &model.Claims{}
 		tkn, err := jwt.ParseWithClaims(res[1], claims, func(token *jwt.Token) (interface{}, error) {
             return model.JwtKey, nil
         })
-
         if err != nil || !tkn.Valid {
 			ctx.AbortWithStatusJSON(http.StatusUnauthorized, model.ErrorResponse{Error: "ga valid bang"})
             return
         }
-		
 		var compare model.User
 		err = db.Where("email = ?", claims.Email).First(&compare).Error
 		if err != nil {
 			ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Trouble finding user"})
 		}
-
 		if compare.Role == "admin"{
 			ctx.Set("email", claims.Email)
 			ctx.Next()

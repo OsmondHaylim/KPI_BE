@@ -6,7 +6,7 @@ import (
 	"gorm.io/gorm"
 )
 
-type SessionService interface {
+type SessionRepo interface {
 	AddSessions(session model.Session) error
 	DeleteSession(token string) error
 	UpdateSessions(session model.Session) error
@@ -15,30 +15,30 @@ type SessionService interface {
 	TokenExpired(session model.Session) bool
 }
 
-type sessionService struct {
+type sessionRepo struct {
 	db *gorm.DB
 }
 
-func NewSessionService(db *gorm.DB) *sessionService {
-	return &sessionService{db}
+func NewSessionRepo(db *gorm.DB) *sessionRepo {
+	return &sessionRepo{db}
 }
 
-func (s *sessionService) AddSessions(session model.Session) error {	
+func (s *sessionRepo) AddSessions(session model.Session) error {	
 	err := s.db.Create(&session)
 	return err.Error
 }
 
-func (s *sessionService) DeleteSession(token string) error {			
+func (s *sessionRepo) DeleteSession(token string) error {			
 	err := s.db.Where("token = ?", token).Delete(&model.Session{})
 	return err.Error
 }
 
-func (s *sessionService) UpdateSessions(session model.Session) error {
+func (s *sessionRepo) UpdateSessions(session model.Session) error {
 	err := s.db.Where("email = ?", session.Email).Updates(session)
 	return err.Error
 }
 
-func (s *sessionService) SessionAvailEmail(email string) (model.Session, error) {
+func (s *sessionRepo) SessionAvailEmail(email string) (model.Session, error) {
 	var result model.Session
 	err := s.db.Where("email = ?", email).First(&result).Error
 	if err != nil{
@@ -47,7 +47,7 @@ func (s *sessionService) SessionAvailEmail(email string) (model.Session, error) 
 	return result, nil
 }
 
-func (s *sessionService) SessionAvailToken(token string) (model.Session, error) {
+func (s *sessionRepo) SessionAvailToken(token string) (model.Session, error) {
 	var result model.Session
 	err := s.db.Where("token = ?", token).First(&result).Error
 	if err != nil{
@@ -56,7 +56,7 @@ func (s *sessionService) SessionAvailToken(token string) (model.Session, error) 
 	return result, nil
 }
 
-func (s *sessionService) TokenValidity(token string) (model.Session, error) {
+func (s *sessionRepo) TokenValidity(token string) (model.Session, error) {
 	session, err := s.SessionAvailToken(token)
 	if err != nil {
 		return model.Session{}, err
@@ -73,6 +73,6 @@ func (s *sessionService) TokenValidity(token string) (model.Session, error) {
 	return session, nil
 }
 
-func (s *sessionService) TokenExpired(session model.Session) bool {
+func (s *sessionRepo) TokenExpired(session model.Session) bool {
 	return session.Expiry.Before(time.Now())
 }

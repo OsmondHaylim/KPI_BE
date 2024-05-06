@@ -14,3 +14,10 @@ type CompactPAP struct{
 	PlanID		*int			`json:"plan_id"`
 	ActualID	*int			`json:"actual_id"`
 }
+
+type User_compact struct {
+	ID 			int				`gorm:"primaryKey" json:"id"`
+	Username	string			`gorm:"notNull" json:"username"`	
+	Email		string			`gorm:"notNull" json:"email"`
+	Role		string			`gorm:"notNull" json:"role"`
+}

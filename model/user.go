@@ -14,15 +14,20 @@ type User struct {
 }
 
 type Session struct {
-	ID     int       			`gorm:"primaryKey;autoIncrement" json:"id"`
-	Token  string    			`json:"token"`
-	Email  string    			`json:"email"`
-	Expiry time.Time 			`json:"expiry"`
+	ID     		int       		`gorm:"primaryKey;autoIncrement" json:"id"`
+	Token  		string    		`json:"token"`
+	Email  		string    		`json:"email"`
+	Expiry 		time.Time 		`json:"expiry"`
+}
+
+type User_login struct{
+	Username 	string			`gorm:"notNull" json:"username"`
+	Password	string			`gorm:"notNull" json:"password"`
 }
 
 var JwtKey = []byte("secret-key")
 
 type Claims struct {
-	Email string `json:"email"`
+	Email 		string 			`json:"email"`
 	jwt.StandardClaims
 }

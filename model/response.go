@@ -41,6 +41,12 @@ type SummaryArrayResponse struct{
 type YearlyArrayResponse struct {
 	Message  	string					`json:"message"`
 	Yearly 		[]YearlyResponse 		`json:"data"`}
+type UserArrayResponse struct {
+	Message string `json:"message"`
+	Users   []User_compact `json:"data"`}
+type SessionArrayResponse struct {
+	Message  string    `json:"message"`
+	Sessions []Session `json:"data"`}
 // Simplified Response
 type AttendanceResponse struct{
 	Year 		int			`json:"Year"`
@@ -88,4 +94,26 @@ type YearlyResponse struct{
 	Year			int						`json:"Year"`
 	Items			[]ItemResponse			`json:"Items"`
 	Attendance 		*AttendanceResponse		`json:"Attendance"`}
+
+type SessionResponse struct {
+	Message string  `json:"message"`
+	Session Session `json:"data"`
+}
+type LoginResponse struct {
+	Message 	string					`json:"message"`
+	Data		struct{
+		ApiKey 		string    			`json:"apiKey"`
+		User   		User_compact	    `json:"user"`
+	}									`json:"data"`
+}
+type RegisterInput struct {
+	Username         string
+	Email            string
+	Password         string
+	Confirm_password string
+}
+type UserResponse struct {
+	Message string `json:"message"`
+	User    User_compact   `json:"data"`
+}
 
