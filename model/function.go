@@ -138,16 +138,16 @@ func (a AttendanceResponse) Back() Attendance{
 	}
 }
 
-func (a Analisa) ToResponse() AnalisaResponse{
-	newAnalisa := AnalisaResponse{
+func (a Analisa) ToCompact() CompactAnalisa{
+	newAnalisa := CompactAnalisa{
 		Year: a.Year,
 	}
 	for _, masalah := range a.Masalah{
-		newAnalisa.Masalah = append(newAnalisa.Masalah, masalah.ToResponse())
+		newAnalisa.Masalah = append(newAnalisa.Masalah, masalah.ToCompact())
 	}
 	return newAnalisa
 }
-func (a AnalisaResponse) Back() Analisa{
+func (a CompactAnalisa) Back() Analisa{
 	newAnalisa := Analisa{
 		Year: a.Year,
 	}
@@ -157,8 +157,8 @@ func (a AnalisaResponse) Back() Analisa{
 	return newAnalisa
 }
 
-func (m Masalah) ToResponse() MasalahResponse{
-	return MasalahResponse{
+func (m Masalah) ToCompact() CompactMasalah{
+	return CompactMasalah{
 		Masalah_ID: m.Masalah_ID,
 		Masalah: m.Masalah,
 		Why: m.Why,
@@ -167,7 +167,7 @@ func (m Masalah) ToResponse() MasalahResponse{
 		Target: m.Target,
 	}
 }
-func (m MasalahResponse) Back() Masalah{
+func (m CompactMasalah) Back() Masalah{
 	return Masalah{
 		Masalah_ID: m.Masalah_ID,
 		Masalah: m.Masalah,

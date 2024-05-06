@@ -14,3 +14,17 @@ type CompactPAP struct{
 	PlanID		*int			`json:"plan_id"`
 	ActualID	*int			`json:"actual_id"`
 }
+
+type CompactMasalah struct{
+	Masalah_ID		int				`gorm:"primaryKey" json:"Masalah_ID"`
+	Masalah 		string			`gorm:"notNull"`
+	Why				[]string		`gorm:"type:text[]" json:"Why"`
+	Tindakan		string
+	Pic				string
+	Target			string
+}
+
+type CompactAnalisa struct{
+	Year 			int
+	Masalah			[]CompactMasalah
+}

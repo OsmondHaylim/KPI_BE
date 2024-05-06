@@ -28,7 +28,7 @@ type CrudService interface {
 	AddEntireResult(wg *sync.WaitGroup, input *model.ResultResponse, id *int, errs chan error)
 	AddEntireFactor(wg *sync.WaitGroup, input *model.FactorResponse, id *int, errs chan error)
 	AddEntireAttendance(input *model.AttendanceResponse, year *int) error
-	AddEntireAnalisa(input *model.AnalisaResponse) error
+	AddEntireAnalisa(input *model.Analisa) error
 	AddEntireSummary(input *model.SummaryResponse) error
 
 	//Update Independent
@@ -47,7 +47,7 @@ type CrudService interface {
 
 	// Update Cascade
 	UpdateEntireAttendance(id int, input model.AttendanceResponse) error
-	UpdateEntireAnalisa(id int, input model.AnalisaResponse) error
+	UpdateEntireAnalisa(id int, input model.Analisa) error
 	UpdateEntireFactor(id int, input model.FactorResponse) error
 	UpdateEntireItem(id int, input model.ItemResponse) error
 	UpdateEntireResult(id int, input model.ResultResponse) error
@@ -87,7 +87,7 @@ type CrudService interface {
 	GetResultByID(input int) (*model.ResultResponse, error)
 	GetYearlyByID(input int) (*model.YearlyResponse, error)
 	GetAnalisaByID(input int) (*model.Analisa, error)
-	GetMasalahByID(input int) (*model.MasalahResponse, error)
+	GetMasalahByID(input int) (*model.Masalah, error)
 	GetProjectByID(input int) (*model.ProjectResponse, error)
 	GetSummaryByID(input int) (*model.SummaryResponse, error)
 	GetFileByID(input int) (*model.UploadFile, error)
@@ -150,6 +150,8 @@ func NewCrudService(
 
 type ParseService interface {
 	ParseKpi(input multipart.File) (*model.YearlyResponse, error)
+	ParseAnalisis(input multipart.File) (*model.Analisa, error)
+	ParseSummary(input multipart.File) (*model.SummaryResponse, error)
 	SaveFile(input multipart.File, header *multipart.FileHeader) (*model.UploadFile, error)
 }
 type parseService struct {
