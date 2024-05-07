@@ -1,9 +1,12 @@
 package service
 
 import (
+	"fmt"
 	"goreact/model"
 	"mime/multipart"
 	"regexp"
+	"strings"
+	"time"
 
 	// "path/filepath"
 	"io"
@@ -29,7 +32,9 @@ func (ps *parseService) ParseKpi (input multipart.File) (*model.YearlyResponse, 
 	if err != nil {return nil, err}
 	test := ""
 	for _, sheet := range excel.Sheets {
-		if sheet.Name == "KPI staff Design" {
+		//Find Sheet
+		if sheet.Name == "KPI staff Design" { 
+			//Get Year
 			re := regexp.MustCompile(`(\d{4})$`)
 			match := re.FindStringSubmatch(sheet.Rows[3].Cells[2].String())
 			year := 0
@@ -38,6 +43,7 @@ func (ps *parseService) ParseKpi (input multipart.File) (*model.YearlyResponse, 
 				if err != nil {return nil, err}
 			}
 			test += strconv.Itoa(year) + " "
+			//Declare Response
 			KPI := model.YearlyResponse{
 				Year: year,
 				Attendance: &model.AttendanceResponse{},
@@ -50,22 +56,13 @@ func (ps *parseService) ParseKpi (input multipart.File) (*model.YearlyResponse, 
 			}
 			// monthly := model.Monthly{}
 
-			content := false
-			onHold := false
-			prereq := false
-			attend := 0
+			content := false	//Reading table status
+			onHold := false		//Switch for 1 delay read before content
+			prereq := false		//Length prerequisite status 
+			attend := 0			//Countdown for Attendance Reading
 			test += "/" + strconv.Itoa(len(sheet.Rows)) + "/"
 			for _, row := range sheet.Rows {
 				prereq = len(row.Cells) >= 22
-				if (prereq && row.Cells[0].String() == "ABSENSI"){
-					attend = 5
-					tempResult.Factors = append(tempResult.Factors, tempFactor)
-					tempFactor = model.FactorResponse{}
-					tempItem.Results = append(tempItem.Results, tempResult)
-					tempResult = model.ResultResponse{}
-					KPI.Items = append(KPI.Items, tempItem)
-					tempItem = model.ItemResponse{}
-				}
 				if (!content && !onHold && row.Cells[0].String() == "Item"){
 					onHold = true
 					continue
@@ -74,6 +71,15 @@ func (ps *parseService) ParseKpi (input multipart.File) (*model.YearlyResponse, 
 					content = true
 					onHold = false
 					continue
+				}
+				if (prereq && row.Cells[0].String() == "ABSENSI"){
+					attend = 5
+					tempResult.Factors = append(tempResult.Factors, tempFactor)
+					tempFactor = model.FactorResponse{}
+					tempItem.Results = append(tempItem.Results, tempResult)
+					tempResult = model.ResultResponse{}
+					KPI.Items = append(KPI.Items, tempItem)
+					tempItem = model.ItemResponse{}
 				}
 				if (prereq && content && row.Cells[0].String() != "ABSENSI") {
 					if row.Cells[3].String() != ""{
@@ -137,6 +143,7 @@ func (ps *parseService) ParseKpi (input multipart.File) (*model.YearlyResponse, 
 						if err != nil {return nil, err}
 						monthly.Remarks = &remarks
 						//Inputting MiniPAP & Monthly
+						if strings.Contains(row.Cells[6].String(), "vs"){continue}
 						switch row.Cells[6].String()[0]{
 						case 'P':
 							if tempFactor.Plan == nil{
@@ -286,4 +293,146 @@ func (ps *parseService) SaveFile (input multipart.File, header *multipart.FileHe
 		File: content,
 	}
 	return &file, nil
+}
+
+func (ps *parseService) ParseAnalisis (input multipart.File) (*model.Analisa, error){
+	//Create temp file
+	out, err := os.CreateTemp("", "upload-*.xlsx")
+	if err != nil {return nil, err}	
+	defer out.Close()
+	//Copy File
+	_, err = io.Copy(out, input)
+	if err != nil {return nil, err}
+	excel, err := xlsx.OpenFile(out.Name())
+	if err != nil {return nil, err}
+	test := ""
+	for _, sheet := range excel.Sheets {
+		if sheet.Name == "Analisa" {
+			fmt.Println("found")
+			re := regexp.MustCompile(`(\d{4})$`)
+			match := re.FindStringSubmatch(sheet.Rows[1].Cells[0].String())
+			year := 0
+			if len(match) == 2 {
+				year, err = strconv.Atoi(match[1])
+				if err != nil {return nil, err}
+			}
+			test += strconv.Itoa(year) + " "
+			Analisis := model.Analisa{
+				Year: year,
+			}
+			tempMasalah := model.Masalah{}
+			prereq := false
+			content := false
+			onHold := false
+			fmt.Println("loop start")
+			for _, row := range sheet.Rows{
+				// fmt.Println(len(row.Cells))
+				prereq = len(row.Cells) >= 12
+				if (prereq && !content && row.Cells[0].String() == "No."){
+					// fmt.Println("preparing to input")
+					onHold = true
+					continue
+				} 
+				if (!content && onHold){
+					// fmt.Println("begin to input")
+					content = true
+					onHold = false
+					continue
+				}
+				if (prereq && content && row.Cells[1].String() != "") {
+					// fmt.Print("inputting")
+					tempMasalah.Masalah = row.Cells[1].String()
+					tempMasalah.Tindakan = row.Cells[7].String()
+					tempMasalah.Pic = row.Cells[8].String()
+					tempMasalah.Target = row.Cells[9].String()
+					if row.Cells[10].String() != "" && row.Cells[10].String() != "-"{
+						tempDate, err := time.Parse(row.Cells[10].String(), row.Cells[10].String())
+						if err != nil{return nil, err}
+						tempMasalah.FolDate = &tempDate
+					}
+					if row.Cells[11].String() != "" && row.Cells[11].String() != "-"{
+						tempMasalah.Status = row.Cells[11].String()
+					}
+					for i := 2; i <= 6; i++{
+						if row.Cells[i].String() != "" && row.Cells[i].String() != "-"{
+							tempMasalah.Why = append(tempMasalah.Why, row.Cells[i].String()) 
+						}
+					}
+					// fmt.Print(tempMasalah)
+					Analisis.Masalah = append(Analisis.Masalah, tempMasalah)
+					tempMasalah = model.Masalah{}
+				}
+				if (prereq && content && row.Cells[1].String() == "") {
+					break
+				}
+			
+			test += "/" + strconv.Itoa(len(sheet.Rows)) + "/"
+			}
+			return &Analisis, nil
+		}
+		
+	}
+	return nil, nil
+}
+
+func (ps *parseService) ParseSummary (input multipart.File) (*model.SummaryResponse, error){
+	//Create temp file
+	out, err := os.CreateTemp("", "upload-*.xlsx")
+	if err != nil {return nil, err}	
+	defer out.Close()
+	//Copy File
+	_, err = io.Copy(out, input)
+	if err != nil {return nil, err}
+	excel, err := xlsx.OpenFile(out.Name())
+	if err != nil {return nil, err}
+	for _, sheet := range excel.Sheets {
+		if sheet.Name == "Summary Project" {
+			fmt.Println("found")
+			Summary := model.SummaryResponse{}
+			
+			
+			for i := 3; i <= len(sheet.Rows[2].Cells); i+=2{
+				if sheet.Rows[2].Cells[i].String() != "REMARKS" && !strings.Contains(sheet.Rows[2].Cells[i].String(), "vs"){
+					tempProject := model.ProjectResponse{}
+					item := make(map[string]int)
+					qty := make(map[string]int)
+					tempProject.Name = sheet.Rows[2].Cells[i].String()
+					fmt.Println(tempProject.Name)
+					item["Not Yet Start Issued FR"], err = sheet.Rows[5].Cells[i].Int()
+					fmt.Println(item["Not Yet Start Issued FR"])
+					if err != nil {return nil, err}
+					qty["Not Yet Start Issued FR"], err = sheet.Rows[5].Cells[i+1].Int()
+					if err != nil {return nil, err}
+					item["DR"], err = sheet.Rows[6].Cells[i].Int()
+					fmt.Println(item["DR"])
+					if err != nil {return nil, err}
+					qty["DR"], err = sheet.Rows[6].Cells[i+1].Int()
+					if err != nil {return nil, err}
+					item["PR to PO"], err = sheet.Rows[7].Cells[i].Int()
+					fmt.Println(item["PR to PO"])
+					if err != nil {return nil, err}
+					qty["PR to PO"], err = sheet.Rows[7].Cells[i+1].Int()
+					if err != nil {return nil, err}
+					item["Install"], err = sheet.Rows[8].Cells[i].Int()
+					fmt.Println(item["Install"])
+					if err != nil {return nil, err}
+					qty["Install"], err = sheet.Rows[8].Cells[i+1].Int()
+					if err != nil {return nil, err}
+					item["Finish"], err = sheet.Rows[9].Cells[i].Int()
+					if err != nil {return nil, err}
+					qty["Finish"], err = sheet.Rows[9].Cells[i+1].Int()
+					if err != nil {return nil, err}
+					item["Cancelled"], err = sheet.Rows[10].Cells[i].Int()
+					if err != nil {return nil, err}
+					qty["Cancelled"], err = sheet.Rows[10].Cells[i+1].Int()
+					if err != nil {return nil, err}
+					tempProject.Item = item
+					tempProject.Quantity = qty
+					Summary.Projects = append(Summary.Projects, tempProject)
+				} else {break}
+			}
+			return &Summary, nil
+		}
+	}
+	return nil, nil
 }

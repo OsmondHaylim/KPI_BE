@@ -306,11 +306,10 @@ func (cs *crudService) GetItemByID(input int) (*model.ItemResponse, error){
 	newInput := tempInput.ToResponse()
 	return &newInput, err
 }
-func (cs *crudService) GetMasalahByID(input int) (*model.MasalahResponse, error){
+func (cs *crudService) GetMasalahByID(input int) (*model.Masalah, error){
 	tempInput, err := cs.masalahRepo.GetByID(input)
 	if err != nil {return nil, err}
-	newInput := tempInput.ToResponse()
-	return &newInput, err
+	return tempInput, err
 }
 func (cs *crudService) GetMinipapByID(input int) (*model.MiniPAP, error){return cs.minipapRepo.GetByID(input)}
 func (cs *crudService) GetMonthlyByID(input int) (*model.Monthly, error){return cs.monthlyRepo.GetByID(input)}
@@ -377,10 +376,8 @@ func (cs *crudService) GetItemList() (model.ItemArrayResponse, error){
 func (cs *crudService) GetMasalahList() (model.MasalahArrayResponse, error){
 	tempInput, err := cs.masalahRepo.GetList()
 	var newInput model.MasalahArrayResponse
-	newInput.Masalah = []model.MasalahResponse{}
-	for _, temp := range tempInput{
-		newInput.Masalah = append(newInput.Masalah, temp.ToResponse())	
-	}
+	newInput.Masalah = []model.Masalah{}
+	newInput.Masalah = append(newInput.Masalah, tempInput...)	
 	return newInput, err
 }
 func (cs *crudService) GetMinipapList() (model.MinipapArrayResponse, error){

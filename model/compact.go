@@ -21,3 +21,17 @@ type User_compact struct {
 	Email		string			`gorm:"notNull" json:"email"`
 	Role		string			`gorm:"notNull" json:"role"`
 }
+
+type CompactMasalah struct{
+	Masalah_ID		int				`gorm:"primaryKey" json:"Masalah_ID"`
+	Masalah 		string			`gorm:"notNull"`
+	Why				[]string		`gorm:"type:text[]" json:"Why"`
+	Tindakan		string
+	Pic				string
+	Target			string
+}
+
+type CompactAnalisa struct{
+	Year 			int
+	Masalah			[]CompactMasalah
+}

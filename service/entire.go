@@ -147,32 +147,29 @@ func (cs *crudService) AddEntireAttendance(input *model.AttendanceResponse, id *
 	if err != nil {return err}
 	return nil
 }
-func (cs *crudService) AddEntireAnalisa(input *model.AnalisaResponse) error{
+func (cs *crudService) AddEntireAnalisa(input *model.Analisa) error{
 	var newAnalisa model.Analisa
 	newAnalisa.Year = input.Year
 
 	err := cs.AddAnalisa(&newAnalisa)
 	if err != nil {return err}
 
-	wg, errs := model.GoRoutineInit()
-
 	for _, data := range input.Masalah{
-		wg.Add(1)
-		go func(data model.MasalahResponse){
-			var newMasalah = model.Masalah{
-				Masalah: data.Masalah,
-				Why: data.Why,
-				Tindakan: data.Tindakan,
-				Pic: data.Pic,
-				Target: data.Target,
-				Year: &newAnalisa.Year,
-				//Default status here
-			}
-			err = cs.AddMasalah(&newMasalah)
-			if err != nil {errs <- err; return}
-		}(data)
+		var newMasalah = model.Masalah{
+			Masalah: data.Masalah,
+			Why: data.Why,
+			Tindakan: data.Tindakan,
+			Pic: data.Pic,
+			Target: data.Target,
+			Year: &newAnalisa.Year,
+			FolDate: data.FolDate,
+
+			//Default status here
+		}
+		err = cs.AddMasalah(&newMasalah)
+		if err != nil {return err}
 	}
-	return model.SimpleErrorChanCheck(&wg, errs)
+	return nil
 }
 func (cs *crudService) AddEntireSummary(input *model.SummaryResponse) error{
 	var newSummary = model.Summary{
@@ -180,31 +177,27 @@ func (cs *crudService) AddEntireSummary(input *model.SummaryResponse) error{
 	}
 	err := cs.AddSummary(&newSummary)
 	if err != nil {return err}
-	wg, errs := model.GoRoutineInit()
 	for _, data := range input.Projects{
-		wg.Add(1)
-		go func(data model.ProjectResponse){
-			var newProject = model.Project{
-				Name: data.Name,
-				Summary_ID: &newSummary.Summary_ID,
-				INYS: data.Item["Not Yet Start Issued FR"],
-				QNYS: data.Quantity["Not Yet Start Issued FR"],
-				IDR: data.Item["DR"],
-				QDR: data.Quantity["DR"],
-				IPR: data.Item["PR to PO"],
-				QPR: data.Quantity["PR to PO"],
-				II: data.Item["Install"],
-				QI: data.Quantity["Install"],
-				IF: data.Item["Finish"],
-				QF: data.Quantity["Finish"],
-				IC: data.Item["Cancelled"],
-				QC: data.Quantity["Cancelled"],
-			}
-			err := cs.AddProject(&newProject)
-			if err != nil {errs <- err; return}
-		}(data)	
+		var newProject = model.Project{
+			Name: data.Name,
+			Summary_ID: &newSummary.Summary_ID,
+			INYS: data.Item["Not Yet Start Issued FR"],
+			QNYS: data.Quantity["Not Yet Start Issued FR"],
+			IDR: data.Item["DR"],
+			QDR: data.Quantity["DR"],
+			IPR: data.Item["PR to PO"],
+			QPR: data.Quantity["PR to PO"],
+			II: data.Item["Install"],
+			QI: data.Quantity["Install"],
+			IF: data.Item["Finish"],
+			QF: data.Quantity["Finish"],
+			IC: data.Item["Cancelled"],
+			QC: data.Quantity["Cancelled"],
+		}
+		err := cs.AddProject(&newProject)
+		if err != nil {return err}
 	}
-	return model.SimpleErrorChanCheck(&wg, errs)
+	return nil
 }
 
 // Delete Entire
@@ -330,7 +323,7 @@ func (cs *crudService) DeleteEntireSummary(input int) error{
 	if err != nil {return err}
 	wg, errs := model.GoRoutineInit()
 	wg.Add(1)
-	go func(){
+	func(){
 		defer wg.Done()
 		for _, data := range temp.Projects{
 			err = cs.DeleteProject(data.Project_ID)
@@ -555,10 +548,9 @@ func (cs *crudService) UpdateEntireAttendance(id int, input model.AttendanceResp
 	if err != nil {return err}
 	return nil
 }
-func (cs *crudService) UpdateEntireAnalisa(id int, input model.AnalisaResponse) error{
+func (cs *crudService) UpdateEntireAnalisa(id int, input model.Analisa) error{
 	before, err := cs.analisaRepo.GetByID(id)
 	if err != nil {return err}
-	newAnalisa := input.Back()
 
 	if before.Masalah != nil{
 		for _, data := range before.Masalah{
@@ -566,14 +558,14 @@ func (cs *crudService) UpdateEntireAnalisa(id int, input model.AnalisaResponse) 
 			if err != nil {return err}
 		}
 	}
-	if newAnalisa.Masalah != nil{
-		for _, data := range newAnalisa.Masalah{
+	if input.Masalah != nil{
+		for _, data := range input.Masalah{
 			data.Year = &id
 			err = cs.AddMasalah(&data)
 			if err != nil {return err}
 		}
 	}
-	return cs.UpdateAnalisa(id, newAnalisa)
+	return cs.UpdateAnalisa(id, input)
 }
 func (cs *crudService) UpdateEntireSummary(id int, input model.SummaryResponse) error{
 	before, err := cs.summaryRepo.GetByID(id)

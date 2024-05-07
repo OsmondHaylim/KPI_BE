@@ -22,7 +22,7 @@ type ItemArrayResponse struct {
 	Item 		[]ItemResponse 			`json:"data"`}
 type MasalahArrayResponse struct {
 	Message  	string					`json:"message"`
-	Masalah 	[]MasalahResponse 		`json:"data"`}
+	Masalah 	[]Masalah 		`json:"data"`}
 type MinipapArrayResponse struct {
 	Message  	string			`json:"message"`
 	Minipap 	[]MiniPAP 		`json:"data"`}
@@ -71,16 +71,6 @@ type ItemResponse struct{
 	Item_ID		int					`json:"Item_ID"`
 	Name		string				`json:"Name"`
 	Results		[]ResultResponse	`json:"Results"`}
-type MasalahResponse struct{
-	Masalah_ID		int				`gorm:"primaryKey" json:"Masalah_ID"`
-	Masalah 		string			`gorm:"notNull"`
-	Why				[]string		`gorm:"type:text[]" json:"Why"`
-	Tindakan		string
-	Pic				string
-	Target			string}
-type AnalisaResponse struct{
-	Year 			int
-	Masalah			[]MasalahResponse}
 type ProjectResponse struct{
 	Project_ID		int				
 	Name 			string		

@@ -188,7 +188,9 @@ func RunServer(db *gorm.DB, gin *gin.Engine) *gin.Engine {
 		}
 		file := kpi.Group("/file", middleware.Auth())
 		{
-			file.POST("", apiHandler.FileAPIHandler.KpiFileUpload)
+			file.POST("/kpi", apiHandler.FileAPIHandler.KpiFileUpload)
+			file.POST("/analisa", apiHandler.FileAPIHandler.AnalisaFileUpload)
+			file.POST("/summary", apiHandler.FileAPIHandler.SummaryFileUpload)
 			file.POST("/save", apiHandler.FileAPIHandler.SaveFile)
 		}
 	}

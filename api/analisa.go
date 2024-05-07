@@ -118,7 +118,7 @@ func (aa *analisaAPI) GetMasalahList(k *gin.Context) {
 }
 
 func (aa *analisaAPI) AddEntireAnalisa(k *gin.Context){
-	var newAnalisa model.AnalisaResponse
+	var newAnalisa model.Analisa
 	err := k.ShouldBindJSON(&newAnalisa)
 	if model.ErrorCheck(k, err){return}
 	err = aa.crudService.AddEntireAnalisa(&newAnalisa)
