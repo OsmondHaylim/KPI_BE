@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"strconv"
 	"sync"
+	"errors"
+	jwt "github.com/golang-jwt/jwt/v4"
 
 	"github.com/gin-gonic/gin"
 )
@@ -372,14 +374,19 @@ func (m Monthly) Reseted() Monthly{
 
 func ErrorCheck(k *gin.Context, err error) bool {
 	if err != nil {
-		if err.Error() == "record not found"{
-			k.JSON(http.StatusNotFound, ErrorResponse{Error: err.Error()})
-			return true
-		}else{
-			k.JSON(http.StatusInternalServerError, ErrorResponse{Error: err.Error()})
-			fmt.Print(err.Error())
-			return true
+		switch err.Error(){
+			case "EOF":
+				k.JSON(http.StatusBadRequest, ErrorResponse{Error: "Empty request body"})
+			case "record not found":
+				k.JSON(http.StatusNotFound, ErrorResponse{Error: err.Error()})
+			case "invalid character 'x' after top-level value":
+				k.JSON(http.StatusBadRequest, ErrorResponse{Error: "Invalid JSON"})
+			case "unauthorized":
+				k.JSON(http.StatusUnauthorized, ErrorResponse{Error: "Unauthorized Access"})
+			default:
+				k.JSON(http.StatusInternalServerError, ErrorResponse{Error: err.Error()})
 		}
+		return true
 	}
 	return false
 }
@@ -416,6 +423,16 @@ func SimpleErrorChanCheck(wg *sync.WaitGroup, errChan chan error) error{
 }
 func GoRoutineInit() (sync.WaitGroup, chan error){
 	return sync.WaitGroup{}, make(chan error)
+}
+func CheckValidation(header string)(*Claims, error){
+	claims := &Claims{}
+	tkn, err := jwt.ParseWithClaims(header, claims, func(token *jwt.Token) (interface{}, error) {
+		return JwtKey, nil
+	})
+	if err != nil || !tkn.Valid {
+		return nil, errors.New("unauthorized")
+	}
+	return claims, nil
 }
 
 func (u User) ToCompact() User_compact{

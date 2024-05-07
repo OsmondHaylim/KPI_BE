@@ -13,10 +13,10 @@ import (
 	"github.com/golang-jwt/jwt"
 )
 
-type UserRepo interface {
-	Login(u *gin.Context)
-	Register(u *gin.Context)
-	Logout(u *gin.Context)
+type UserService interface {
+	Login(user model.User_login) (*string, error)
+	Register(user model.RegisterInput) error
+	Logout(claim *model.Claims) error
 	AddUser(u *gin.Context)
 	UpdateUser(u *gin.Context)
 	DeleteUser(u *gin.Context)
@@ -36,25 +36,12 @@ func NewUserAPI(userRepo repository.UserRepo, sessionRepo repository.SessionRepo
 	return &userService{userRepo, sessionRepo}
 }
 
-func (ua *userService) Login(u *gin.Context) {
-	var user model.User_login
-	if err := u.BindJSON(&user); err != nil {
-		u.JSON(http.StatusBadRequest, errors.New("invalid decode json"))
-		return
-	}
-	if user.Username == "" || user.Password == "" {
-		u.JSON(http.StatusBadRequest, errors.New("login data is empty"))
-		return
-	}
-	dbUser, _ := ua.userRepo.GetByName(user.Username)
-	if dbUser.Username == "" || dbUser.ID == 0 {
-		u.JSON(http.StatusBadRequest, errors.New("user not found"))
-		return
-	}
-	if !middleware.CheckPasswordHash(user.Password, dbUser.Password) {
-		u.JSON(http.StatusBadRequest, errors.New("wrong email or password"))
-		return
-	}
+func (us *userService) Login(user model.User_login) (*string, error){
+	if user.Username == "" || user.Password == "" {return nil, errors.New("username or password empty")}
+	dbUser, _ := us.userRepo.GetByName(user.Username)
+	if dbUser.Username == "" || dbUser.ID == 0 {return nil, errors.New("user with username" + user.Username + " not found")}
+	if !middleware.CheckPasswordHash(user.Password, dbUser.Password) {return nil, errors.New("wrong email or password")}
+
 	expirationTime := time.Now().Add(20 * time.Minute)
 	claims := &model.Claims{
 		Email: dbUser.Email,
@@ -64,90 +51,67 @@ func (ua *userService) Login(u *gin.Context) {
 	}
 	t := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	tokenString, err := t.SignedString(model.JwtKey)
-	if err != nil {
-		u.JSON(http.StatusInternalServerError, errors.New("error signing claims"))
-		return
-	}
+	if err != nil {return nil, errors.New("error signing claims")}
+
 	session := model.Session{
 		Token:  tokenString,
 		Email:  dbUser.Email,
 		Expiry: expirationTime,
 	}
-	_, err = ua.sessionRepo.SessionAvailEmail(session.Email)
+	_, err = us.sessionRepo.SessionAvailEmail(session.Email)
 	if err != nil {
-		err = ua.sessionRepo.AddSessions(session)
+		err = us.sessionRepo.AddSessions(session)
 	} else {
-		err = ua.sessionRepo.UpdateSessions(session)
+		err = us.sessionRepo.UpdateSessions(session)
 	}
-
-	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
-		return model.JwtKey, nil
-	})
-
-	if err != nil {
-		u.JSON(http.StatusInternalServerError, errors.New("error internal server"))
-		return
-	}
-
-	if !token.Valid {
-		u.JSON(http.StatusUnauthorized, errors.New("invalid token"))
-		return
-	}
-
-	u.JSON(http.StatusOK, gin.H{
-		"message": "login success",
-		"data": gin.H{
-			"apiKey": tokenString,
-			"user": gin.H{
-				"id":       dbUser.ID,
-				"username": dbUser.Username,
-				"email":    dbUser.Email,
-				"role":     dbUser.Role,
-			},
-		},
-	})
+	if err != nil {return nil, err}
+	_, err = model.CheckValidation(tokenString)
+	return &tokenString, err
 }
 
-func (ua *userService) Register(u *gin.Context) {
-	var user model.RegisterInput
-	if err := u.BindJSON(&user); err != nil {
-		u.JSON(http.StatusBadRequest, errors.New("invalid decode json"))
-		return
-	}
+func (us *userService) Register(user model.RegisterInput) error{
 	if user.Email == "" || user.Password == "" || user.Username == "" {
-		u.JSON(http.StatusBadRequest, errors.New("register data is empty"))
-		return
+		return errors.New("register data is empty")
 	} else if user.Password != user.Confirm_password {
-		u.JSON(http.StatusBadRequest, errors.New("password and confirm password doesn't match"))
-		return
+		return errors.New("password and confirm password doesn't match")
 	}
-	_, exists := ua.userRepo.GetByEmail(user.Email)
-	if exists {
-		u.JSON(http.StatusBadRequest, errors.New("email already exists"))
-		return
-	}
+	_, exists := us.userRepo.GetByEmail(user.Email)
+	if exists {return errors.New("email already exists")}
 
 	hashedPw, err := middleware.HashPassword(user.Password)
-	if err != nil {
-		u.JSON(http.StatusInternalServerError, errors.New("Skill Issue at Hashing"))
-	}
+	if err != nil {return err}
 
 	var result model.User = model.User{
 		Username: user.Username,
 		Email:    user.Email,
 		Password: hashedPw,
-		Role:     "member",
+		Role:     "Member",
 	}
-	err = ua.userRepo.Store(&result)
-	if err != nil {
-		u.JSON(http.StatusInternalServerError, errors.New("Error Storing Data"))
-		return
-	}
-	u.JSON(http.StatusCreated, model.NewSuccessResponse("register success"))
+	err = us.userRepo.Store(&result)
+	if err != nil {return err}
+	return nil
 }
 
-func (ua *userService) Logout(u *gin.Context) {
-	u.JSON(http.StatusOK, model.NewSuccessResponse("logout success"))
+func (us *userService) Logout(claim *model.Claims) error{
+	expirationTime := time.Now()
+	claim.StandardClaims.ExpiresAt = expirationTime.Unix()
+	t := jwt.NewWithClaims(jwt.SigningMethodHS256, claim)
+	tokenString, err := t.SignedString(model.JwtKey)
+	if err != nil {return errors.New("error signing claims")}
+
+	session := model.Session{
+		Token:  tokenString,
+		Email:  claim.Email,
+		Expiry: expirationTime,
+	}
+	_, err = us.sessionRepo.SessionAvailEmail(session.Email)
+	if err != nil {
+		return err
+	} else {
+		err = us.sessionRepo.DeleteSession(tokenString)
+	}
+	if err != nil {return err}
+	return nil
 }
 
 func (ua *userService) AddUser(u *gin.Context) {
@@ -220,7 +184,7 @@ func (ua *userService) ChangePassword(u *gin.Context) {
 	} else {
 		hashedPw, err := middleware.HashPassword(newp)
 		if err != nil {
-			u.JSON(http.StatusInternalServerError, errors.New("Skill Issue at Hashing"))
+			u.JSON(http.StatusInternalServerError, err)
 		}
 		compare.Password = hashedPw
 		err = ua.userRepo.Update(compare.ID, compare)
