@@ -227,6 +227,15 @@ func main(){
 		DBName:   os.Getenv("DB_NAME"),
 	}
 
+	// config := &db.Config{
+	// 	Host:     "localhost",
+	// 	Port:     "5432",
+	// 	Password: "administrator",
+	// 	User:     "postgres",
+	// 	SSLMode:  "disable",
+	// 	DBName:   "kpiv",
+	// }
+
 	wg := sync.WaitGroup{}
 
 	wg.Add(1)
@@ -255,7 +264,7 @@ func main(){
 		router = RunServer(conn, router)
 
 		fmt.Println("Server is running on port 8080")
-		err = router.Run(":8080")
+		err = router.Run(":8081")
 		if err != nil {
 			panic(err)
 		}
