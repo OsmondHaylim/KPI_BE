@@ -54,37 +54,31 @@ func (aa *analisaAPI) AddMasalah(k *gin.Context) {
 
 func (aa *analisaAPI) UpdateAnalisa(k *gin.Context) {
 	var newAnalisa model.Analisa
-	err := k.ShouldBindJSON(&newAnalisa)
-	if model.ErrorCheck(k, err){return}
+	if model.ErrorCheck(k, k.ShouldBindJSON(&newAnalisa)){return}
 	KpiID, err := strconv.Atoi(k.Param("id"))
 	if model.ErrorCheck(k, err){return}
-	err = aa.crudService.UpdateAnalisa(KpiID, newAnalisa)
-	if model.ErrorCheck(k, err){return}
+	if model.ErrorCheck(k, aa.crudService.UpdateAnalisa(KpiID, newAnalisa)){return}
 	k.JSON(http.StatusOK, model.SuccessResponse{Message: "Analisa update success"})
 }
 func (aa *analisaAPI) UpdateMasalah(k *gin.Context) {
 	var newMasalah model.Masalah
-	err := k.ShouldBindJSON(&newMasalah)
-	if model.ErrorCheck(k, err){return}
+	if model.ErrorCheck(k, k.ShouldBindJSON(&newMasalah)){return}
 	KpiID, err := strconv.Atoi(k.Param("id"))
 	if model.ErrorCheck(k, err){return}
-	err = aa.crudService.UpdateMasalah(KpiID, newMasalah)	
-	if model.ErrorCheck(k, err){return}
+	if model.ErrorCheck(k, aa.crudService.UpdateMasalah(KpiID, newMasalah)){return}
 	k.JSON(http.StatusOK, model.SuccessResponse{Message: "Masalah update success"})
 }
 
 func (aa *analisaAPI) DeleteAnalisa(k *gin.Context) {
 	KpiID, err := strconv.Atoi(k.Param("id"))
 	if model.ErrorCheck(k, err){return}
-	err = aa.crudService.DeleteAnalisa(KpiID)
-	if model.ErrorCheck(k, err){return}
+	if model.ErrorCheck(k, aa.crudService.DeleteAnalisa(KpiID)){return}
 	k.JSON(http.StatusOK, model.SuccessResponse{Message: "Analisa delete success"})
 }
 func (aa *analisaAPI) DeleteMasalah(k *gin.Context) {
 	KpiID, err := strconv.Atoi(k.Param("id"))
 	if model.ErrorCheck(k, err){return}
-	err = aa.crudService.DeleteMasalah(KpiID)
-	if model.ErrorCheck(k, err){return}
+	if model.ErrorCheck(k, aa.crudService.DeleteMasalah(KpiID)){return}
 	k.JSON(http.StatusOK, model.SuccessResponse{Message: "Masalah delete success"})
 }
 
@@ -119,26 +113,21 @@ func (aa *analisaAPI) GetMasalahList(k *gin.Context) {
 
 func (aa *analisaAPI) AddEntireAnalisa(k *gin.Context){
 	var newAnalisa model.Analisa
-	err := k.ShouldBindJSON(&newAnalisa)
-	if model.ErrorCheck(k, err){return}
-	err = aa.crudService.AddEntireAnalisa(&newAnalisa)
-	if model.ErrorCheck(k, err){return}
+	if model.ErrorCheck(k, k.ShouldBindJSON(&newAnalisa)){return}
+	if model.ErrorCheck(k, aa.crudService.AddEntireAnalisa(&newAnalisa)){return}
 	k.JSON(http.StatusCreated, model.SuccessResponse{Message: "add Analisa success"})
 }
 func (aa *analisaAPI) UpdateEntireAnalisa(k *gin.Context){
 	var newAnalisa model.Analisa
-	err := k.ShouldBindJSON(&newAnalisa)
-	if model.ErrorCheck(k, err){return}
+	if model.ErrorCheck(k, k.ShouldBindJSON(&newAnalisa)){return}
 	KpiID, err := strconv.Atoi(k.Param("id"))
 	if model.ErrorCheck(k, err){return}
-	err = aa.crudService.UpdateAnalisa(KpiID, newAnalisa)
-	if model.ErrorCheck(k, err){return}
+	if model.ErrorCheck(k, aa.crudService.UpdateAnalisa(KpiID, newAnalisa)){return}
 	k.JSON(http.StatusOK, model.SuccessResponse{Message: "Analisa update success"})
 }
 func (aa *analisaAPI) DeleteEntireAnalisa(k *gin.Context) {
 	KpiID, err := strconv.Atoi(k.Param("id"))
 	if model.ErrorCheck(k, err){return}
-	err = aa.crudService.DeleteEntireAnalisa(KpiID)
-	if model.ErrorCheck(k, err){return}
+	if model.ErrorCheck(k, aa.crudService.DeleteEntireAnalisa(KpiID)){return}
 	k.JSON(http.StatusOK, model.SuccessResponse{Message: "Analisa delete success"})
 }

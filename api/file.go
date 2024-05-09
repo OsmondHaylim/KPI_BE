@@ -52,8 +52,7 @@ func (fa *fileAPI) KpiFileUpload(f *gin.Context) {
 	}
 	input, err := fa.parseService.ParseKpi(file)
 	if model.ErrorCheck(f, err) {return}
-	err = fa.crudService.AddEntireYearly(input)
-	if model.ErrorCheck(f, err) {return}
+	if model.ErrorCheck(f, fa.crudService.AddEntireYearly(input)) {return}
 	// f.JSON(http.StatusAccepted, model.SuccessResponse{Message: "Inputted"})
 	f.JSON(http.StatusAccepted, input)
 }
@@ -68,8 +67,7 @@ func (fa *fileAPI) AnalisaFileUpload(f *gin.Context) {
 	}
 	input, err := fa.parseService.ParseAnalisis(file)
 	if model.ErrorCheck(f, err) {return}
-	err = fa.crudService.AddEntireAnalisa(input)
-	if model.ErrorCheck(f, err) {return}
+	if model.ErrorCheck(f, fa.crudService.AddEntireAnalisa(input)) {return}
 	// f.JSON(http.StatusAccepted, model.SuccessResponse{Message: "Inputted"})
 	f.JSON(http.StatusAccepted, input)
 }
@@ -84,8 +82,7 @@ func (fa *fileAPI) SummaryFileUpload(f *gin.Context) {
 	}
 	input, err := fa.parseService.ParseSummary(file)
 	if model.ErrorCheck(f, err) {return}
-	err = fa.crudService.AddEntireSummary(input)
-	if model.ErrorCheck(f, err) {return}
+	if model.ErrorCheck(f, fa.crudService.AddEntireSummary(input)) {return}
 	// f.JSON(http.StatusAccepted, model.SuccessResponse{Message: "Inputted"})
 	f.JSON(http.StatusAccepted, input)
 }

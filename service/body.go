@@ -26,8 +26,8 @@ type CrudService interface {
 	//Create cascade
 	AddEntireYearly(input *model.YearlyResponse) error
 	AddEntireItem(wg *sync.WaitGroup, input *model.ItemResponse, id *int, errs chan error)
-	AddEntireResult(wg *sync.WaitGroup, input *model.ResultResponse, id *int, errs chan error)
-	AddEntireFactor(wg *sync.WaitGroup, input *model.FactorResponse, id *int, errs chan error)
+	AddEntireResult(input *model.ResultResponse, id *int) error
+	AddEntireFactor(input *model.FactorResponse, id *int) error
 	AddEntireAttendance(input *model.AttendanceResponse, year *int) error
 	AddEntireAnalisa(input *model.Analisa) error
 	AddEntireSummary(input *model.SummaryResponse) error
@@ -75,8 +75,8 @@ type CrudService interface {
 	//Delete Cascade
 	DeleteEntireYearly(input int) error
 	DeleteEntireItem(wg *sync.WaitGroup, input int, errs chan error)
-	DeleteEntireResult(wg *sync.WaitGroup, input int, errs chan error)
-	DeleteEntireFactor(wg *sync.WaitGroup, input int, errs chan error)
+	DeleteEntireResult(input int) error
+	DeleteEntireFactor(input int) error
 	DeleteEntireAttendance(input int) error
 	DeleteEntireAnalisa(input int) error
 	DeleteEntireSummary(input int) error
