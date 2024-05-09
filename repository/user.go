@@ -48,14 +48,9 @@ func (us *userRepo) GetByID(id int) (*model.User, error) {
 
 func (us *userRepo) GetList() ([]model.User, error) {
 	var result []model.User
-	rows, err := us.db.Table("users").Rows()
-	if err != nil || rows == nil{
+	err := us.db.Find(&result).Error
+	if err != nil {
 		return []model.User{}, err
-	}
-	defer rows.Close()
-
-	for rows.Next() { 
-		us.db.ScanRows(rows, &result)
 	}
 	return result, nil 
 }

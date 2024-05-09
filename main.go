@@ -40,6 +40,7 @@ func RunServer(db *gorm.DB, gin *gin.Engine) *gin.Engine {
 	fileRepo		:= repository.NewFileRepo(db)
 	projectRepo 	:= repository.NewProjectRepo(db)
 	summaryRepo		:= repository.NewSummaryRepo(db)
+	userRepo 		:= repository.NewUserRepo(db)
 
 	crudService 	:= service.NewCrudService(
 		attendanceRepo,
@@ -53,6 +54,7 @@ func RunServer(db *gorm.DB, gin *gin.Engine) *gin.Engine {
 		projectRepo,
 		resultRepo,
 		summaryRepo,
+		userRepo,
 		yearlyRepo,
 	)
 	

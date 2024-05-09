@@ -43,7 +43,7 @@ type YearlyArrayResponse struct {
 	Yearly 		[]YearlyResponse 		`json:"data"`}
 type UserArrayResponse struct {
 	Message string `json:"message"`
-	Users   []User_compact `json:"data"`}
+	Users   []UserResponse `json:"data"`}
 type SessionArrayResponse struct {
 	Message  string    `json:"message"`
 	Sessions []Session `json:"data"`}
@@ -85,15 +85,11 @@ type YearlyResponse struct{
 	Items			[]ItemResponse			`json:"Items"`
 	Attendance 		*AttendanceResponse		`json:"Attendance"`}
 
-type SessionResponse struct {
-	Message string  `json:"message"`
-	Session Session `json:"data"`
-}
 type LoginResponse struct {
 	Message 	string					`json:"message"`
 	Data		struct{
 		ApiKey 		string    			`json:"apiKey"`
-		User   		User_compact	    `json:"user"`
+		User   		UserResponse	    `json:"user"`
 	}									`json:"data"`
 }
 type RegisterInput struct {
@@ -103,7 +99,9 @@ type RegisterInput struct {
 	Confirm_password string
 }
 type UserResponse struct {
-	Message string `json:"message"`
-	User    User_compact   `json:"data"`
+	ID 			int				`gorm:"primaryKey" json:"id"`
+	Username	string			`gorm:"notNull" json:"username"`	
+	Email		string			`gorm:"notNull" json:"email"`
+	Role		string			`gorm:"notNull" json:"role"`
 }
 

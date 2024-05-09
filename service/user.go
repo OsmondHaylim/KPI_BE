@@ -1,40 +1,29 @@
 package service
 
 import (
-	"goreact/repository"
 	"goreact/middleware"
 	"goreact/model"
 
 	"net/http"
-	"strconv"
 	"time"
 	"errors"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt"
 )
 
-type UserService interface {
-	Login(user model.User_login) (*string, error)
-	Register(user model.RegisterInput) error
-	Logout(claim *model.Claims) error
-	AddUser(u *gin.Context)
-	UpdateUser(u *gin.Context)
-	DeleteUser(u *gin.Context)
-	ChangePassword(u *gin.Context)
-	GetUserByID(u *gin.Context)
-	GetUserList(u *gin.Context)
-	// GetPrivileged(u *gin.Context)
-	Profile(u *gin.Context)
-}
-
-type userService struct {
-	userRepo    repository.UserRepo
-	sessionRepo repository.SessionRepo
-}
-
-func NewUserAPI(userRepo repository.UserRepo, sessionRepo repository.SessionRepo) *userService {
-	return &userService{userRepo, sessionRepo}
-}
+// type UserService interface {
+// 	Login(user model.User_login) (*string, error)
+// 	Register(user model.RegisterInput) error
+// 	Logout(claim *model.Claims) error
+// 	AddUser(u *gin.Context)
+// 	UpdateUser(u *gin.Context)
+// 	DeleteUser(u *gin.Context)
+// 	ChangePassword(u *gin.Context)
+// 	GetUserByID(u *gin.Context)
+// 	GetUserList(u *gin.Context)
+// 	// GetPrivileged(u *gin.Context)
+// 	Profile(u *gin.Context)
+// }
 
 func (us *userService) Login(user model.User_login) (*string, error){
 	if user.Username == "" || user.Password == "" {return nil, errors.New("username or password empty")}
@@ -114,60 +103,6 @@ func (us *userService) Logout(claim *model.Claims) error{
 	return nil
 }
 
-func (ua *userService) AddUser(u *gin.Context) {
-	var newUser model.User
-	if err := u.ShouldBindJSON(&newUser); err != nil {
-		u.JSON(http.StatusBadRequest, model.ErrorResponse{Error: err.Error()})
-		return
-	}
-
-	if newUser.Email == "" || newUser.Password == "" || newUser.Username == "" {
-		u.JSON(http.StatusBadRequest, errors.New("register data is empty"))
-		return
-	}
-
-	err := ua.userRepo.Store(&newUser)
-	if err != nil {
-		u.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
-		return
-	}
-
-	u.JSON(http.StatusOK, model.SuccessResponse{Message: "add User success"})
-}
-
-func (ua *userService) UpdateUser(u *gin.Context) {
-	var newUser model.User
-	if err := u.ShouldBindJSON(&newUser); err != nil {
-		u.JSON(http.StatusBadRequest, model.ErrorResponse{Error: err.Error()})
-		return
-	}
-	UserID, err := strconv.Atoi(u.Param("id"))
-	if err != nil {
-		u.JSON(http.StatusBadRequest, model.ErrorResponse{Error: "invalid User ID"})
-		return
-	}
-	err = ua.userRepo.Update(UserID, newUser)
-	if err != nil {
-		u.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
-		return
-	}
-	u.JSON(http.StatusOK, model.SuccessResponse{Message: "User update success"})
-}
-
-func (ua *userService) DeleteUser(u *gin.Context) {
-	UserID, err := strconv.Atoi(u.Param("id"))
-	if err != nil {
-		u.JSON(http.StatusBadRequest, model.ErrorResponse{Error: "invalid User ID"})
-		return
-	}
-	err = ua.userRepo.Delete(UserID)
-	if err != nil {
-		u.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
-		return
-	}
-	u.JSON(http.StatusOK, model.SuccessResponse{Message: "User delete success"})
-}
-
 func (ua *userService) ChangePassword(u *gin.Context) {
 	email := u.Keys["email"].(string)
 
@@ -196,91 +131,12 @@ func (ua *userService) ChangePassword(u *gin.Context) {
 	}
 }
 
-func (ua *userService) GetUserByID(u *gin.Context) {
-	UserID, err := strconv.Atoi(u.Param("id"))
-	if err != nil {
-		u.JSON(http.StatusBadRequest, model.ErrorResponse{Error: "Invalid User ID"})
-		return
-	}
-
-	User, err := ua.userRepo.GetByID(UserID)
-	if err != nil {
-		u.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
-		return
-	}
-
-	var result model.UserResponse
-	result.User = User.ToCompact()
-	result.Message = "User with ID " + strconv.Itoa(UserID) + " Found"
-
-	u.JSON(http.StatusOK, result)
-}
-
-func (ua *userService) GetUserList(u *gin.Context) {
-	name := u.Query("name")
-	// if name != ""{
-	User, err := ua.userRepo.SearchName(name)
-	if err != nil {
-		u.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
-		return
-	}
-
-	var result model.UserArrayResponse
-	userResult := []model.User_compact{}
-
-	for _, data := range User {
-		userResult = append(userResult, data.ToCompact())
-	}
-
-	result.Users = userResult
-	result.Message = "Getting All Users From Search Result Success"
-
-	u.JSON(http.StatusOK, result)
-	// }else{
-	// 	User, err := ua.userRepo.GetList()
-	// 	if err != nil {
-	// 		u.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
-	// 		return
-	// 	}
-	// 	var result model.UserArrayResponse
-	// 	var userResult []model.User_compact
-	// 	for _, data := range User{
-	// 		userResult = append(userResult, model.ToCompact(data))
-	// 	}
-	// 	result.Users = userResult
-	// 	result.Message = "Getting All Users Success"
-	// 	u.JSON(http.StatusOK, result)
-	// }
-}
-
-// func (ua *userService) GetPrivileged(u *gin.Context) {
-// 	User, err := ua.userRepo.GetPrivileged()
-// 	if err != nil {
-// 		u.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
-// 		return
-// 	}
-// 	var result model.UserArrayResponse
-// 	var userResult []model.User_compact
-// 	for _, data := range User {
-// 		userResult = append(userResult, model.ToCompact(data))
-// 	}
-// 	result.Users = userResult
-// 	result.Message = "Getting All Privileged Users Success"
-// 	u.JSON(http.StatusOK, result)
-// }
-
 func (ua *userService) Profile(u *gin.Context) {
 	email := u.Keys["email"].(string)
-
 	compare, boo := ua.userRepo.GetByEmail(email)
 	if !boo {
 		u.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Trouble finding user"})
 	}
-
-	userResult := compare.ToCompact()
-
-	u.JSON(http.StatusOK, gin.H{
-		"message": "Get User Profile Success",
-		"data":    userResult,
-	})
+	userResult := compare.ToResponse()
+	u.JSON(http.StatusOK, userResult)
 }

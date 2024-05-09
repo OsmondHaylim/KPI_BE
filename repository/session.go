@@ -61,7 +61,6 @@ func (s *sessionRepo) TokenValidity(token string) (model.Session, error) {
 	if err != nil {
 		return model.Session{}, err
 	}
-
 	if s.TokenExpired(session) {
 		err := s.DeleteSession(token)
 		if err != nil {
@@ -69,7 +68,6 @@ func (s *sessionRepo) TokenValidity(token string) (model.Session, error) {
 		}
 		return model.Session{}, err
 	}
-
 	return session, nil
 }
 

@@ -435,8 +435,8 @@ func CheckValidation(header string)(*Claims, error){
 	return claims, nil
 }
 
-func (u User) ToCompact() User_compact{
-	return User_compact{
+func (u User) ToResponse() UserResponse{
+	return UserResponse{
 		ID: 		u.ID,
 		Username: 	u.Username,
 		Email:		u.Email,

@@ -20,6 +20,7 @@ type CrudService interface {
 	AddProject(input *model.Project) error
 	AddResult(input *model.Result) error
 	AddSummary(input *model.Summary) error
+	AddUser(input *model.User) error
 	AddYearly(input *model.Yearly) error
 
 	//Create cascade
@@ -43,6 +44,7 @@ type CrudService interface {
 	UpdateProject(id int, input model.Project) error
 	UpdateResult(id int, input model.Result) error
 	UpdateSummary(id int, input model.Summary) error
+	UpdateUser(id int, input model.User) error
 	UpdateYearly(id int, input model.Yearly) error
 
 	// Update Cascade
@@ -66,6 +68,7 @@ type CrudService interface {
 	DeleteProject(input int) error
 	DeleteResult(input int) error
 	DeleteSummary(input int) error
+	DeleteUser(input int) error
 	DeleteYearly(input int) error
 
 
@@ -90,6 +93,7 @@ type CrudService interface {
 	GetMasalahByID(input int) (*model.Masalah, error)
 	GetProjectByID(input int) (*model.ProjectResponse, error)
 	GetSummaryByID(input int) (*model.SummaryResponse, error)
+	GetUserByID(input int) (*model.UserResponse, error)
 	GetFileByID(input int) (*model.UploadFile, error)
 
 	//Get Batch
@@ -104,6 +108,7 @@ type CrudService interface {
 	GetMasalahList()(model.MasalahArrayResponse, error)
 	GetProjectList()(model.ProjectArrayResponse, error)
 	GetSummaryList()(model.SummaryArrayResponse, error)
+	GetUserList()(model.UserArrayResponse, error)
 	GetFileList()([]model.UploadFile, error)
 }
 type crudService struct {
@@ -118,6 +123,7 @@ type crudService struct {
 	projectRepo		repo.ProjectRepo
 	resultRepo     	repo.ResultRepo
 	summaryRepo 	repo.SummaryRepo
+	userRepo 		repo.UserRepo
 	yearlyRepo     	repo.YearlyRepo
 }
 func NewCrudService(
@@ -132,6 +138,7 @@ func NewCrudService(
 	projectRepo		repo.ProjectRepo,
 	resultRepo 		repo.ResultRepo,
 	summaryRepo 	repo.SummaryRepo,
+	userRepo		repo.UserRepo,
 	yearlyRepo 		repo.YearlyRepo,) *crudService {
 	return &crudService{
 		attendanceRepo,
@@ -145,6 +152,7 @@ func NewCrudService(
 		projectRepo,
 		resultRepo,
 		summaryRepo,
+		userRepo,
 		yearlyRepo}
 }
 
@@ -161,4 +169,19 @@ func NewParseService(fileRepo repo.FileRepo) *parseService{
 	return &parseService{
 		fileRepo,
 	}
+}
+
+type UserService interface{
+	Login(user model.User_login) (*string, error)
+	Register(user model.RegisterInput) error
+	Logout(claim *model.Claims) error
+	ChangePassword(email string, old string, new string) error
+	Profile(email string) (*model.UserResponse, error)
+}
+type userService struct {
+	userRepo    repo.UserRepo
+	sessionRepo repo.SessionRepo
+}
+func NewUserAPI(userRepo repo.UserRepo, sessionRepo repo.SessionRepo) *userService {
+	return &userService{userRepo, sessionRepo}
 }

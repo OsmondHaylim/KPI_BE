@@ -31,6 +31,7 @@ func (cs *crudService) AddMonthly(input *model.Monthly) error{
 func (cs *crudService) AddProject(input *model.Project) error{return cs.projectRepo.Store(input)}
 func (cs *crudService) AddResult(input *model.Result) error{return cs.resultRepo.Store(input)}
 func (cs *crudService) AddSummary(input *model.Summary) error{return cs.summaryRepo.Store(input)}
+func (cs *crudService) AddUser(input *model.User) error {return cs.userRepo.Store(input)}
 func (cs *crudService) AddYearly(input *model.Yearly) error{return cs.yearlyRepo.Store(input)}
 
 
@@ -146,6 +147,17 @@ func (cs *crudService) UpdateSummary(id int, input model.Summary) error{
 		if data.Summary_ID == id{
 			input.Summary_ID = id
 			return cs.summaryRepo.Saves(input)
+		}
+	}
+	return errors.New("not found")
+}
+func (cs *crudService) UpdateUser(id int, input model.User) error{
+	list, err := cs.userRepo.GetList()
+	if err != nil {return err}
+	for _, data := range list{
+		if data.ID == id{
+			input.ID = id
+			return cs.userRepo.Update(id, input)
 		}
 	}
 	return errors.New("not found")
@@ -274,6 +286,16 @@ func (cs *crudService) DeleteSummary(input int) error{
 	}
 	return errors.New("not found")
 }
+func (cs *crudService) DeleteUser(input int) error{
+	list, err := cs.userRepo.GetList()
+	if err != nil {return err}
+	for _, data := range list{
+		if data.ID == input{
+			return cs.userRepo.Delete(input)
+		}
+	}
+	return errors.New("not found")
+}
 func (cs *crudService) DeleteYearly(input int) error{
 	list, err := cs.yearlyRepo.GetList()
 	if err != nil {return err}
@@ -327,6 +349,12 @@ func (cs *crudService) GetResultByID(input int) (*model.ResultResponse, error){
 }
 func (cs *crudService) GetSummaryByID(input int) (*model.SummaryResponse, error){
 	tempInput, err := cs.summaryRepo.GetByID(input)
+	if err != nil {return nil, err}
+	newInput := tempInput.ToResponse()
+	return &newInput, err
+}
+func (cs *crudService) GetUserByID(input int) (*model.UserResponse, error){
+	tempInput, err := cs.userRepo.GetByID(input)
 	if err != nil {return nil, err}
 	newInput := tempInput.ToResponse()
 	return &newInput, err
@@ -416,6 +444,15 @@ func (cs *crudService) GetSummaryList() (model.SummaryArrayResponse, error){
 	newInput.Summary = []model.SummaryResponse{}
 	for _, temp := range tempInput{
 		newInput.Summary = append(newInput.Summary, temp.ToResponse())	
+	}
+	return newInput, err
+}
+func (cs *crudService) GetUserList() (model.UserArrayResponse, error){
+	tempInput, err := cs.userRepo.GetList()
+	var newInput model.UserArrayResponse
+	newInput.Users = []model.UserResponse{}
+	for _, temp := range tempInput{
+		newInput.Users = append(newInput.Users, temp.ToResponse())	
 	}
 	return newInput, err
 }
