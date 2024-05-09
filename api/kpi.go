@@ -77,75 +77,58 @@ func NewKpiAPI(crudService service.CrudService) *kpiAPI{
 // Add
 func (ka *kpiAPI) AddAttendance(k *gin.Context) {
 	var newAttendance model.Attendance
-	err := k.ShouldBindJSON(&newAttendance)
-	if model.ErrorCheck(k, err) {return}
-	err = ka.crudService.AddAttendance(&newAttendance)
-	if model.ErrorCheck(k, err) {return}
+	if model.ErrorCheck(k, k.ShouldBindJSON(&newAttendance)) {return}
+	if model.ErrorCheck(k, ka.crudService.AddAttendance(&newAttendance)) {return}
 	k.JSON(http.StatusCreated, model.SuccessResponse{Message: "add Attendance success"})
 }
 func (ka *kpiAPI) AddFactor(k *gin.Context) {
 	var newFactor model.Factor
-	err := k.ShouldBindJSON(&newFactor)
-	if model.ErrorCheck(k, err) {return}
-	err = ka.crudService.AddFactor(&newFactor)
-	if model.ErrorCheck(k, err) {return}
+	if model.ErrorCheck(k, k.ShouldBindJSON(&newFactor)) {return}
+	if model.ErrorCheck(k, ka.crudService.AddFactor(&newFactor)) {return}
 	k.JSON(http.StatusCreated, model.SuccessResponse{Message: "add Factor success"})
 }
 func (ka *kpiAPI) AddItem(k *gin.Context) {
 	var newItem model.Item
-	err := k.ShouldBindJSON(&newItem)
-	if model.ErrorCheck(k, err) {return}
-	err = ka.crudService.AddItem(&newItem)
-	if model.ErrorCheck(k, err) {return}
+	if model.ErrorCheck(k, k.ShouldBindJSON(&newItem)) {return}
+	if model.ErrorCheck(k, ka.crudService.AddItem(&newItem)) {return}
 	k.JSON(http.StatusCreated, model.SuccessResponse{Message: "add Item success"})
 }
 func (ka *kpiAPI) AddMinipap(k *gin.Context) {
 	var newMinipap model.MiniPAP
-	err := k.ShouldBindJSON(&newMinipap)
-	if model.ErrorCheck(k, err) {return}
-	err = ka.crudService.AddMinipap(&newMinipap)
-	if model.ErrorCheck(k, err) {return}
+	if model.ErrorCheck(k, k.ShouldBindJSON(&newMinipap)) {return}
+	if model.ErrorCheck(k, ka.crudService.AddMinipap(&newMinipap)) {return}
 	k.JSON(http.StatusCreated, model.SuccessResponse{Message: "add Minipap success"})
 }
 func (ka *kpiAPI) AddMonthly(k *gin.Context) {
 	var newMonthly model.Monthly
-	err := k.ShouldBindJSON(&newMonthly)
-	if model.ErrorCheck(k, err) {return}
+	if model.ErrorCheck(k, k.ShouldBindJSON(&newMonthly)) {return}
 	newMonthly = newMonthly.Reseted()
-	err = ka.crudService.AddMonthly(&newMonthly)
-	if model.ErrorCheck(k, err) {return}
+	if model.ErrorCheck(k, ka.crudService.AddMonthly(&newMonthly)) {return}
 	k.JSON(http.StatusCreated, model.SuccessResponse{Message: "add Monthly success"})
 }
 func (ka *kpiAPI) AddResult(k *gin.Context) {
 	var newResult model.Result
-	err := k.ShouldBindJSON(&newResult)
-	if model.ErrorCheck(k, err) {return}
-	err = ka.crudService.AddResult(&newResult)
-	if model.ErrorCheck(k, err) {return}
+	if model.ErrorCheck(k, k.ShouldBindJSON(&newResult)) {return}
+	if model.ErrorCheck(k, ka.crudService.AddResult(&newResult)) {return}
 	k.JSON(http.StatusCreated, model.SuccessResponse{Message: "add Result success"})
 }
 func (ka *kpiAPI) AddYearly(k *gin.Context) {
 	var newYearly model.Yearly
-	err := k.ShouldBindJSON(&newYearly)
-	if model.ErrorCheck(k, err) {return}
-	err = ka.crudService.AddYearly(&newYearly)
-	if model.ErrorCheck(k, err) {return}
+	if model.ErrorCheck(k, k.ShouldBindJSON(&newYearly)) {return}
+	if model.ErrorCheck(k, ka.crudService.AddYearly(&newYearly)) {return}
 	k.JSON(http.StatusCreated, model.SuccessResponse{Message: "add Yearly success"})
 }
 
 // Add Entire
 func (ka *kpiAPI) AddEntireYearly(k *gin.Context) {
 	var newYearly model.YearlyResponse
-	err := k.ShouldBindJSON(&newYearly)
-	if model.ErrorCheck(k, err) {return}
-	err = ka.crudService.AddEntireYearly(&newYearly)
-	if model.ErrorCheck(k, err) {return}
+	if model.ErrorCheck(k, k.ShouldBindJSON(&newYearly)) {return}
+	if model.ErrorCheck(k, ka.crudService.AddEntireYearly(&newYearly)) {return}
 	k.JSON(http.StatusCreated, model.SuccessResponse{Message: "add Entire Yearly success"})
 }
 func (ka *kpiAPI) AddEntireItem(k *gin.Context) {
 	var response model.ItemResponse
-	err := k.ShouldBindJSON(&response)
-	if model.ErrorCheck(k, err) {return}
+	if model.ErrorCheck(k, k.ShouldBindJSON(&response)) {return}
 	wg, errs := model.GoRoutineInit()
 	wg.Add(1)
 	go ka.crudService.AddEntireItem(&wg, &response, nil, errs)
@@ -155,156 +138,120 @@ func (ka *kpiAPI) AddEntireItem(k *gin.Context) {
 }
 func (ka *kpiAPI) AddEntireResult(k *gin.Context) {
 	var response model.ResultResponse
-	err := k.ShouldBindJSON(&response) 
-	if model.ErrorCheck(k, err) {return}
-	wg, errs := model.GoRoutineInit()
-	wg.Add(1)
-	go ka.crudService.AddEntireResult(&wg, &response, nil, errs)
-	wg.Wait()
-	if model.ErrorChanCheck(k, errs) {return}
+	if model.ErrorCheck(k, k.ShouldBindJSON(&response) ) {return}
+	if model.ErrorCheck(k, ka.crudService.AddEntireResult(&response, nil)) {return}
 	k.JSON(http.StatusCreated, model.SuccessResponse{Message: "add Entire Result success"})
 }
 func (ka *kpiAPI) AddEntireFactor(k *gin.Context) {
 	var response model.FactorResponse
-	err := k.ShouldBindJSON(&response) 
-	if model.ErrorCheck(k, err) {return}
-	wg, errs := model.GoRoutineInit()
-	wg.Add(1)
-	go ka.crudService.AddEntireFactor(&wg, &response, nil, errs)
-	wg.Wait()
-	if model.ErrorChanCheck(k, errs) {return}
+	if model.ErrorCheck(k, k.ShouldBindJSON(&response) ) {return}
+	if model.ErrorCheck(k, ka.crudService.AddEntireFactor(&response, nil)) {return}
 	k.JSON(http.StatusCreated, model.SuccessResponse{Message: "add Entire Factor success"})
 }
 func (ka *kpiAPI) AddEntireAttendance(k *gin.Context) {
 	var response model.AttendanceResponse
-	err := k.ShouldBindJSON(&response)
-	if model.ErrorCheck(k, err){return}
-	err = ka.crudService.AddEntireAttendance(&response, nil)
-	if model.ErrorCheck(k, err) {return}
+	if model.ErrorCheck(k, k.ShouldBindJSON(&response)){return}
+	if model.ErrorCheck(k, ka.crudService.AddEntireAttendance(&response, nil)) {return}
 	k.JSON(http.StatusCreated, model.SuccessResponse{Message: "add Entire Attendance success"})
 }
 
 // Update
 func (ka *kpiAPI) UpdateAttendance(k *gin.Context) {
 	var newAttendance model.Attendance
-	err := k.ShouldBindJSON(&newAttendance)
-	if model.ErrorCheck(k, err){return}
+	if model.ErrorCheck(k, k.ShouldBindJSON(&newAttendance)){return}
 	KpiID, err := strconv.Atoi(k.Param("id"))
 	if model.ErrorCheck(k, err){return}
-	err = ka.crudService.UpdateAttendance(KpiID, newAttendance)
-	if model.ErrorCheck(k, err) {return}
+	if model.ErrorCheck(k, ka.crudService.UpdateAttendance(KpiID, newAttendance)) {return}
 	k.JSON(http.StatusOK, model.SuccessResponse{Message: "Attendance update success"})
 }
 func (ka *kpiAPI) UpdateFactor(k *gin.Context) {
 	var newFactor model.Factor
-	err := k.ShouldBindJSON(&newFactor)
-	if model.ErrorCheck(k, err){return}
+	if model.ErrorCheck(k, k.ShouldBindJSON(&newFactor)){return}
 	KpiID, err := strconv.Atoi(k.Param("id"))
 	if model.ErrorCheck(k, err){return}
-	err = ka.crudService.UpdateFactor(KpiID, newFactor)
-	if model.ErrorCheck(k, err) {return}
+	if model.ErrorCheck(k, ka.crudService.UpdateFactor(KpiID, newFactor)) {return}
 	k.JSON(http.StatusOK, model.SuccessResponse{Message: "Factor update success"})
 }
 func (ka *kpiAPI) UpdateItem(k *gin.Context) {
 	var newItem model.Item
-	err := k.ShouldBindJSON(&newItem)
-	if model.ErrorCheck(k, err){return}
+	if model.ErrorCheck(k, k.ShouldBindJSON(&newItem)){return}
 	KpiID, err := strconv.Atoi(k.Param("id"))
 	if model.ErrorCheck(k, err){return}
-	err = ka.crudService.UpdateItem(KpiID, newItem)	
-	if model.ErrorCheck(k, err) {return}
+	if model.ErrorCheck(k, ka.crudService.UpdateItem(KpiID, newItem)	) {return}
 	k.JSON(http.StatusOK, model.SuccessResponse{Message: "Item update success"})
 }
 func (ka *kpiAPI) UpdateMinipap(k *gin.Context) {
 	var newMinipap model.MiniPAP
-	err := k.ShouldBindJSON(&newMinipap)
-	if model.ErrorCheck(k, err){return}
+	if model.ErrorCheck(k, k.ShouldBindJSON(&newMinipap)){return}
 	KpiID, err := strconv.Atoi(k.Param("id"))
 	if model.ErrorCheck(k, err){return}
-	err = ka.crudService.UpdateMinipap(KpiID, newMinipap)	
-	if model.ErrorCheck(k, err) {return}
+	if model.ErrorCheck(k, ka.crudService.UpdateMinipap(KpiID, newMinipap)	) {return}
 	k.JSON(http.StatusOK, model.SuccessResponse{Message: "MiniPAP update success"})
 }
 func (ka *kpiAPI) UpdateMonthly(k *gin.Context) {
 	var newMonthly model.Monthly
-	err := k.ShouldBindJSON(&newMonthly)
-	if model.ErrorCheck(k, err){return}
+	if model.ErrorCheck(k, k.ShouldBindJSON(&newMonthly)){return}
 	KpiID, err := strconv.Atoi(k.Param("id"))
 	if model.ErrorCheck(k, err){return}
-	err = ka.crudService.UpdateMonthly(KpiID, newMonthly)
-	if model.ErrorCheck(k, err) {return}
+	if model.ErrorCheck(k, ka.crudService.UpdateMonthly(KpiID, newMonthly)) {return}
 	k.JSON(http.StatusOK, model.SuccessResponse{Message: "Monthly update success"})
 }
 func (ka *kpiAPI) UpdateResult(k *gin.Context) {
 	var newResult model.Result
-	err := k.ShouldBindJSON(&newResult)
-	if model.ErrorCheck(k, err){return}
+	if model.ErrorCheck(k, k.ShouldBindJSON(&newResult)){return}
 	KpiID, err := strconv.Atoi(k.Param("id"))
 	if model.ErrorCheck(k, err){return}
-	err = ka.crudService.UpdateResult(KpiID, newResult)	
-	if model.ErrorCheck(k, err) {return}
+	if model.ErrorCheck(k, ka.crudService.UpdateResult(KpiID, newResult)) {return}
 	k.JSON(http.StatusOK, model.SuccessResponse{Message: "Result update success"})
 }
 func (ka *kpiAPI) UpdateYearly(k *gin.Context) {
 	var newYearly model.Yearly
-	err := k.ShouldBindJSON(&newYearly)
-	if model.ErrorCheck(k, err){return}
+	if model.ErrorCheck(k, k.ShouldBindJSON(&newYearly)){return}
 	KpiID, err := strconv.Atoi(k.Param("id"))
 	if model.ErrorCheck(k, err){return}
-	err = ka.crudService.UpdateYearly(KpiID, newYearly)	
-	if model.ErrorCheck(k, err) {return}
+	if model.ErrorCheck(k, ka.crudService.UpdateYearly(KpiID, newYearly)	) {return}
 	k.JSON(http.StatusOK, model.SuccessResponse{Message: "Yearly update success"})
 }
 
 // Update Entire
 func (ka *kpiAPI) UpdateEntireAttendance(k *gin.Context) {
 	var newAttendance model.AttendanceResponse
-	err := k.ShouldBindJSON(&newAttendance)
-	if model.ErrorCheck(k, err){return}
+	if model.ErrorCheck(k, k.ShouldBindJSON(&newAttendance)){return}
 	KpiID, err := strconv.Atoi(k.Param("id"))
 	if model.ErrorCheck(k, err){return}
-	err = ka.crudService.UpdateEntireAttendance(KpiID, newAttendance)
-	if model.ErrorCheck(k, err) {return}
+	if model.ErrorCheck(k, ka.crudService.UpdateEntireAttendance(KpiID, newAttendance)) {return}
 	k.JSON(http.StatusOK, model.SuccessResponse{Message: "Attendance update success"})
 }
 func (ka *kpiAPI) UpdateEntireFactor(k *gin.Context) {
 	var newFactor model.FactorResponse
-	err := k.ShouldBindJSON(&newFactor)
-	if model.ErrorCheck(k, err){return}
+	if model.ErrorCheck(k, k.ShouldBindJSON(&newFactor)){return}
 	KpiID, err := strconv.Atoi(k.Param("id"))
 	if model.ErrorCheck(k, err){return}
-	err = ka.crudService.UpdateEntireFactor(KpiID, newFactor)
-	if model.ErrorCheck(k, err) {return}
+	if model.ErrorCheck(k, ka.crudService.UpdateEntireFactor(KpiID, newFactor)) {return}
 	k.JSON(http.StatusOK, model.SuccessResponse{Message: "Factor update success"})
 }
 func (ka *kpiAPI) UpdateEntireItem(k *gin.Context) {
 	var newItem model.ItemResponse
-	err := k.ShouldBindJSON(&newItem)
-	if model.ErrorCheck(k, err){return}
+	if model.ErrorCheck(k, k.ShouldBindJSON(&newItem)){return}
 	KpiID, err := strconv.Atoi(k.Param("id"))
 	if model.ErrorCheck(k, err){return}
-	err = ka.crudService.UpdateEntireItem(KpiID, newItem)	
-	if model.ErrorCheck(k, err) {return}
+	if model.ErrorCheck(k, ka.crudService.UpdateEntireItem(KpiID, newItem)	) {return}
 	k.JSON(http.StatusOK, model.SuccessResponse{Message: "Item update success"})
 }
 func (ka *kpiAPI) UpdateEntireResult(k *gin.Context) {
 	var newResult model.ResultResponse
-	err := k.ShouldBindJSON(&newResult)
-	if model.ErrorCheck(k, err){return}
+	if model.ErrorCheck(k, k.ShouldBindJSON(&newResult)){return}
 	KpiID, err := strconv.Atoi(k.Param("id"))
 	if model.ErrorCheck(k, err){return}
-	err = ka.crudService.UpdateEntireResult(KpiID, newResult)	
-	if model.ErrorCheck(k, err) {return}
+	if model.ErrorCheck(k, ka.crudService.UpdateEntireResult(KpiID, newResult)	) {return}
 	k.JSON(http.StatusOK, model.SuccessResponse{Message: "Result update success"})
 }
 func (ka *kpiAPI) UpdateEntireYearly(k *gin.Context) {
 	var newYearly model.YearlyResponse
-	err := k.ShouldBindJSON(&newYearly)
-	if model.ErrorCheck(k, err){return}
+	if model.ErrorCheck(k, k.ShouldBindJSON(&newYearly)){return}
 	KpiID, err := strconv.Atoi(k.Param("id"))
 	if model.ErrorCheck(k, err){return}
-	err = ka.crudService.UpdateEntireYearly(KpiID, newYearly)	
-	if model.ErrorCheck(k, err) {return}
+	if model.ErrorCheck(k, ka.crudService.UpdateEntireYearly(KpiID, newYearly)) {return}
 	k.JSON(http.StatusOK, model.SuccessResponse{Message: "Yearly update success"})
 }
 
@@ -312,50 +259,43 @@ func (ka *kpiAPI) UpdateEntireYearly(k *gin.Context) {
 func (ka *kpiAPI) DeleteAttendance(k *gin.Context) {
 	KpiID, err := strconv.Atoi(k.Param("id"))
 	if model.ErrorCheck(k, err){return}
-	err = ka.crudService.DeleteAttendance(KpiID)
-	if model.ErrorCheck(k, err) {return}
+	if model.ErrorCheck(k, ka.crudService.DeleteAttendance(KpiID)) {return}
 	k.JSON(http.StatusOK, model.SuccessResponse{Message: "Attendance delete success"})
 }
 func (ka *kpiAPI) DeleteFactor(k *gin.Context) {
 	KpiID, err := strconv.Atoi(k.Param("id"))
 	if model.ErrorCheck(k, err){return}
-	err = ka.crudService.DeleteFactor(KpiID)
-	if model.ErrorCheck(k, err) {return}
+	if model.ErrorCheck(k, ka.crudService.DeleteFactor(KpiID)) {return}
 	k.JSON(http.StatusOK, model.SuccessResponse{Message: "Factor delete success"})
 }
 func (ka *kpiAPI) DeleteItem(k *gin.Context) {
 	KpiID, err := strconv.Atoi(k.Param("id"))
 	if model.ErrorCheck(k, err){return}
-	err = ka.crudService.DeleteItem(KpiID)
-	if model.ErrorCheck(k, err) {return}
+	if model.ErrorCheck(k, ka.crudService.DeleteItem(KpiID)) {return}
 	k.JSON(http.StatusOK, model.SuccessResponse{Message: "Item delete success"})
 }
 func (ka *kpiAPI) DeleteMinipap(k *gin.Context) {
 	KpiID, err := strconv.Atoi(k.Param("id"))
 	if model.ErrorCheck(k, err){return}
-	err = ka.crudService.DeleteMinipap(KpiID)
-	if model.ErrorCheck(k, err) {return}
+	if model.ErrorCheck(k, ka.crudService.DeleteMinipap(KpiID)) {return}
 	k.JSON(http.StatusOK, model.SuccessResponse{Message: "MiniPAP delete success"})
 }
 func (ka *kpiAPI) DeleteMonthly(k *gin.Context) {
 	KpiID, err := strconv.Atoi(k.Param("id"))
 	if model.ErrorCheck(k, err){return}
-	err = ka.crudService.DeleteMonthly(KpiID)
-	if model.ErrorCheck(k, err) {return}
+	if model.ErrorCheck(k, ka.crudService.DeleteMonthly(KpiID)) {return}
 	k.JSON(http.StatusOK, model.SuccessResponse{Message: "Monthly delete success"})
 }
 func (ka *kpiAPI) DeleteResult(k *gin.Context) {
 	KpiID, err := strconv.Atoi(k.Param("id"))
 	if model.ErrorCheck(k, err){return}
-	err = ka.crudService.DeleteResult(KpiID)
-	if model.ErrorCheck(k, err) {return}
+	if model.ErrorCheck(k, ka.crudService.DeleteResult(KpiID)) {return}
 	k.JSON(http.StatusOK, model.SuccessResponse{Message: "Result delete success"})
 }
 func (ka *kpiAPI) DeleteYearly(k *gin.Context) {
 	KpiID, err := strconv.Atoi(k.Param("id"))
 	if model.ErrorCheck(k, err){return}
-	err = ka.crudService.DeleteYearly(KpiID)
-	if model.ErrorCheck(k, err) {return}
+	if model.ErrorCheck(k, ka.crudService.DeleteYearly(KpiID)) {return}
 	k.JSON(http.StatusOK, model.SuccessResponse{Message: "Yearly delete success"})
 }
 
@@ -363,8 +303,7 @@ func (ka *kpiAPI) DeleteYearly(k *gin.Context) {
 func (ka *kpiAPI) DeleteEntireYearly(k *gin.Context) {
 	KpiID, err := strconv.Atoi(k.Param("id"))
 	if model.ErrorCheck(k, err){return}
-	err = ka.crudService.DeleteEntireYearly(KpiID)
-	if model.ErrorCheck(k, err){return}
+	if model.ErrorCheck(k, ka.crudService.DeleteEntireYearly(KpiID)){return}
 	k.JSON(http.StatusOK, model.SuccessResponse{Message: "delete Entire Yearly success"})
 }
 func (ka *kpiAPI) DeleteEntireItem(k *gin.Context) {
@@ -380,28 +319,19 @@ func (ka *kpiAPI) DeleteEntireItem(k *gin.Context) {
 func (ka *kpiAPI) DeleteEntireResult(k *gin.Context) {
 	KpiID, err := strconv.Atoi(k.Param("id"))
 	if model.ErrorCheck(k, err){return}
-	wg, errs := model.GoRoutineInit()
-	wg.Add(1)
-	go ka.crudService.DeleteEntireResult(&wg, KpiID, errs)
-	wg.Wait()
-	if model.ErrorChanCheck(k, errs) {return}
+	if model.ErrorCheck(k, ka.crudService.DeleteEntireResult(KpiID)) {return}
 	k.JSON(http.StatusOK, model.SuccessResponse{Message: "delete Entire Result success"})
 }
 func (ka *kpiAPI) DeleteEntireFactor(k *gin.Context) {
 	KpiID, err := strconv.Atoi(k.Param("id"))
 	if model.ErrorCheck(k, err){return}
-	wg, errs := model.GoRoutineInit()
-	wg.Add(1)
-	go ka.crudService.DeleteEntireFactor(&wg, KpiID, errs)
-	wg.Wait()
-	if model.ErrorChanCheck(k, errs) {return}
+	if model.ErrorCheck(k, ka.crudService.DeleteEntireFactor(KpiID)) {return}
 	k.JSON(http.StatusOK, model.SuccessResponse{Message: "delete Entire Factor success"})
 }
 func (ka *kpiAPI) DeleteEntireAttendance(k *gin.Context) {
 	KpiID, err := strconv.Atoi(k.Param("id"))
 	if model.ErrorCheck(k, err) {return}
-	err = ka.crudService.DeleteEntireAttendance(KpiID)
-	if model.ErrorCheck(k, err) {return}
+	if model.ErrorCheck(k, ka.crudService.DeleteEntireAttendance(KpiID)) {return}
 	k.JSON(http.StatusOK, model.SuccessResponse{Message: "delete Entire Attendance success"})
 }
 

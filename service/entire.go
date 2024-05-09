@@ -35,71 +35,60 @@ func (cs *crudService) AddEntireItem(wg *sync.WaitGroup, input *model.ItemRespon
 	err := cs.AddItem(&newItem)
 	if err != nil {errChan <- err; return}
 	//Storing Results
-	wgs := sync.WaitGroup{}
 	for _, result := range input.Results{
-		wgs.Add(1)
-		go cs.AddEntireResult(&wgs, &result, &newItem.Item_ID, errChan)
+		if err := cs.AddEntireResult(&result, &newItem.Item_ID);err != nil{errChan <- err; return}
 	}
-	wgs.Wait()
 }
-func (cs *crudService) AddEntireResult(wg *sync.WaitGroup, input *model.ResultResponse, id *int, errChan chan error) {
-	defer wg.Done()
+func (cs *crudService) AddEntireResult(input *model.ResultResponse, id *int) error {
 	//Storing Results
 	var newResult model.Result
 	newResult.Name = input.Name
 	if id != nil {newResult.ItemID = id}
 	//Creating Results to get id
-	err := cs.AddResult(&newResult)
-	if err != nil {errChan <- err; return}
+	if err := cs.AddResult(&newResult);err != nil {return err}
 	//Storing Factors
-	wgs := sync.WaitGroup{}
 	for _, factor := range input.Factors{
-		wgs.Add(1)
-		go cs.AddEntireFactor(&wgs, &factor, &newResult.Result_ID, errChan)
+		if err := cs.AddEntireFactor(&factor, &newResult.Result_ID);err != nil{return err}
 	}
-	wgs.Wait()
+	return nil
 }
-func (cs *crudService) AddEntireFactor(wg *sync.WaitGroup, input *model.FactorResponse, id *int, errChan chan error) {
-	defer wg.Done()
-	var newFactor model.Factor
+func (cs *crudService) AddEntireFactor(input *model.FactorResponse, id *int) error {
+	newFactor := model.Factor{
+		Title: input.Title,
+		Unit: input.Unit,
+		Target: input.Target,
+	}
 	if id != nil {newFactor.ResultID = id}
-	newFactor.Title = input.Title
-	newFactor.Unit = input.Unit
-	newFactor.Target = input.Target
 	if input.Plan != nil{
 		//Storing MiniPAP Plan
 		var newMinipap model.MiniPAP
 		//Create MiniPAP to get id
-		err := cs.AddMinipap(&newMinipap)
-		if err != nil {errChan <- err; return}
+		if err := cs.AddMinipap(&newMinipap);err != nil {return err}
 		//Connect MiniPAP to Factor
 		newFactor.PlanID = &newMinipap.MiniPAP_ID
 		//Storing Plan Monthly
 		for _, monthly := range input.Plan.Monthly{
 			newMonthly := monthly.Reseted()
 			newMonthly.MinipapID = &newMinipap.MiniPAP_ID
-			err := cs.AddMonthly(&newMonthly)
-			if err != nil {errChan <- err; return}
+			if err := cs.AddMonthly(&newMonthly);err != nil {return err}
 		}
 	}
 	if input.Actual != nil{
 		//Storing MiniPAP Actual
 		var newMinipap model.MiniPAP
 		//Create MiniPAP to get id
-		err := cs.AddMinipap(&newMinipap)
-		if err != nil {errChan <- err; return}
+		if err := cs.AddMinipap(&newMinipap);err != nil {return err}
 		//Connect MiniPAP to Factor
 		newFactor.ActualID = &newMinipap.MiniPAP_ID
 		//Storing Actual Monthly
 		for _, monthly := range input.Actual.Monthly{
 			newMonthly := monthly.Reseted()
 			newMonthly.MinipapID = &newMinipap.MiniPAP_ID
-			err := cs.AddMonthly(&newMonthly)
-			if err != nil {errChan <- err; return}
+			if err := cs.AddMonthly(&newMonthly);err != nil {return err}
 		}
 	}
-	err := cs.AddFactor(&newFactor)
-	if err != nil {errChan <- err; return}
+	if err := cs.AddFactor(&newFactor);err != nil {return err}
+	return nil
 }
 func (cs *crudService) AddEntireAttendance(input *model.AttendanceResponse, id *int) error{
 	// Storing Attendance
@@ -226,54 +215,48 @@ func (cs *crudService) DeleteEntireItem(wg *sync.WaitGroup, input int, errs chan
 	temp, err := cs.GetItemByID(input)
 	if err != nil {errs <- err; return}
 	if temp.Results != nil {
-		wgs := sync.WaitGroup{}
 		for _, result := range temp.Results{
-			wgs.Add(1)
-			cs.DeleteEntireResult(&wgs, result.Result_ID, errs)
+			if err := cs.DeleteEntireResult(result.Result_ID); err != nil{errs <- err; return}
 		}
-		wgs.Wait()
 	}
 	err = cs.DeleteItem(input)
 	if err != nil {errs <- err; return}
 }
-func (cs *crudService) DeleteEntireResult(wg *sync.WaitGroup, input int, errs chan error){
-	defer wg.Done()
+func (cs *crudService) DeleteEntireResult(input int) error{
 	temp, err := cs.GetResultByID(input)
-	if err != nil {errs <- err; return}
+	if err != nil {return err}
 	if temp.Factors != nil {
-		wgs := sync.WaitGroup{}
 		for _, factor := range temp.Factors{
-			wgs.Add(1)
-			go cs.DeleteEntireFactor(&wgs, factor.Factor_ID, errs)
+			if err := cs.DeleteEntireFactor(factor.Factor_ID); err != nil{return err}
 		}
-		wgs.Wait()
 	}
 	err = cs.DeleteResult(input)
-	if err != nil {errs <- err; return}
+	if err != nil {return err}
+	return nil
 }
-func (cs *crudService) DeleteEntireFactor(wg *sync.WaitGroup, input int, errs chan error){
-	defer wg.Done()
+func (cs *crudService) DeleteEntireFactor(input int) error{
 	temp, err := cs.GetFactorByID(input)
-	if err != nil {errs <- err; return}
+	if err != nil {return err}
 	
 	if temp.Plan != nil {
 		for _, monthly := range temp.Plan.Monthly{
 			err = cs.DeleteMonthly(monthly.Monthly_ID)
-			if err != nil {errs <- err; return}
+			if err != nil {return err}
 		}
 		err = cs.DeleteMinipap(temp.Plan.MiniPAP_ID)
-		if err != nil {errs <- err; return}
+		if err != nil {return err}
 	}
 	if temp.Actual != nil {
 		for _, monthly := range temp.Actual.Monthly{
 			err = cs.DeleteMonthly(monthly.Monthly_ID)
-			if err != nil {errs <- err; return}
+			if err != nil {return err}
 		}
 		err = cs.DeleteMinipap(temp.Actual.MiniPAP_ID)
-		if err != nil {errs <- err; return}
+		if err != nil {return err}
 	}
 	err = cs.DeleteFactor(input)
-	if err != nil {errs <- err; return}
+	if err != nil {return err}
+	return nil
 }
 func (cs *crudService) DeleteEntireAttendance(input int) error{
 	temp, err := cs.GetAttendanceByID(input)
@@ -372,20 +355,17 @@ func (cs *crudService) UpdateEntireItem(id int, input model.ItemResponse) error{
 	if err != nil {return err}
 	//Delete Item (no id in response)
 	for _, result := range before.Results{
-		wg.Add(1)
-		go cs.DeleteEntireResult(&wg, result.Result_ID, errs)
+		if err := cs.DeleteEntireResult(result.Result_ID); err != nil{return err}
 	}
 	err = model.SimpleErrorChanCheck(&wg, errs)
 	if err != nil {return err}
 	// Add Back Results
 	for _, result := range input.Results{
-		wg.Add(1)
-		go cs.AddEntireResult(&wg, &result, &id, errs)
+		if err :=  cs.AddEntireResult(&result, &id); err != nil{return err}
 	}
 	return model.SimpleErrorChanCheck(&wg, errs)
 }
 func (cs *crudService) UpdateEntireResult(id int, input model.ResultResponse) error{
-	wg, errs := model.GoRoutineInit()
 	before, err := cs.resultRepo.GetByID(id)
 	if err != nil {return err}
 	newResult := input.Back()
@@ -394,17 +374,13 @@ func (cs *crudService) UpdateEntireResult(id int, input model.ResultResponse) er
 	if err != nil {return err}
 	//Delete Factor (no id in response)
 	for _, factor := range before.Factors{
-		wg.Add(1)
-		go cs.DeleteEntireFactor(&wg, factor.Factor_ID, errs)
+		if err := cs.DeleteEntireFactor(factor.Factor_ID); err != nil{return err}
 	}
-	err = model.SimpleErrorChanCheck(&wg, errs)
-	if err != nil {return err}
 	// Add Back Factors
 	for _, factor := range input.Factors{
-		wg.Add(1)
-		go cs.AddEntireFactor(&wg, &factor, &id, errs)
+		if err := cs.AddEntireFactor(&factor, &id); err != nil{return err}
 	}
-	return model.SimpleErrorChanCheck(&wg, errs)
+	return nil
 }
 func (cs *crudService) UpdateEntireFactor(id int, input model.FactorResponse) error{
 	wg, errs := model.GoRoutineInit()
@@ -437,23 +413,19 @@ func (cs *crudService) UpdateEntireFactor(id int, input model.FactorResponse) er
 	if err != nil {return err}
 
 	if newFactor.Plan != nil{
-		wg.Add(1)
-		go func (){
-			defer wg.Done()
-			for _, month := range newFactor.Plan.Monthly{
-				if before.PlanID != nil{
-					month.MinipapID = before.PlanID
-				}else {
-					newMini := model.MiniPAP{}
-					err := cs.AddMinipap(&newMini)
-					if err != nil {errs <- err; return}
-					newFactor.PlanID = &newMini.MiniPAP_ID
-					month.MinipapID = &newMini.MiniPAP_ID
-				}
-				err := cs.AddMonthly(&month)
-				if err != nil {errs <- err; return}
+		for _, month := range newFactor.Plan.Monthly{
+			if before.PlanID != nil{
+				month.MinipapID = before.PlanID
+			}else {
+				newMini := model.MiniPAP{}
+				err := cs.AddMinipap(&newMini)
+				if err != nil {return err}
+				newFactor.PlanID = &newMini.MiniPAP_ID
+				month.MinipapID = &newMini.MiniPAP_ID
 			}
-		}()
+			err := cs.AddMonthly(&month)
+			if err != nil {return err}
+		}
 	}
 	if newFactor.Actual != nil{
 		wg.Add(1)
