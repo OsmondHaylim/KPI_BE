@@ -33,7 +33,7 @@ type ProjectAPI interface {
 }
 type projectAPI struct {crudService		service.CrudService}
 func NewProjectAPI(crudService service.CrudService) *projectAPI{
-	return &projectAPI{crudService,}}
+	return &projectAPI{crudService}}
 
 func (aa *projectAPI) AddProject(k *gin.Context) {
 	var newProject model.Project

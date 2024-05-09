@@ -175,13 +175,13 @@ type UserService interface{
 	Login(user model.User_login) (*string, error)
 	Register(user model.RegisterInput) error
 	Logout(claim *model.Claims) error
-	ChangePassword(email string, old string, new string) error
+	ChangePassword(email string, curr string, newp string) error
 	Profile(email string) (*model.UserResponse, error)
 }
 type userService struct {
 	userRepo    repo.UserRepo
 	sessionRepo repo.SessionRepo
 }
-func NewUserAPI(userRepo repo.UserRepo, sessionRepo repo.SessionRepo) *userService {
+func NewUserService(userRepo repo.UserRepo, sessionRepo repo.SessionRepo) *userService {
 	return &userService{userRepo, sessionRepo}
 }

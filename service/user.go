@@ -4,10 +4,8 @@ import (
 	"goreact/middleware"
 	"goreact/model"
 
-	"net/http"
 	"time"
 	"errors"
-	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt"
 )
 
@@ -103,40 +101,24 @@ func (us *userService) Logout(claim *model.Claims) error{
 	return nil
 }
 
-func (ua *userService) ChangePassword(u *gin.Context) {
-	email := u.Keys["email"].(string)
-
-	compare, boo := ua.userRepo.GetByEmail(email)
-	if !boo {
-		u.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Trouble finding user"})
-	}
-
-	curr := u.Param("current_password")
-	newp := u.Param("new_password")
+func (ua *userService) ChangePassword(email string, curr string, newp string) error {
+	compare, exist := ua.userRepo.GetByEmail(email)
+	if !exist {return errors.New("not found")}
 	if !middleware.CheckPasswordHash(curr, compare.Email) {
-		u.JSON(http.StatusInternalServerError, errors.New("wrong password"))
-		return
+		return errors.New("wrong password")
 	} else {
 		hashedPw, err := middleware.HashPassword(newp)
-		if err != nil {
-			u.JSON(http.StatusInternalServerError, err)
-		}
+		if err != nil {return err}
 		compare.Password = hashedPw
 		err = ua.userRepo.Update(compare.ID, compare)
-		if err != nil {
-			u.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
-			return
-		}
-		u.JSON(http.StatusOK, model.SuccessResponse{Message: "User update success"})
+		if err != nil {return err}
+		return nil
 	}
 }
 
-func (ua *userService) Profile(u *gin.Context) {
-	email := u.Keys["email"].(string)
-	compare, boo := ua.userRepo.GetByEmail(email)
-	if !boo {
-		u.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Trouble finding user"})
-	}
-	userResult := compare.ToResponse()
-	u.JSON(http.StatusOK, userResult)
+func (ua *userService) Profile(email string) (*model.UserResponse, error){
+	user, exist := ua.userRepo.GetByEmail(email)
+	if !exist {return nil, errors.New("not found")}
+	result := user.ToResponse()
+	return &result, nil
 }

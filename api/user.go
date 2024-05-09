@@ -16,20 +16,20 @@ type UserAPI interface{
 	Login(u *gin.Context)
 	Register(u *gin.Context)
 	Logout(u *gin.Context)
-	// AddUser(u *gin.Context)
-	// UpdateUser(u *gin.Context)
-	// DeleteUser(u *gin.Context)
 	// ChangePassword(u *gin.Context)
-	// GetUserByID(u *gin.Context)
-	// GetUserList(u *gin.Context)
-	// // GetPrivileged(u *gin.Context)
-	// Profile(u *gin.Context)
+	Profile(u *gin.Context)
 }
 
 type userAPI struct {
 	crudService service.CrudService
 	userService service.UserService
 }
+
+func NewUserAPI(crudService service.CrudService, userService service.UserService) *userAPI{
+	return &userAPI{crudService, 
+		userService}
+}
+
 
 func (ua *userAPI) Login (u *gin.Context) {
 	var user model.User_login
@@ -63,4 +63,18 @@ func (ua *userAPI) Logout (u *gin.Context) {
 	err = ua.userService.Logout(claims)
 	if model.ErrorCheck(u, err){return}
 	u.JSON(http.StatusFound, model.SuccessResponse{Message: "Logout success"})
+}
+
+func (ua *userAPI) ChangePassword(u *gin.Context) {
+	email := u.Keys["email"].(string)
+	curr := u.Param("current_password")
+	newp := u.Param("new_password")
+	if model.ErrorCheck(u, ua.userService.ChangePassword(email, curr, newp)) {return}
+}
+
+func (ua *userAPI) Profile (u *gin.Context) {
+	email := u.Keys["email"].(string)
+	result, err := ua.userService.Profile(email)
+	if model.ErrorCheck(u, err){return}
+	u.JSON(http.StatusFound, result)
 }

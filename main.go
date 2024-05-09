@@ -25,6 +25,7 @@ type APIHandler struct{
 	FileAPIHandler		api.FileAPI
 	AnalisaAPIHandler	api.AnalisaAPI
 	ProjectAPIHandler 	api.ProjectAPI
+	UserAPIHandler		api.UserAPI
 }
 
 func RunServer(db *gorm.DB, gin *gin.Engine) *gin.Engine {
@@ -41,6 +42,7 @@ func RunServer(db *gorm.DB, gin *gin.Engine) *gin.Engine {
 	projectRepo 	:= repository.NewProjectRepo(db)
 	summaryRepo		:= repository.NewSummaryRepo(db)
 	userRepo 		:= repository.NewUserRepo(db)
+	sessionRepo		:= repository.NewSessionRepo(db)
 
 	crudService 	:= service.NewCrudService(
 		attendanceRepo,
@@ -62,16 +64,19 @@ func RunServer(db *gorm.DB, gin *gin.Engine) *gin.Engine {
 		fileRepo,
 	)
 
+	userService 	:= service.NewUserService(userRepo, sessionRepo)
 	
 	kpiAPIHandler := api.NewKpiAPI(crudService)
 	fileAPIHandler := api.NewFileAPI(crudService, parseService)
 	analisaAPIHandler := api.NewAnalisaAPI(crudService)
 	projectAPIHandler := api.NewProjectAPI(crudService)
+	userAPIHandler := api.NewUserAPI(crudService, userService)
 	apiHandler := APIHandler{
 		KpiAPIHandler: kpiAPIHandler,
 		FileAPIHandler: fileAPIHandler,
 		AnalisaAPIHandler: analisaAPIHandler,
 		ProjectAPIHandler: projectAPIHandler,
+		UserAPIHandler: userAPIHandler,
 	}
 	kpi := gin.Group("/kpi")
 	{
@@ -176,6 +181,13 @@ func RunServer(db *gorm.DB, gin *gin.Engine) *gin.Engine {
 			summary.PUT("/:id", apiHandler.ProjectAPIHandler.UpdateSummary)
 			summary.DELETE("/:id", apiHandler.ProjectAPIHandler.DeleteSummary)
 			summary.DELETE("/entire/:id", apiHandler.ProjectAPIHandler.DeleteEntireSummary)
+		}
+		user := kpi.Group("/user")
+		{
+			user.POST("/login", apiHandler.UserAPIHandler.Login)
+			user.POST("/register", apiHandler.UserAPIHandler.Register)
+			user.POST("/logout", apiHandler.UserAPIHandler.Logout)
+			user.GET("/profile", apiHandler.UserAPIHandler.Profile)
 		}
 		yearly := kpi.Group("/yearly") 
 		{
