@@ -45,9 +45,9 @@ func start() (*gin.Engine, *sync.WaitGroup){
 	conn.Migrator().DropTable(&model.Factor{})
 	conn.Migrator().DropTable(&model.Attendance{})
 	conn.Migrator().DropTable(&model.MiniPAP{}, &model.Analisa{}, &model.Summary{})
-	conn.Migrator().DropTable(&model.Monthly{}, &model.Masalah{}, &model.Project{}, &model.UploadFile{})
+	conn.Migrator().DropTable(&model.Monthly{}, &model.Masalah{}, &model.Project{}, &model.UploadFile{}, &model.User{}, &model.Session{})
 
-	conn.AutoMigrate(&model.Monthly{}, &model.Masalah{}, &model.Project{}, &model.UploadFile{}) 
+	conn.AutoMigrate(&model.Monthly{}, &model.Masalah{}, &model.Project{}, &model.UploadFile{}, &model.User{}, &model.Session{}) 
 	conn.AutoMigrate(&model.MiniPAP{}, &model.Analisa{}, &model.Summary{})
 	conn.AutoMigrate(&model.Attendance{})
 	conn.AutoMigrate(&model.Factor{})
@@ -95,6 +95,38 @@ func TestMain(t *testing.T){
 		router, wg := start() 
 		defer stop(router, wg)
 		time.Sleep(1 * time.Second)
+		apiKey := ""
+		t.Run("Account", func(t *testing.T){
+			t.Run("Register", func(t *testing.T){
+				registerBody := `{
+					"username": "test",
+					"email": "test@mail.com",
+					"password": "12345678",
+					"confirm_password": "12345678"
+				}`
+				req, _ := http.NewRequest("POST", "/kpi/user/register", strings.NewReader(registerBody))
+				req.Header.Set("Authorization", "Bearer "+ apiKey)
+				w := httptest.NewRecorder()
+				router.ServeHTTP(w, req)
+				// getSuccess(w.Body)
+				assert.Equal(t, http.StatusCreated, w.Code)
+			})
+			t.Run("Login", func(t *testing.T){
+				registerBody := `{
+					"username": "test",
+					"password": "12345678"
+				}`
+				req, _ := http.NewRequest("POST", "/kpi/user/login", strings.NewReader(registerBody))
+				req.Header.Set("Authorization", "Bearer "+ apiKey)
+				w := httptest.NewRecorder()
+				router.ServeHTTP(w, req)
+				// getSuccess(w.Body)
+				assert.Equal(t, http.StatusOK, w.Code)
+				temp := model.LoginResponse{}
+				_ = json.Unmarshal(w.Body.Bytes(), &temp)
+				apiKey = temp.Token
+			})
+		})
 		t.Run("Monthly", func(t *testing.T){
 			t.Run("Add Single", func(t *testing.T){
 				monthlyBody := `{
@@ -113,7 +145,7 @@ func TestMain(t *testing.T){
 					"Remarks": ""
 				}`
 				req, _ := http.NewRequest("POST", "/kpi/monthly", strings.NewReader(monthlyBody))
-				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+				req.Header.Set("Authorization", "Bearer "+ apiKey)
 				w := httptest.NewRecorder()
 				router.ServeHTTP(w, req)
 				// getSuccess(w.Body)
@@ -121,7 +153,7 @@ func TestMain(t *testing.T){
 			})
 			t.Run("Get Single", func(t *testing.T){
 				req, _ := http.NewRequest("GET", "/kpi/monthly/1", nil)
-				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+				req.Header.Set("Authorization", "Bearer "+ apiKey)
 				w := httptest.NewRecorder()
 				router.ServeHTTP(w, req)
 				// getSuccess(w.Body)
@@ -145,7 +177,7 @@ func TestMain(t *testing.T){
 					"Remarks": "test"
 				}`
 				req, _ := http.NewRequest("PUT", "/kpi/monthly/1", strings.NewReader(monthlyBody))
-				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+				req.Header.Set("Authorization", "Bearer "+ apiKey)
 				w := httptest.NewRecorder()
 				router.ServeHTTP(w, req)
 				// getSuccess(w.Body)
@@ -154,7 +186,7 @@ func TestMain(t *testing.T){
 			
 			t.Run("Delete Single", func(t *testing.T){
 				req, _ := http.NewRequest("DELETE", "/kpi/monthly/1", nil)
-				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+				req.Header.Set("Authorization", "Bearer "+ apiKey)
 				w := httptest.NewRecorder()
 				router.ServeHTTP(w, req)
 				// getSuccess(w.Body)
@@ -162,7 +194,7 @@ func TestMain(t *testing.T){
 			})
 			t.Run("Get All", func(t *testing.T){
 				req, _ := http.NewRequest("GET", "/kpi/monthly", nil)
-				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+				req.Header.Set("Authorization", "Bearer "+ apiKey)
 				w := httptest.NewRecorder()
 				router.ServeHTTP(w, req)
 				// getSuccess(w.Body)
@@ -175,7 +207,7 @@ func TestMain(t *testing.T){
 					"Year": 2000
 				}`
 				req, _ := http.NewRequest("POST", "/kpi/attendance", strings.NewReader(attendanceBody))
-				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+				req.Header.Set("Authorization", "Bearer "+ apiKey)
 				w := httptest.NewRecorder()
 				router.ServeHTTP(w, req)
 				// getSuccess(w.Body)
@@ -276,7 +308,7 @@ func TestMain(t *testing.T){
 					}
 				}`
 				req, _ := http.NewRequest("POST", "/kpi/attendance/entire", strings.NewReader(attendanceBody))
-				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+				req.Header.Set("Authorization", "Bearer "+ apiKey)
 				w := httptest.NewRecorder()
 				router.ServeHTTP(w, req)
 				getSuccess(w.Body)
@@ -284,7 +316,7 @@ func TestMain(t *testing.T){
 			})
 			t.Run("Get Single", func(t *testing.T){
 				req, _ := http.NewRequest("GET", "/kpi/attendance/2000", nil)
-				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+				req.Header.Set("Authorization", "Bearer "+ apiKey)
 				w := httptest.NewRecorder()
 				router.ServeHTTP(w, req)
 				getSuccess(w.Body)
@@ -297,7 +329,7 @@ func TestMain(t *testing.T){
 			// 		"Target": "4 /Month"
 			// 	}`
 			// 	req, _ := http.NewRequest("PUT", "/kpi/attendance/1", strings.NewReader(attendanceBody))
-			// 	// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+				// req.Header.Set("Authorization", "Bearer "+ apiKey)
 			// 	w := httptest.NewRecorder()
 			// 	router.ServeHTTP(w, req)
 			// 	// getSuccess(w.Body)
@@ -305,7 +337,7 @@ func TestMain(t *testing.T){
 			// })
 			t.Run("Delete Single", func(t *testing.T){
 				req, _ := http.NewRequest("DELETE", "/kpi/attendance/2000", nil)
-				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+				req.Header.Set("Authorization", "Bearer "+ apiKey)
 				w := httptest.NewRecorder()
 				router.ServeHTTP(w, req)
 				// getSuccess(w.Body)
@@ -313,7 +345,7 @@ func TestMain(t *testing.T){
 			})
 			t.Run("Delete Entire", func(t *testing.T){
 				req, _ := http.NewRequest("DELETE", "/kpi/attendance/entire/2023", nil)
-				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+				req.Header.Set("Authorization", "Bearer "+ apiKey)
 				w := httptest.NewRecorder()
 				router.ServeHTTP(w, req)
 				// getSuccess(w.Body)
@@ -321,7 +353,7 @@ func TestMain(t *testing.T){
 			})
 			t.Run("Get All", func(t *testing.T){
 				req, _ := http.NewRequest("GET", "/kpi/attendance", nil)
-				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+				req.Header.Set("Authorization", "Bearer "+ apiKey)
 				w := httptest.NewRecorder()
 				router.ServeHTTP(w, req)
 				// getSuccess(w.Body)
@@ -332,7 +364,7 @@ func TestMain(t *testing.T){
 			t.Run("Add Single", func(t *testing.T){
 				minipapBody := `{}`
 				req, _ := http.NewRequest("POST", "/kpi/minipap", strings.NewReader(minipapBody))
-				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+				req.Header.Set("Authorization", "Bearer "+ apiKey)
 				w := httptest.NewRecorder()
 				router.ServeHTTP(w, req)
 				// getSuccess(w.Body)
@@ -340,7 +372,7 @@ func TestMain(t *testing.T){
 			})
 			t.Run("Get Single", func(t *testing.T){
 				req, _ := http.NewRequest("GET", "/kpi/minipap/1", nil)
-				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+				req.Header.Set("Authorization", "Bearer "+ apiKey)
 				w := httptest.NewRecorder()
 				router.ServeHTTP(w, req)
 				// getSuccess(w.Body)
@@ -351,7 +383,7 @@ func TestMain(t *testing.T){
 			// 		"Minipap_ID": 2
 			// 	}`
 			// 	req, _ := http.NewRequest("PUT", "/kpi/minipap/1", strings.NewReader(minipapBody))
-			// 	// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+				// req.Header.Set("Authorization", "Bearer "+ apiKey)
 			// 	w := httptest.NewRecorder()
 			// 	router.ServeHTTP(w, req)
 			// 	// getSuccess(w.Body)
@@ -359,7 +391,7 @@ func TestMain(t *testing.T){
 			// })
 			t.Run("Delete Single", func(t *testing.T){
 				req, _ := http.NewRequest("DELETE", "/kpi/minipap/1", nil)
-				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+				req.Header.Set("Authorization", "Bearer "+ apiKey)
 				w := httptest.NewRecorder()
 				router.ServeHTTP(w, req)
 				// getSuccess(w.Body)
@@ -367,7 +399,7 @@ func TestMain(t *testing.T){
 			})
 			t.Run("Get All", func(t *testing.T){
 				req, _ := http.NewRequest("GET", "/kpi/minipap", nil)
-				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+				req.Header.Set("Authorization", "Bearer "+ apiKey)
 				w := httptest.NewRecorder()
 				router.ServeHTTP(w, req)
 				// getSuccess(w.Body)
@@ -382,7 +414,7 @@ func TestMain(t *testing.T){
 					"Target": "Zero"
 				}`
 				req, _ := http.NewRequest("POST", "/kpi/factor", strings.NewReader(factorBody))
-				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+				req.Header.Set("Authorization", "Bearer "+ apiKey)
 				w := httptest.NewRecorder()
 				router.ServeHTTP(w, req)
 				// getSuccess(w.Body)
@@ -441,7 +473,7 @@ func TestMain(t *testing.T){
 					}
 				}`
 				req, _ := http.NewRequest("POST", "/kpi/factor/entire", strings.NewReader(factorBody))
-				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+				req.Header.Set("Authorization", "Bearer "+ apiKey)
 				w := httptest.NewRecorder()
 				router.ServeHTTP(w, req)
 				getSuccess(w.Body)
@@ -449,7 +481,7 @@ func TestMain(t *testing.T){
 			})
 			t.Run("Get Single", func(t *testing.T){
 				req, _ := http.NewRequest("GET", "/kpi/factor/1", nil)
-				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+				req.Header.Set("Authorization", "Bearer "+ apiKey)
 				w := httptest.NewRecorder()
 				router.ServeHTTP(w, req)
 				getSuccess(w.Body)
@@ -462,7 +494,7 @@ func TestMain(t *testing.T){
 					"Target": "4 /Month"
 				}`
 				req, _ := http.NewRequest("PUT", "/kpi/factor/1", strings.NewReader(factorBody))
-				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+				req.Header.Set("Authorization", "Bearer "+ apiKey)
 				w := httptest.NewRecorder()
 				router.ServeHTTP(w, req)
 				// getSuccess(w.Body)
@@ -470,7 +502,7 @@ func TestMain(t *testing.T){
 			})
 			t.Run("Delete Single", func(t *testing.T){
 				req, _ := http.NewRequest("DELETE", "/kpi/factor/1", nil)
-				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+				req.Header.Set("Authorization", "Bearer "+ apiKey)
 				w := httptest.NewRecorder()
 				router.ServeHTTP(w, req)
 				// getSuccess(w.Body)
@@ -478,7 +510,7 @@ func TestMain(t *testing.T){
 			})
 			t.Run("Delete Entire", func(t *testing.T){
 				req, _ := http.NewRequest("DELETE", "/kpi/factor/entire/2", nil)
-				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+				req.Header.Set("Authorization", "Bearer "+ apiKey)
 				w := httptest.NewRecorder()
 				router.ServeHTTP(w, req)
 				// getSuccess(w.Body)
@@ -486,7 +518,7 @@ func TestMain(t *testing.T){
 			})
 			t.Run("Get All", func(t *testing.T){
 				req, _ := http.NewRequest("GET", "/kpi/factor", nil)
-				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+				req.Header.Set("Authorization", "Bearer "+ apiKey)
 				w := httptest.NewRecorder()
 				router.ServeHTTP(w, req)
 				// getSuccess(w.Body)
@@ -499,7 +531,7 @@ func TestMain(t *testing.T){
 					"Name": "Test"
 				}`
 				req, _ := http.NewRequest("POST", "/kpi/result", strings.NewReader(resultBody))
-				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+				req.Header.Set("Authorization", "Bearer "+ apiKey)
 				w := httptest.NewRecorder()
 				router.ServeHTTP(w, req)
 				// getSuccess(w.Body)
@@ -623,7 +655,7 @@ func TestMain(t *testing.T){
                     ]
                 },`
 				req, _ := http.NewRequest("POST", "/kpi/result/entire", strings.NewReader(resultBody))
-				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+				req.Header.Set("Authorization", "Bearer "+ apiKey)
 				w := httptest.NewRecorder()
 				router.ServeHTTP(w, req)
 				getSuccess(w.Body)
@@ -631,7 +663,7 @@ func TestMain(t *testing.T){
 			})
 			t.Run("Get Single", func(t *testing.T){
 				req, _ := http.NewRequest("GET", "/kpi/result/1", nil)
-				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+				req.Header.Set("Authorization", "Bearer "+ apiKey)
 				w := httptest.NewRecorder()
 				router.ServeHTTP(w, req)
 				getSuccess(w.Body)
@@ -642,7 +674,7 @@ func TestMain(t *testing.T){
 					"Name": "a. LKK"
 				}`
 				req, _ := http.NewRequest("PUT", "/kpi/result/1", strings.NewReader(resultBody))
-				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+				req.Header.Set("Authorization", "Bearer "+ apiKey)
 				w := httptest.NewRecorder()
 				router.ServeHTTP(w, req)
 				// getSuccess(w.Body)
@@ -650,7 +682,7 @@ func TestMain(t *testing.T){
 			})
 			t.Run("Delete Single", func(t *testing.T){
 				req, _ := http.NewRequest("DELETE", "/kpi/result/1", nil)
-				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+				req.Header.Set("Authorization", "Bearer "+ apiKey)
 				w := httptest.NewRecorder()
 				router.ServeHTTP(w, req)
 				// getSuccess(w.Body)
@@ -658,7 +690,7 @@ func TestMain(t *testing.T){
 			})
 			t.Run("Delete Entire", func(t *testing.T){
 				req, _ := http.NewRequest("DELETE", "/kpi/result/entire/2", nil)
-				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+				req.Header.Set("Authorization", "Bearer "+ apiKey)
 				w := httptest.NewRecorder()
 				router.ServeHTTP(w, req)
 				// getSuccess(w.Body)
@@ -666,7 +698,7 @@ func TestMain(t *testing.T){
 			})
 			t.Run("Get All", func(t *testing.T){
 				req, _ := http.NewRequest("GET", "/kpi/result", nil)
-				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+				req.Header.Set("Authorization", "Bearer "+ apiKey)
 				w := httptest.NewRecorder()
 				router.ServeHTTP(w, req)
 				// getSuccess(w.Body)
@@ -679,7 +711,7 @@ func TestMain(t *testing.T){
 					"Name": "Test"
 				}`
 				req, _ := http.NewRequest("POST", "/kpi/item", strings.NewReader(itemBody))
-				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+				req.Header.Set("Authorization", "Bearer "+ apiKey)
 				w := httptest.NewRecorder()
 				router.ServeHTTP(w, req)
 				// getSuccess(w.Body)
@@ -1151,7 +1183,7 @@ func TestMain(t *testing.T){
 					]
 				}`
 				req, _ := http.NewRequest("POST", "/kpi/item/entire", strings.NewReader(itemBody))
-				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+				req.Header.Set("Authorization", "Bearer "+ apiKey)
 				w := httptest.NewRecorder()
 				router.ServeHTTP(w, req)
 				getSuccess(w.Body)
@@ -1159,7 +1191,7 @@ func TestMain(t *testing.T){
 			})
 			t.Run("Get Single", func(t *testing.T){
 				req, _ := http.NewRequest("GET", "/kpi/item/1", nil)
-				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+				req.Header.Set("Authorization", "Bearer "+ apiKey)
 				w := httptest.NewRecorder()
 				router.ServeHTTP(w, req)
 				getSuccess(w.Body)
@@ -1170,7 +1202,7 @@ func TestMain(t *testing.T){
 					"Name": "a. LKK"
 				}`
 				req, _ := http.NewRequest("PUT", "/kpi/item/1", strings.NewReader(itemBody))
-				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+				req.Header.Set("Authorization", "Bearer "+ apiKey)
 				w := httptest.NewRecorder()
 				router.ServeHTTP(w, req)
 				// getSuccess(w.Body)
@@ -1178,7 +1210,7 @@ func TestMain(t *testing.T){
 			})
 			t.Run("Delete Single", func(t *testing.T){
 				req, _ := http.NewRequest("DELETE", "/kpi/item/1", nil)
-				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+				req.Header.Set("Authorization", "Bearer "+ apiKey)
 				w := httptest.NewRecorder()
 				router.ServeHTTP(w, req)
 				// getSuccess(w.Body)
@@ -1186,7 +1218,7 @@ func TestMain(t *testing.T){
 			})
 			t.Run("Delete Entire", func(t *testing.T){
 				req, _ := http.NewRequest("DELETE", "/kpi/item/entire/2", nil)
-				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+				req.Header.Set("Authorization", "Bearer "+ apiKey)
 				w := httptest.NewRecorder()
 				router.ServeHTTP(w, req)
 				// getSuccess(w.Body)
@@ -1194,7 +1226,7 @@ func TestMain(t *testing.T){
 			})
 			t.Run("Get All", func(t *testing.T){
 				req, _ := http.NewRequest("GET", "/kpi/item", nil)
-				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+				req.Header.Set("Authorization", "Bearer "+ apiKey)
 				w := httptest.NewRecorder()
 				router.ServeHTTP(w, req)
 				// getSuccess(w.Body)
@@ -1207,7 +1239,7 @@ func TestMain(t *testing.T){
 					"Year": 2025
 				}`
 				req, _ := http.NewRequest("POST", "/kpi/yearly", strings.NewReader(yearlyBody))
-				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+				req.Header.Set("Authorization", "Bearer "+ apiKey)
 				w := httptest.NewRecorder()
 				router.ServeHTTP(w, req)
 				// getSuccess(w.Body)
@@ -3925,7 +3957,7 @@ func TestMain(t *testing.T){
 					}
 				}`
 				req, _ := http.NewRequest("POST", "/kpi/yearly/entire", strings.NewReader(yearlyBody))
-				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+				req.Header.Set("Authorization", "Bearer "+ apiKey)
 				w := httptest.NewRecorder()
 				router.ServeHTTP(w, req)
 				getSuccess(w.Body)
@@ -3933,7 +3965,7 @@ func TestMain(t *testing.T){
 			})
 			t.Run("Get Single", func(t *testing.T){
 				req, _ := http.NewRequest("GET", "/kpi/yearly/2023", nil)
-				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+				req.Header.Set("Authorization", "Bearer "+ apiKey)
 				w := httptest.NewRecorder()
 				router.ServeHTTP(w, req)
 				// getSuccess(w.Body)
@@ -3944,7 +3976,7 @@ func TestMain(t *testing.T){
 			// 		"Name": "a. LKK"
 			// 	}`
 			// 	req, _ := http.NewRequest("PUT", "/kpi/yearly/1", strings.NewReader(yearlyBody))
-			// 	// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+				// req.Header.Set("Authorization", "Bearer "+ apiKey)
 			// 	w := httptest.NewRecorder()
 			// 	router.ServeHTTP(w, req)
 			// 	// getSuccess(w.Body)
@@ -3952,7 +3984,7 @@ func TestMain(t *testing.T){
 			// })
 			t.Run("Delete Single", func(t *testing.T){
 				req, _ := http.NewRequest("DELETE", "/kpi/yearly/2025", nil)
-				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+				req.Header.Set("Authorization", "Bearer "+ apiKey)
 				w := httptest.NewRecorder()
 				router.ServeHTTP(w, req)
 				// getSuccess(w.Body)
@@ -3960,7 +3992,7 @@ func TestMain(t *testing.T){
 			})
 			t.Run("Delete Entire", func(t *testing.T){
 				req, _ := http.NewRequest("DELETE", "/kpi/yearly/entire/2023", nil)
-				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+				req.Header.Set("Authorization", "Bearer "+ apiKey)
 				w := httptest.NewRecorder()
 				router.ServeHTTP(w, req)
 				// getSuccess(w.Body)
@@ -3968,7 +4000,7 @@ func TestMain(t *testing.T){
 			})
 			t.Run("Get All", func(t *testing.T){
 				req, _ := http.NewRequest("GET", "/kpi/yearly", nil)
-				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+				req.Header.Set("Authorization", "Bearer "+ apiKey)
 				w := httptest.NewRecorder()
 				router.ServeHTTP(w, req)
 				// getSuccess(w.Body)
@@ -3993,7 +4025,7 @@ func TestMain(t *testing.T){
 					"QC": 0
 				}`
 				req, _ := http.NewRequest("POST", "/kpi/project", strings.NewReader(projectBody))
-				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+				req.Header.Set("Authorization", "Bearer "+ apiKey)
 				w := httptest.NewRecorder()
 				router.ServeHTTP(w, req)
 				// getSuccess(w.Body)
@@ -4001,7 +4033,7 @@ func TestMain(t *testing.T){
 			})
 			t.Run("Get Single", func(t *testing.T){
 				req, _ := http.NewRequest("GET", "/kpi/project/1", nil)
-				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+				req.Header.Set("Authorization", "Bearer "+ apiKey)
 				w := httptest.NewRecorder()
 				router.ServeHTTP(w, req)
 				// getSuccess(w.Body)
@@ -4024,7 +4056,7 @@ func TestMain(t *testing.T){
 					"QC": 1
 				}`
 				req, _ := http.NewRequest("PUT", "/kpi/project/1", strings.NewReader(projectBody))
-				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+				req.Header.Set("Authorization", "Bearer "+ apiKey)
 				w := httptest.NewRecorder()
 				router.ServeHTTP(w, req)
 				// getSuccess(w.Body)
@@ -4032,7 +4064,7 @@ func TestMain(t *testing.T){
 			})
 			t.Run("Delete Single", func(t *testing.T){
 				req, _ := http.NewRequest("DELETE", "/kpi/project/1", nil)
-				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+				req.Header.Set("Authorization", "Bearer "+ apiKey)
 				w := httptest.NewRecorder()
 				router.ServeHTTP(w, req)
 				// getSuccess(w.Body)
@@ -4040,7 +4072,7 @@ func TestMain(t *testing.T){
 			})
 			t.Run("Get All", func(t *testing.T){
 				req, _ := http.NewRequest("GET", "/kpi/project", nil)
-				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+				req.Header.Set("Authorization", "Bearer "+ apiKey)
 				w := httptest.NewRecorder()
 				router.ServeHTTP(w, req)
 				// getSuccess(w.Body)
@@ -4053,7 +4085,7 @@ func TestMain(t *testing.T){
 					"IssuedDate": "2024-01-24T00:00:00Z"
 				}`
 				req, _ := http.NewRequest("POST", "/kpi/summary", strings.NewReader(summaryBody))
-				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+				req.Header.Set("Authorization", "Bearer "+ apiKey)
 				w := httptest.NewRecorder()
 				router.ServeHTTP(w, req)
 				// getSuccess(w.Body)
@@ -4071,7 +4103,7 @@ func TestMain(t *testing.T){
 					"IssuedDate": "2024-01-24T00:00:00Z"
 				}`
 				req, _ := http.NewRequest("POST", "/kpi/summary/entire", strings.NewReader(summaryBody))
-				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+				req.Header.Set("Authorization", "Bearer "+ apiKey)
 				w := httptest.NewRecorder()
 				router.ServeHTTP(w, req)
 				// getSuccess(w.Body)
@@ -4080,7 +4112,7 @@ func TestMain(t *testing.T){
 			})
 			t.Run("Get Single", func(t *testing.T){
 				req, _ := http.NewRequest("GET", "/kpi/summary/1", nil)
-				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+				req.Header.Set("Authorization", "Bearer "+ apiKey)
 				w := httptest.NewRecorder()
 				router.ServeHTTP(w, req)
 				// getSuccess(w.Body)
@@ -4091,7 +4123,7 @@ func TestMain(t *testing.T){
 					"IssuedDate": "2024-02-24T00:00:00Z"
 				}`
 				req, _ := http.NewRequest("PUT", "/kpi/summary/1", strings.NewReader(summaryBody))
-				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+				req.Header.Set("Authorization", "Bearer "+ apiKey)
 				w := httptest.NewRecorder()
 				router.ServeHTTP(w, req)
 				// getSuccess(w.Body)
@@ -4099,7 +4131,7 @@ func TestMain(t *testing.T){
 			})
 			t.Run("Delete Single", func(t *testing.T){
 				req, _ := http.NewRequest("DELETE", "/kpi/summary/1", nil)
-				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+				req.Header.Set("Authorization", "Bearer "+ apiKey)
 				w := httptest.NewRecorder()
 				router.ServeHTTP(w, req)
 				// getSuccess(w.Body)
@@ -4107,7 +4139,7 @@ func TestMain(t *testing.T){
 			})
 			t.Run("Delete Entire", func(t *testing.T){
 				req, _ := http.NewRequest("DELETE", "/kpi/summary/entire/2", nil)
-				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+				req.Header.Set("Authorization", "Bearer "+ apiKey)
 				w := httptest.NewRecorder()
 				router.ServeHTTP(w, req)
 				// fmt.Printf(w.Body.String())
@@ -4116,7 +4148,7 @@ func TestMain(t *testing.T){
 			})
 			t.Run("Get All", func(t *testing.T){
 				req, _ := http.NewRequest("GET", "/kpi/summary", nil)
-				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+				req.Header.Set("Authorization", "Bearer "+ apiKey)
 				w := httptest.NewRecorder()
 				router.ServeHTTP(w, req)
 				// getSuccess(w.Body)
@@ -4131,7 +4163,7 @@ func TestMain(t *testing.T){
 					"Tindakan":"tiada"
 				}`
 				req, _ := http.NewRequest("POST", "/kpi/masalah", strings.NewReader(masalahBody))
-				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+				req.Header.Set("Authorization", "Bearer "+ apiKey)
 				w := httptest.NewRecorder()
 				router.ServeHTTP(w, req)
 				// getSuccess(w.Body)
@@ -4140,7 +4172,7 @@ func TestMain(t *testing.T){
 			})
 			t.Run("Get Single", func(t *testing.T){
 				req, _ := http.NewRequest("GET", "/kpi/masalah/1", nil)
-				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+				req.Header.Set("Authorization", "Bearer "+ apiKey)
 				w := httptest.NewRecorder()
 				router.ServeHTTP(w, req)
 				// getSuccess(w.Body)
@@ -4153,7 +4185,7 @@ func TestMain(t *testing.T){
 					"Tindakan":"tiada"
 				}`
 				req, _ := http.NewRequest("PUT", "/kpi/masalah/1", strings.NewReader(masalahBody))
-				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+				req.Header.Set("Authorization", "Bearer "+ apiKey)
 				w := httptest.NewRecorder()
 				router.ServeHTTP(w, req)
 				// getSuccess(w.Body)
@@ -4161,7 +4193,7 @@ func TestMain(t *testing.T){
 			})
 			t.Run("Delete Single", func(t *testing.T){
 				req, _ := http.NewRequest("DELETE", "/kpi/masalah/1", nil)
-				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+				req.Header.Set("Authorization", "Bearer "+ apiKey)
 				w := httptest.NewRecorder()
 				router.ServeHTTP(w, req)
 				// getSuccess(w.Body)
@@ -4169,7 +4201,7 @@ func TestMain(t *testing.T){
 			})
 			t.Run("Get All", func(t *testing.T){
 				req, _ := http.NewRequest("GET", "/kpi/masalah", nil)
-				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+				req.Header.Set("Authorization", "Bearer "+ apiKey)
 				w := httptest.NewRecorder()
 				router.ServeHTTP(w, req)
 				// getSuccess(w.Body)
@@ -4182,7 +4214,7 @@ func TestMain(t *testing.T){
 					"Year": 2023
 				}`
 				req, _ := http.NewRequest("POST", "/kpi/analisa", strings.NewReader(analisaBody))
-				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+				req.Header.Set("Authorization", "Bearer "+ apiKey)
 				w := httptest.NewRecorder()
 				router.ServeHTTP(w, req)
 				// getSuccess(w.Body)
@@ -4199,7 +4231,7 @@ func TestMain(t *testing.T){
 					"Year": 2024
 				}`
 				req, _ := http.NewRequest("POST", "/kpi/analisa/entire", strings.NewReader(analisaBody))
-				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+				req.Header.Set("Authorization", "Bearer "+ apiKey)
 				w := httptest.NewRecorder()
 				router.ServeHTTP(w, req)
 				// getSuccess(w.Body)
@@ -4208,7 +4240,7 @@ func TestMain(t *testing.T){
 			})
 			t.Run("Get Single", func(t *testing.T){
 				req, _ := http.NewRequest("GET", "/kpi/analisa/2023", nil)
-				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+				req.Header.Set("Authorization", "Bearer "+ apiKey)
 				w := httptest.NewRecorder()
 				router.ServeHTTP(w, req)
 				// getSuccess(w.Body)
@@ -4219,7 +4251,7 @@ func TestMain(t *testing.T){
 			// 		"IssuedDate": "2024-02-24T00:00:00Z"
 			// 	}`
 			// 	req, _ := http.NewRequest("PUT", "/kpi/analisa/1", strings.NewReader(analisaBody))
-			// 	// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+				// req.Header.Set("Authorization", "Bearer "+ apiKey)
 			// 	w := httptest.NewRecorder()
 			// 	router.ServeHTTP(w, req)
 			// 	// getSuccess(w.Body)
@@ -4227,7 +4259,7 @@ func TestMain(t *testing.T){
 			// })
 			t.Run("Delete Single", func(t *testing.T){
 				req, _ := http.NewRequest("DELETE", "/kpi/analisa/2023", nil)
-				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+				req.Header.Set("Authorization", "Bearer "+ apiKey)
 				w := httptest.NewRecorder()
 				router.ServeHTTP(w, req)
 				// getSuccess(w.Body)
@@ -4235,7 +4267,7 @@ func TestMain(t *testing.T){
 			})
 			t.Run("Delete Entire", func(t *testing.T){
 				req, _ := http.NewRequest("DELETE", "/kpi/analisa/entire/2024", nil)
-				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+				req.Header.Set("Authorization", "Bearer "+ apiKey)
 				w := httptest.NewRecorder()
 				router.ServeHTTP(w, req)
 				// fmt.Printf(w.Body.String())
@@ -4244,591 +4276,20 @@ func TestMain(t *testing.T){
 			})
 			t.Run("Get All", func(t *testing.T){
 				req, _ := http.NewRequest("GET", "/kpi/analisa", nil)
-				// req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
+				req.Header.Set("Authorization", "Bearer "+ apiKey)
 				w := httptest.NewRecorder()
 				router.ServeHTTP(w, req)
 				// getSuccess(w.Body)
 				assert.Equal(t, http.StatusOK, w.Code)
 			})
+		})	
+		t.Run("Logout", func(t *testing.T){
+			req, _ := http.NewRequest("POST", "/kpi/user/logout", nil)
+			req.Header.Set("Authorization", "Bearer "+ apiKey)
+			w := httptest.NewRecorder()
+			router.ServeHTTP(w, req)
+			// getSuccess(w.Body)
+			assert.Equal(t, http.StatusOK, w.Code)
 		})
-		
 	})
 }
-// // func TestMain(t *testing.T){
-// 	t.Run("Running Server", func(t *testing.T){
-// 		userBody := `{
-// 			"Username" : "Rommel22w",
-// 			"Password" : "abcd"
-// 		 }`
-// 		req, _ := http.NewRequest("POST", "/kpi/monthly", strings.NewReader(userBody))
-// 		w := httptest.NewRecorder()
-// 		router, wg := start() 
-// 		defer stop(router, wg)
-// 		time.Sleep(1 * time.Second)
-// 		router.ServeHTTP(w, req)
-// 		var temp model.LoginResponse
-// 		body, err := ioutil.ReadAll(w.Body)
-// 		if err != nil {
-// 			fmt.Println("Error reading response:", err)
-// 		}
-// 		resJson := []byte(body)
-// 		err = json.Unmarshal(resJson, &temp)
-// 		if err != nil {
-// 			fmt.Println("Error parsing JSON:", err)		
-// 		assert.Equal(t, http.StatusOK, w.Code)
-// 		t.Run("Cities", func(t *testing.T){
-// 			t.Run("Get Cities", func(t *testing.T){
-// 				req, _ := http.NewRequest("GET", "/agatra/cities", nil)
-// 				w := httptest.NewRecorder()
-// 				router.ServeHTTP(w, req)
-// 				fmt.Println("Get Cities Body:", w.Body)
-// 				assert.Equal(t, http.StatusOK, w.Code)
-// 			})
-// 			t.Run("Get Cities By ID", func(t *testing.T){
-// 				req, _ := http.NewRequest("GET", "/agatra/cities/1", nil)
-// 				w := httptest.NewRecorder()
-// 				router.ServeHTTP(w, req)
-// 				fmt.Println("Get Cities Body By ID:", w.Body)
-// 				assert.Equal(t, http.StatusOK, w.Code)
-// 			})
-// 			t.Run("Add Cities", func(t *testing.T){
-// 				cityBody := `{
-// 					"Name" : "Bekasih"
-// 				}`
-// 				req, _ := http.NewRequest("POST", "/agatra/admin/cities", strings.NewReader(cityBody))
-// 				req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
-// 				w := httptest.NewRecorder()
-// 				router.ServeHTTP(w, req)
-// 				getSuccess(w.Body)
-// 				assert.Equal(t, http.StatusOK, w.Code)
-// 			})
-// 			t.Run("Update Cities", func(t *testing.T){
-// 				req, _ := http.NewRequest("GET", "/agatra/cities", nil)
-// 				w := httptest.NewRecorder()
-// 				router.ServeHTTP(w, req)
-// 				var temp2 model.CityArrayResponse
-// 				body, err := ioutil.ReadAll(w.Body)
-// 				if err != nil {
-// 					fmt.Println("Error reading response:", err)
-// 				}
-// 				resJson := []byte(body)
-// 				err = json.Unmarshal(resJson, &temp2)
-// 				if err != nil {
-// 					fmt.Println("Error parsing JSON:", err)
-// 				}
-// 				cityBody := `{
-// 					"Name" : "Bekasi"
-// 				}`
-// 				id := strconv.Itoa(temp2.Cities[len(temp2.Cities)-1].ID)
-// 				req, _ = http.NewRequest("PUT", "/agatra/admin/cities/" + id, strings.NewReader(cityBody))
-// 				req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
-// 				router.ServeHTTP(w, req)
-// 				getSuccess(w.Body)
-// 				assert.Equal(t, http.StatusOK, w.Code)
-// 			})
-// 			t.Run("Delete Cities", func(t *testing.T){
-// 				req, _ := http.NewRequest("GET", "/agatra/cities", nil)
-// 				w := httptest.NewRecorder()
-// 				router.ServeHTTP(w, req)
-// 				var temp2 model.CityArrayResponse
-// 				body, err := ioutil.ReadAll(w.Body)
-// 				if err != nil {
-// 					fmt.Println("Error reading response:", err)
-// 				}
-// 				resJson := []byte(body)
-// 				err = json.Unmarshal(resJson, &temp2)
-// 				if err != nil {
-// 					fmt.Println("Error parsing JSON:", err)
-// 				}
-// 				id := strconv.Itoa(temp2.Cities[len(temp2.Cities)-1].ID)
-// 				req, _ = http.NewRequest("DELETE", "/agatra/admin/cities/" + id, nil)
-// 				req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
-// 				router.ServeHTTP(w, req)
-// 				getSuccess(w.Body)
-// 				assert.Equal(t, http.StatusOK, w.Code)
-// 			})
-// 		})
-// 		t.Run("Arcade Locations", func(t *testing.T){
-// 			t.Run("Get Arcade Locations", func(t *testing.T){
-// 				req, _ := http.NewRequest("GET", "/agatra/arcade_locations", nil)
-// 				w := httptest.NewRecorder()
-// 				router.ServeHTTP(w, req)
-// 				fmt.Println("Get Arcade Locations Body:", w.Body)
-// 				assert.Equal(t, http.StatusOK, w.Code)
-// 			})
-// 			t.Run("Get Arcade Locations By ID", func(t *testing.T){
-// 				req, _ := http.NewRequest("GET", "/agatra/arcade_locations/1", nil)
-// 				w := httptest.NewRecorder()
-// 				router.ServeHTTP(w, req)
-// 				fmt.Println("Get Arcade Locations Body By ID:", w.Body)
-// 				assert.Equal(t, http.StatusOK, w.Code)
-// 			})
-// 			t.Run("Add Arcade Locations", func(t *testing.T){
-// 				locationBody := `{
-// 					"Name" : "2",
-// 					"Description" : "2",
-// 					"Lat" : 2,
-// 					"Long" : 2,
-// 					"Center_id" : 1,
-// 					"City_id" : 1
-// 				}`
-// 				req, _ := http.NewRequest("POST", "/agatra/admin/arcade_locations", strings.NewReader(locationBody))
-// 				req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
-// 				w := httptest.NewRecorder()
-// 				router.ServeHTTP(w, req)
-// 				getSuccess(w.Body)
-// 				assert.Equal(t, http.StatusOK, w.Code)
-// 			})
-// 			t.Run("Update Arcade Locations", func(t *testing.T){
-// 				req, _ := http.NewRequest("GET", "/agatra/arcade_locations", nil)
-// 				w := httptest.NewRecorder()
-// 				router.ServeHTTP(w, req)
-// 				var temp2 model.LocationArrayResponse
-// 				body, err := ioutil.ReadAll(w.Body)
-// 				if err != nil {
-// 					fmt.Println("Error reading response:", err)
-// 				}
-// 				resJson := []byte(body)
-// 				err = json.Unmarshal(resJson, &temp2)
-// 				if err != nil {
-// 					fmt.Println("Error parsing JSON:", err)
-// 				}
-// 				locationBody := `{
-// 					"Name" : "1",
-// 					"Description" : "1",
-// 					"Lat" : 1,
-// 					"Long" : 1,
-// 					"Center_id" : 1,
-// 					"City_id" : 1
-// 				}`
-// 				id := strconv.Itoa(temp2.Locations[len(temp2.Locations)-1].ID)
-// 				req, _ = http.NewRequest("PUT", "/agatra/admin/arcade_locations/" + id, strings.NewReader(locationBody))
-// 				req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
-// 				router.ServeHTTP(w, req)
-// 				getSuccess(w.Body)
-// 				assert.Equal(t, http.StatusOK, w.Code)
-// 			})
-// 			t.Run("Delete Arcade Locations", func(t *testing.T){
-// 				req, _ := http.NewRequest("GET", "/agatra/arcade_locations", nil)
-// 				w := httptest.NewRecorder()
-// 				router.ServeHTTP(w, req)
-// 				var temp2 model.LocationArrayResponse
-// 				body, err := ioutil.ReadAll(w.Body)
-// 				if err != nil {
-// 					fmt.Println("Error reading response:", err)
-// 				}
-// 				resJson := []byte(body)
-// 				err = json.Unmarshal(resJson, &temp2)
-// 				if err != nil {
-// 					fmt.Println("Error parsing JSON:", err)
-// 				}
-// 				id := strconv.Itoa(temp2.Locations[len(temp2.Locations)-1].ID)
-// 				req, _ = http.NewRequest("DELETE", "/agatra/admin/arcade_locations/" + id, nil)
-// 				req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
-// 				router.ServeHTTP(w, req)
-// 				getSuccess(w.Body)
-// 				assert.Equal(t, http.StatusOK, w.Code)
-// 			})
-// 		})
-// 		t.Run("Arcade Centers", func(t *testing.T){
-// 			t.Run("Get Arcade Centers", func(t *testing.T){
-// 				req, _ := http.NewRequest("GET", "/agatra/arcade_centers", nil)
-// 				w := httptest.NewRecorder()
-// 				router.ServeHTTP(w, req)
-// 				fmt.Println("Get Arcade Centers Body:", w.Body)
-// 				assert.Equal(t, http.StatusOK, w.Code)
-// 			})
-// 			t.Run("Get Arcade Centers By ID", func(t *testing.T){
-// 				req, _ := http.NewRequest("GET", "/agatra/arcade_centers/1", nil)
-// 				w := httptest.NewRecorder()
-// 				router.ServeHTTP(w, req)
-// 				fmt.Println("Get Arcade Centers Body By ID:", w.Body)
-// 				assert.Equal(t, http.StatusOK, w.Code)
-// 			})
-// 			t.Run("Add Arcade Centers", func(t *testing.T){
-// 				centerBody := `{
-// 					"Name" : "Tz",
-// 					"Info" : "test"
-// 				}`
-// 				req, _ := http.NewRequest("POST", "/agatra/admin/arcade_centers", strings.NewReader(centerBody))
-// 				req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
-// 				w := httptest.NewRecorder()
-// 				router.ServeHTTP(w, req)
-// 				getSuccess(w.Body)
-// 				assert.Equal(t, http.StatusOK, w.Code)
-// 			})
-// 			t.Run("Update Arcade Centers", func(t *testing.T){
-// 				req, _ := http.NewRequest("GET", "/agatra/arcade_centers", nil)
-// 				w := httptest.NewRecorder()
-// 				router.ServeHTTP(w, req)
-// 				var temp2 model.CenterArrayResponse
-// 				body, err := ioutil.ReadAll(w.Body)
-// 				if err != nil {
-// 					fmt.Println("Error reading response:", err)
-// 				}
-// 				resJson := []byte(body)
-// 				err = json.Unmarshal(resJson, &temp2)
-// 				if err != nil {
-// 					fmt.Println("Error parsing JSON:", err)
-// 				}
-// 				centerBody := `{
-// 					"Name" : "Timez",
-// 					"Info" : "test"
-// 				}`
-// 				id := strconv.Itoa(temp2.Centers[len(temp2.Centers)-1].ID)
-// 				req, _ = http.NewRequest("PUT", "/agatra/admin/arcade_centers/" + id, strings.NewReader(centerBody))
-// 				req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
-// 				router.ServeHTTP(w, req)
-// 				getSuccess(w.Body)
-// 				assert.Equal(t, http.StatusOK, w.Code)
-// 			})
-// 			t.Run("Delete Arcade Centers", func(t *testing.T){
-// 				req, _ := http.NewRequest("GET", "/agatra/arcade_centers", nil)
-// 				w := httptest.NewRecorder()
-// 				router.ServeHTTP(w, req)
-// 				var temp2 model.CenterArrayResponse
-// 				body, err := ioutil.ReadAll(w.Body)
-// 				if err != nil {
-// 					fmt.Println("Error reading response:", err)
-// 				}
-// 				resJson := []byte(body)
-// 				err = json.Unmarshal(resJson, &temp2)
-// 				if err != nil {
-// 					fmt.Println("Error parsing JSON:", err)
-// 				}
-// 				id := strconv.Itoa(temp2.Centers[len(temp2.Centers)-1].ID)
-// 				req, _ = http.NewRequest("DELETE", "/agatra/admin/arcade_centers/" + id, nil)
-// 				req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
-// 				router.ServeHTTP(w, req)
-// 				getSuccess(w.Body)
-// 				assert.Equal(t, http.StatusOK, w.Code)
-// 			})
-// 		})
-// 		t.Run("Arcade Machines", func(t *testing.T){
-// 			t.Run("Get Arcade Machines", func(t *testing.T){
-// 				req, _ := http.NewRequest("GET", "/agatra/arcade_machines", nil)
-// 				w := httptest.NewRecorder()
-// 				router.ServeHTTP(w, req)
-// 				fmt.Println("Get Arcade Machines Body:", w.Body)
-// 				assert.Equal(t, http.StatusOK, w.Code)
-// 			})
-// 			t.Run("Get Arcade Machines By ID", func(t *testing.T){
-// 				req, _ := http.NewRequest("GET", "/agatra/arcade_machines/1", nil)
-// 				w := httptest.NewRecorder()
-// 				router.ServeHTTP(w, req)
-// 				fmt.Println("Get Arcade Machines Body By ID:", w.Body)
-// 				assert.Equal(t, http.StatusOK, w.Code)
-// 			})
-// 			t.Run("Add Arcade Machines", func(t *testing.T){
-// 				machineBody := `{
-// 					"version_id" : 1,
-// 					"count" : 1,
-// 					"price" : 1,
-// 					"location_id" : 1,
-// 					"notes" : "1"					
-// 				}`
-// 				req, _ := http.NewRequest("POST", "/agatra/admin/arcade_machines", strings.NewReader(machineBody))
-// 				req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
-// 				w := httptest.NewRecorder()
-// 				router.ServeHTTP(w, req)
-// 				getSuccess(w.Body)
-// 				assert.Equal(t, http.StatusOK, w.Code)
-// 			})
-// 			t.Run("Update Arcade Machines", func(t *testing.T){
-// 				req, _ := http.NewRequest("GET", "/agatra/arcade_machines", nil)
-// 				w := httptest.NewRecorder()
-// 				router.ServeHTTP(w, req)
-// 				var temp2 model.MachineArrayResponse
-// 				body, err := ioutil.ReadAll(w.Body)
-// 				if err != nil {
-// 					fmt.Println("Error reading response:", err)
-// 				}
-// 				resJson := []byte(body)
-// 				err = json.Unmarshal(resJson, &temp2)
-// 				if err != nil {
-// 					fmt.Println("Error parsing JSON:", err)
-// 				}
-// 				machineBody := `{
-// 					"version_id" : 1,
-// 					"count" : 2,
-// 					"location_id" : 1,
-// 					"notes" : "2",
-// 					"price" : 2
-// 				}`
-// 				id := strconv.Itoa(temp2.Machines[len(temp2.Machines)-1].ID)
-// 				req, _ = http.NewRequest("PUT", "/agatra/admin/arcade_machines/" + id, strings.NewReader(machineBody))
-// 				req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
-// 				router.ServeHTTP(w, req)
-// 				getSuccess(w.Body)
-// 				assert.Equal(t, http.StatusOK, w.Code)
-// 			})
-// 			t.Run("Delete Arcade Machines", func(t *testing.T){
-// 				req, _ := http.NewRequest("GET", "/agatra/arcade_machines", nil)
-// 				w := httptest.NewRecorder()
-// 				router.ServeHTTP(w, req)
-// 				var temp2 model.MachineArrayResponse
-// 				body, err := ioutil.ReadAll(w.Body)
-// 				if err != nil {
-// 					fmt.Println("Error reading response:", err)
-// 				}
-// 				resJson := []byte(body)
-// 				err = json.Unmarshal(resJson, &temp2)
-// 				if err != nil {
-// 					fmt.Println("Error parsing JSON:", err)
-// 				}
-// 				id := strconv.Itoa(temp2.Machines[len(temp2.Machines)-1].ID)
-// 				req, _ = http.NewRequest("DELETE", "/agatra/admin/arcade_machines/" + id, nil)
-// 				req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
-// 				router.ServeHTTP(w, req)
-// 				getSuccess(w.Body)
-// 				assert.Equal(t, http.StatusOK, w.Code)
-// 			})
-// 		})		
-// 		t.Run("Game Title Versions", func(t *testing.T){
-// 			t.Run("Get Game Title Versions", func(t *testing.T){
-// 				req, _ := http.NewRequest("GET", "/agatra/game_title_versions", nil)
-// 				w := httptest.NewRecorder()
-// 				router.ServeHTTP(w, req)
-// 				fmt.Println("Get Game Title Versions Body:", w.Body)
-// 				assert.Equal(t, http.StatusOK, w.Code)
-// 			})
-// 			t.Run("Get Game Title Versions By ID", func(t *testing.T){
-// 				req, _ := http.NewRequest("GET", "/agatra/game_title_versions/1", nil)
-// 				w := httptest.NewRecorder()
-// 				router.ServeHTTP(w, req)
-// 				fmt.Println("Get Game Title Versions Body By ID:", w.Body)
-// 				assert.Equal(t, http.StatusOK, w.Code)
-// 			})
-// 			t.Run("Add Game Title Versions", func(t *testing.T){
-// 				titleBody := `{
-// 					"Name" : "maymay finale",
-// 					"title_id" : 1,
-// 					"Info" : "1"
-// 				}`
-// 				req, _ := http.NewRequest("POST", "/agatra/admin/game_title_versions", strings.NewReader(titleBody))
-// 				req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
-// 				w := httptest.NewRecorder()
-// 				router.ServeHTTP(w, req)
-// 				getSuccess(w.Body)
-// 				assert.Equal(t, http.StatusOK, w.Code)
-// 			})
-// 			t.Run("Update Game Title Versions", func(t *testing.T){
-// 				req, _ := http.NewRequest("GET", "/agatra/game_title_versions", nil)
-// 				w := httptest.NewRecorder()
-// 				router.ServeHTTP(w, req)
-// 				var temp2 model.VersionArrayResponse
-// 				body, err := ioutil.ReadAll(w.Body)
-// 				if err != nil {
-// 					fmt.Println("Error reading response:", err)
-// 				}
-// 				resJson := []byte(body)
-// 				err = json.Unmarshal(resJson, &temp2)
-// 				if err != nil {
-// 					fmt.Println("Error parsing JSON:", err)
-// 				}
-// 				titleBody := `{
-// 					"Name" : "MaiMai Festival",
-// 					"title_id" : 1,
-// 					"Info" : "2"
-// 				}`
-// 				id := strconv.Itoa(temp2.Versions[len(temp2.Versions)-1].ID)
-// 				req, _ = http.NewRequest("PUT", "/agatra/admin/game_title_versions/" + id, strings.NewReader(titleBody))
-// 				req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
-// 				router.ServeHTTP(w, req)
-// 				getSuccess(w.Body)
-// 				assert.Equal(t, http.StatusOK, w.Code)
-// 			})
-// 			t.Run("Delete Game Title Versions", func(t *testing.T){
-// 				req, _ := http.NewRequest("GET", "/agatra/game_title_versions", nil)
-// 				w := httptest.NewRecorder()
-// 				router.ServeHTTP(w, req)
-// 				var temp2 model.VersionArrayResponse
-// 				body, err := ioutil.ReadAll(w.Body)
-// 				if err != nil {
-// 					fmt.Println("Error reading response:", err)
-// 				}
-// 				resJson := []byte(body)
-// 				err = json.Unmarshal(resJson, &temp2)
-// 				if err != nil {
-// 					fmt.Println("Error parsing JSON:", err)
-// 				}
-// 				id := strconv.Itoa(temp2.Versions[len(temp2.Versions)-1].ID)
-// 				req, _ = http.NewRequest("DELETE", "/agatra/admin/game_title_versions/" + id, nil)
-// 				req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
-// 				router.ServeHTTP(w, req)
-// 				getSuccess(w.Body)
-// 				assert.Equal(t, http.StatusOK, w.Code)
-// 			})
-// 		})		
-// 		t.Run("Game Titles", func(t *testing.T){
-// 			t.Run("Get Game Titles", func(t *testing.T){
-// 				req, _ := http.NewRequest("GET", "/agatra/game_titles", nil)
-// 				w := httptest.NewRecorder()
-// 				router.ServeHTTP(w, req)
-// 				fmt.Println("Get Game Titles Body:", w.Body)
-// 				assert.Equal(t, http.StatusOK, w.Code)
-// 			})
-// 			t.Run("Get Game Titles By ID", func(t *testing.T){
-// 				req, _ := http.NewRequest("GET", "/agatra/game_titles/1", nil)
-// 				w := httptest.NewRecorder()
-// 				router.ServeHTTP(w, req)
-// 				fmt.Println("Get Game Titles Body By ID:", w.Body)
-// 				assert.Equal(t, http.StatusOK, w.Code)
-// 			})
-// 			t.Run("Add Game Titles", func(t *testing.T){
-// 				titleBody := `{
-// 					"Name" : "maymay"
-// 				}`
-// 				req, _ := http.NewRequest("POST", "/agatra/admin/game_titles", strings.NewReader(titleBody))
-// 				req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
-// 				w := httptest.NewRecorder()
-// 				router.ServeHTTP(w, req)
-// 				getSuccess(w.Body)
-// 				assert.Equal(t, http.StatusOK, w.Code)
-// 			})
-// 			t.Run("Update Game Titles", func(t *testing.T){
-// 				req, _ := http.NewRequest("GET", "/agatra/game_titles", nil)
-// 				w := httptest.NewRecorder()
-// 				router.ServeHTTP(w, req)
-// 				var temp2 model.TitleArrayResponse
-// 				body, err := ioutil.ReadAll(w.Body)
-// 				if err != nil {
-// 					fmt.Println("Error reading response:", err)
-// 				}
-// 				resJson := []byte(body)
-// 				err = json.Unmarshal(resJson, &temp2)
-// 				if err != nil {
-// 					fmt.Println("Error parsing JSON:", err)
-// 				}
-// 				titleBody := `{
-// 					"Name" : "MaiMai"
-// 				}`
-// 				id := strconv.Itoa(temp2.Titles[len(temp2.Titles)-1].ID)
-// 				req, _ = http.NewRequest("PUT", "/agatra/admin/game_titles/" + id, strings.NewReader(titleBody))
-// 				req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
-// 				router.ServeHTTP(w, req)
-// 				getSuccess(w.Body)
-// 				assert.Equal(t, http.StatusOK, w.Code)
-// 			})
-// 			t.Run("Delete Game Titles", func(t *testing.T){
-// 				req, _ := http.NewRequest("GET", "/agatra/game_titles", nil)
-// 				w := httptest.NewRecorder()
-// 				router.ServeHTTP(w, req)
-// 				var temp2 model.TitleArrayResponse
-// 				body, err := ioutil.ReadAll(w.Body)
-// 				if err != nil {
-// 					fmt.Println("Error reading response:", err)
-// 				}
-// 				resJson := []byte(body)
-// 				err = json.Unmarshal(resJson, &temp2)
-// 				if err != nil {
-// 					fmt.Println("Error parsing JSON:", err)
-// 				}
-// 				id := strconv.Itoa(temp2.Titles[len(temp2.Titles)-1].ID)
-// 				req, _ = http.NewRequest("DELETE", "/agatra/admin/game_titles/" + id, nil)
-// 				req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
-// 				router.ServeHTTP(w, req)
-// 				getSuccess(w.Body)
-// 				assert.Equal(t, http.StatusOK, w.Code)
-// 			})
-// 		})		
-// 		t.Run("Users", func(t *testing.T){
-// 			t.Run("Get Users", func(t *testing.T){
-// 				req, _ := http.NewRequest("GET", "/agatra/admin/users", nil)
-// 				req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
-// 				w := httptest.NewRecorder()
-// 				router.ServeHTTP(w, req)
-// 				fmt.Println("Get Users Body:", w.Body)
-// 				assert.Equal(t, http.StatusOK, w.Code)
-// 			})
-// 			t.Run("Get Privileged Users", func(t *testing.T){
-// 				req, _ := http.NewRequest("GET", "/agatra/admin/users/privileged", nil)
-// 				req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
-// 				w := httptest.NewRecorder()
-// 				router.ServeHTTP(w, req)
-// 				fmt.Println("Get Privileged Body:", w.Body)
-// 				assert.Equal(t, http.StatusOK, w.Code)
-// 			})
-// 			t.Run("Get Users By ID", func(t *testing.T){
-// 				req, _ := http.NewRequest("GET", "/agatra/admin/users/1", nil)
-// 				req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
-// 				w := httptest.NewRecorder()
-// 				router.ServeHTTP(w, req)
-// 				fmt.Println("Get Users Body By ID:", w.Body)
-// 				assert.Equal(t, http.StatusOK, w.Code)
-// 			})
-// 			t.Run("Add Users", func(t *testing.T){
-// 				userBody := `{
-// 					"Username" : "jan",
-// 					"Email" : "1",
-// 					"Password" : "1",
-// 					"Role" : "Member"
-// 				}`
-// 				req, _ := http.NewRequest("POST", "/agatra/admin/users", strings.NewReader(userBody))
-// 				req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
-// 				w := httptest.NewRecorder()
-// 				router.ServeHTTP(w, req)
-// 				getSuccess(w.Body)
-// 				assert.Equal(t, http.StatusOK, w.Code)
-// 			})
-// 			t.Run("Update Users", func(t *testing.T){
-// 				req, _ := http.NewRequest("GET", "/agatra/admin/users", nil)
-// 				req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
-// 				w := httptest.NewRecorder()
-// 				router.ServeHTTP(w, req)
-// 				var temp2 model.UserArrayResponse
-// 				body, err := ioutil.ReadAll(w.Body)
-// 				if err != nil {
-// 					fmt.Println("Error reading response:", err)
-// 				}
-// 				resJson := []byte(body)
-// 				err = json.Unmarshal(resJson, &temp2)
-// 				if err != nil {
-// 					fmt.Println("Error parsing JSON:", err)
-// 				}
-// 				userBody := `{
-// 					"Username" : "ojan",
-// 					"Email" : "1",
-// 					"Password" : "1",
-// 					"Role" : "Member"
-// 				}`
-// 				id := strconv.Itoa(temp2.Users[len(temp2.Users)-1].ID)
-// 				req, _ = http.NewRequest("PUT", "/agatra/admin/users/" + id, strings.NewReader(userBody))
-// 				req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
-// 				router.ServeHTTP(w, req)
-// 				getSuccess(w.Body)
-// 				assert.Equal(t, http.StatusOK, w.Code)
-// 			})
-// 			t.Run("Delete Users", func(t *testing.T){
-// 				req, _ := http.NewRequest("GET", "/agatra/admin/users", nil)
-// 				req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
-// 				w := httptest.NewRecorder()
-// 				router.ServeHTTP(w, req)
-// 				var temp2 model.UserArrayResponse
-// 				body, err := ioutil.ReadAll(w.Body)
-// 				if err != nil {
-// 					fmt.Println("Error reading response:", err)
-// 				}
-// 				resJson := []byte(body)
-// 				err = json.Unmarshal(resJson, &temp2)
-// 				if err != nil {
-// 					fmt.Println("Error parsing JSON:", err)
-// 				}
-// 				id := strconv.Itoa(temp2.Users[len(temp2.Users)-1].ID)
-// 				req, _ = http.NewRequest("DELETE", "/agatra/admin/users/" + id, nil)
-// 				req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
-// 				router.ServeHTTP(w, req)
-// 				getSuccess(w.Body)
-// 				assert.Equal(t, http.StatusOK, w.Code)
-// 			})
-// 		})	
-// 		t.Run("Get Profile", func(t *testing.T){
-// 			req, _ := http.NewRequest("GET", "/agatra/profile", nil)
-// 			req.Header.Set("Authorization", "Bearer "+ temp.Data.ApiKey)
-// 			w := httptest.NewRecorder()
-// 			router.ServeHTTP(w, req)
-// 			fmt.Println("Get Profiles Body:", w.Body)
-// 			assert.Equal(t, http.StatusOK, w.Code)
-// 		})
-// 	})
-// 	}

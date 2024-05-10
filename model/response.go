@@ -87,17 +87,9 @@ type YearlyResponse struct{
 
 type LoginResponse struct {
 	Message 	string					`json:"message"`
-	Data		struct{
-		ApiKey 		string    			`json:"apiKey"`
-		User   		UserResponse	    `json:"user"`
-	}									`json:"data"`
+	Token		string    				`json:"token"`
 }
-type RegisterInput struct {
-	Username         string
-	Email            string
-	Password         string
-	Confirm_password string
-}
+
 type UserResponse struct {
 	ID 			int				`gorm:"primaryKey" json:"id"`
 	Username	string			`gorm:"notNull" json:"username"`	

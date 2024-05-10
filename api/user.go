@@ -37,10 +37,11 @@ func (ua *userAPI) Login (u *gin.Context) {
 	if model.ErrorCheck(u, err){return}
 	tokenString, err := ua.userService.Login(user)
 	if model.ErrorCheck(u, err){return}
-	u.JSON(http.StatusFound, gin.H{
-		"data":"Successfully Logging In",
-		"token":&tokenString,
-	})
+	result := model.LoginResponse{
+		Message: "Successfully Logging In",
+		Token: *tokenString,
+	}
+	u.JSON(http.StatusOK, result)
 }
 
 func (ua *userAPI) Register (u *gin.Context) {
@@ -49,7 +50,7 @@ func (ua *userAPI) Register (u *gin.Context) {
 	if model.ErrorCheck(u, err){return}
 	err = ua.userService.Register(user)
 	if model.ErrorCheck(u, err){return}
-	u.JSON(http.StatusFound, model.SuccessResponse{Message: "Register User success"})
+	u.JSON(http.StatusCreated, model.SuccessResponse{Message: "Register User success"})
 }
 
 func (ua *userAPI) Logout (u *gin.Context) {
@@ -62,7 +63,7 @@ func (ua *userAPI) Logout (u *gin.Context) {
 	u.Header("Authorization", "")
 	err = ua.userService.Logout(claims)
 	if model.ErrorCheck(u, err){return}
-	u.JSON(http.StatusFound, model.SuccessResponse{Message: "Logout success"})
+	u.JSON(http.StatusOK, model.SuccessResponse{Message: "Logout success"})
 }
 
 func (ua *userAPI) ChangePassword(u *gin.Context) {

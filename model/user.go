@@ -31,3 +31,10 @@ type Claims struct {
 	Email 		string 			`json:"email"`
 	jwt.StandardClaims
 }
+
+type RegisterInput struct {
+	Username         string		`json:"username"`
+	Email            string		`json:"email"`
+	Password         string		`json:"password"`
+	Confirm_password string		`json:"confirm_password"`
+}

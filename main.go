@@ -253,7 +253,7 @@ func main(){
 			panic(err)
 		}
 
-		conn.AutoMigrate(&model.Monthly{}, &model.Masalah{}, &model.Project{}, &model.UploadFile{}) 
+		conn.AutoMigrate(&model.Monthly{}, &model.Masalah{}, &model.Project{}, &model.UploadFile{}, &model.User{}, &model.Session{}) 
 		conn.AutoMigrate(&model.MiniPAP{}, &model.Analisa{}, &model.Summary{})
 		conn.AutoMigrate(&model.Attendance{})
 		conn.AutoMigrate(&model.Factor{})
