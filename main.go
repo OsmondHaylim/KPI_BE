@@ -9,12 +9,12 @@ import (
 
 	_ "embed"
 	"fmt"
+	"sync"
 	"log"
 	"os"
-	"sync"
 
-	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
+	"github.com/gin-gonic/gin"
 	_ "github.com/lib/pq"
 	"gorm.io/gorm"
 )
@@ -210,6 +210,15 @@ func main(){
 	// 	DBName:   "kpiv",
 	// }
 
+	// config := &db.Config{
+	// 	Host:     "localhost",
+	// 	Port:     "5432",
+	// 	Password: "Whi827cc25",
+	// 	User:     "postgres",
+	// 	SSLMode:  "disable",
+	// 	DBName:   "kpiv",
+	// }
+
 	wg := sync.WaitGroup{}
 
 	wg.Add(1)
@@ -237,10 +246,14 @@ func main(){
 
 		router = RunServer(conn, router)
 
-		fmt.Println("Server is running on port 8080")
-		err = router.Run(":8081")
+		fmt.Println("Server is running on port 8081")
+		err = router.Run(":8080")
 		if err != nil {
-			panic(err)
+			fmt.Println("Port 8080 taken, switching port 8081")
+			err = router.Run(":8081")
+			if err != nil {
+				panic(err)
+			}
 		}
 
 	}()
