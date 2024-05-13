@@ -10,10 +10,10 @@ import (
 	_ "embed"
 	"fmt"
 	"sync"
-	"log"
-	"os"
+	// "log"
+	// "os"
 
-	"github.com/joho/godotenv"
+	// "github.com/joho/godotenv"
 	"github.com/gin-gonic/gin"
 	_ "github.com/lib/pq"
 	"gorm.io/gorm"
@@ -188,36 +188,29 @@ func RunServer(db *gorm.DB, gin *gin.Engine) *gin.Engine {
 func main(){
 	gin.SetMode(gin.ReleaseMode)
 
-	err := godotenv.Load(".env")
-	if err != nil {
-		log.Print("Missing .env file. Probably okay on dockerized environment")
-	}
+	// err := godotenv.Load(".env")
+	// if err != nil {
+	// 	log.Print("Missing .env file. Probably okay on dockerized environment")
+	// }
+	// config := &db.Config{
+	// 	Host:     os.Getenv("DB_HOST"),
+	// 	Port:     os.Getenv("DB_PORT"),
+	// 	Password: os.Getenv("DB_PASS"),
+	// 	User:     os.Getenv("DB_USER"),
+	// 	SSLMode:  os.Getenv("DB_SSLMODE"),
+	// 	DBName:   os.Getenv("DB_NAME"),
+	// }
+
 	config := &db.Config{
-		Host:     os.Getenv("DB_HOST"),
-		Port:     os.Getenv("DB_PORT"),
-		Password: os.Getenv("DB_PASS"),
-		User:     os.Getenv("DB_USER"),
-		SSLMode:  os.Getenv("DB_SSLMODE"),
-		DBName:   os.Getenv("DB_NAME"),
+		Host:     "aws-0-ap-southeast-1.pooler.supabase.com",
+		Port:     "5432",
+		Password: "Technosport@2024",
+		User:     "postgres.mjmfiwrmndhoitdltbud",
+		SSLMode:  "disable",
+		DBName:   "postgres",
 	}
 
-	// config := &db.Config{
-	// 	Host:     "localhost",
-	// 	Port:     "5432",
-	// 	Password: "administrator",
-	// 	User:     "postgres",
-	// 	SSLMode:  "disable",
-	// 	DBName:   "kpiv",
-	// }
 
-	// config := &db.Config{
-	// 	Host:     "localhost",
-	// 	Port:     "5432",
-	// 	Password: "Whi827cc25",
-	// 	User:     "postgres",
-	// 	SSLMode:  "disable",
-	// 	DBName:   "kpiv",
-	// }
 
 	wg := sync.WaitGroup{}
 
@@ -246,7 +239,7 @@ func main(){
 
 		router = RunServer(conn, router)
 
-		fmt.Println("Server is running on port 8081")
+		fmt.Println("Server is running on port 8080")
 		err = router.Run(":8080")
 		if err != nil {
 			fmt.Println("Port 8080 taken, switching port 8081")

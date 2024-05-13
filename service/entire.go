@@ -21,11 +21,11 @@ func (cs *crudService) AddEntireYearly(input *model.YearlyResponse) error {
 	//Storing Items
 	for _, item := range input.Items{
 		wg.Add(1)
-		go cs.AddEntireItem(&wg, &item, &newYearly.Year, errs)
+		go cs.AddEntireItem(&wg, item, &newYearly.Year, errs)
 	}
 	return model.SimpleErrorChanCheck(&wg, errs)
 }
-func (cs *crudService) AddEntireItem(wg *sync.WaitGroup, input *model.ItemResponse, id *int, errChan chan error) {
+func (cs *crudService) AddEntireItem(wg *sync.WaitGroup, input model.ItemResponse, id *int, errChan chan error) {
 	defer wg.Done()
 	//Storing Items
 	var newItem model.Item
@@ -341,7 +341,7 @@ func (cs *crudService) UpdateEntireYearly(id int, input model.YearlyResponse) er
 	// Add Back items
 	for _, item := range input.Items{
 		wg.Add(1)
-		go cs.AddEntireItem(&wg, &item, &id, errs)
+		go cs.AddEntireItem(&wg, item, &id, errs)
 	}
 	return model.SimpleErrorChanCheck(&wg, errs)
 }

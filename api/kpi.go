@@ -131,7 +131,7 @@ func (ka *kpiAPI) AddEntireItem(k *gin.Context) {
 	if model.ErrorCheck(k, k.ShouldBindJSON(&response)) {return}
 	wg, errs := model.GoRoutineInit()
 	wg.Add(1)
-	go ka.crudService.AddEntireItem(&wg, &response, nil, errs)
+	go ka.crudService.AddEntireItem(&wg, response, nil, errs)
 	wg.Wait()
 	if model.ErrorChanCheck(k, errs) {return}
 	k.JSON(http.StatusCreated, model.SuccessResponse{Message: "add Entire Item success"})
