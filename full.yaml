@@ -1,0 +1,2976 @@
+openapi: '3.0.0'
+info:
+  version: '1.0.0'
+  title: 'KPIV API'
+  description: API for Key Performance Indicator Visualizer
+
+servers:
+    - url: "http://localhost:8080/kpi/"
+
+paths:
+  /login:
+    post:
+      summary: Login
+      security: []
+      requestBody:
+        content:
+          "multipart-form-data":
+            schema:
+              properties:
+                username:
+                  description: The name of an user
+                  type: string
+                password:
+                  description: The password needed for an user to log in to the application
+                  type: string
+      responses:
+        200:
+          description: Logged in
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/loginResponse"
+        400:
+          description: Wrong username or password
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+  /logout:
+    post:
+      summary: Logout
+      responses:
+        200:
+          description: Logged out
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+  /register:
+    post:
+      summary: Create a new account
+      requestBody:
+        content:
+          "multipart-form-data":
+            schema:
+              properties:
+                username:
+                  description: The name of an user. Should be unique and consist of 3 to 30 alphanumeric characters
+                  type: string
+                email:
+                  description: Email to connect to user account. Should be a valid email address
+                  type: string
+                password:
+                  description: The password needed for an user to log in to the application. Should be between 8 and 50 characters in length
+                  type: string
+                confirm_password:
+                  description: Typing the password the second time to ensure no typo and confirmation. Should be the same as password
+                  type: string
+      responses:
+        200:
+          description: Account successfully created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        400: 
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        409: 
+          description: Account username or email already existed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        500: 
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+
+  /monthly:
+    get:
+      summary: Get all monthly 
+      description: Fetch all monthly struct from table monthly. 
+      responses:
+        200:
+          description: All monthly struct on the table monthly
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/monthlyArrayResponse"
+        500:
+          description: Failure to process data. Send body and report to BE immediately.
+    post:
+      summary: Add a monthly
+      description: Add a monthly. Must be logged in first and have the valid Authorization header.
+      requestBody:
+        content:
+          "multipart/form-data":
+            schema:
+              $ref: "#/components/schemas/monthly"
+      responses:
+        200:
+          description: Monthly added successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        401:
+          description: Unauthorized because user is unauthenticated. Must login first
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        403:
+          description: Forbidden because user do not have sufficient authority to add, edit or delete stuff.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        500:
+          description: Failure to process data. Send body and report to BE immediately.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+  /monthly/{monthly_id}:
+    parameters:
+      - name: monthly_id
+        in: path
+        required: true
+        schema:
+          $ref: "#/components/schemas/monthly/properties/Monthly_ID"
+    get:
+      summary: Get a monthly corresponding to the provided `monthly_id`
+      responses:
+        200:
+          description: The monthly corresponding to the provided `monthly_id`
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/monthly"
+        500:
+          description: Failure to process data. Send body and report to BE immediately.        
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+    put:
+      description: Edit a monthly. Must be logged in first and have the valid Authorization header.
+      requestBody:
+        content:
+          "multipart/form-data":
+            schema:
+              $ref: "#/components/schemas/monthly"
+      responses:
+        200:
+          description: Monthly edited successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        401:
+          description: Unauthorized because user is unauthenticated. Must login first
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        403:
+          description: Forbidden because user do not have sufficient authority to add, edit or delete stuff.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        404:
+          description: Data that needs to be edited not found. 
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        500:
+          description: Failure to process data. Send body and report to BE immediately.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+    delete:
+      description: Delete a monthly. Must be logged in first and have the valid Authorization header.
+      responses:
+        200:
+          description: monthly deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        401:
+          description: Unauthorized because user is unauthenticated. Must login first
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        403:
+          description: Forbidden because user do not have sufficient authority to add, edit or delete stuff.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        404:
+          description: Data that needs to be edited not found. 
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        500:
+          description: Failure to process data. Send body and report to BE immediately.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+
+  /minipap:
+    get:
+      summary: Get all minipap 
+      description: Fetch all minipap struct from table minipap. 
+      responses:
+        200:
+          description: All minipap struct on the table minipap
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/minipapArrayResponse"
+        500:
+          description: Failure to process data. Send body and report to BE immediately.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+    post:
+      summary: Add a minipap
+      description: Add a minipap. Must be logged in first and have the valid Authorization header.
+      requestBody:
+        content:
+          "multipart/form-data":
+            schema:
+              $ref: "#/components/schemas/minipap"
+      responses:
+        200:
+          description: minipap added successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        401:
+          description: Unauthorized because user is unauthenticated. Must login first
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        403:
+          description: Forbidden because user do not have sufficient authority to add, edit or delete stuff.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        500:
+          description: Failure to process data. Send body and report to BE immediately.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+  /minipap/{minipap_id}:
+    parameters:
+      - name: minipap_id
+        in: path
+        required: true
+        schema:
+          $ref: "#/components/schemas/minipap/properties/Minipap_ID"
+    get:
+      summary: Get a minipap corresponding to the provided `minipap_id`
+      responses:
+        200:
+          description: The minipap corresponding to the provided `minipap_id`
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/minipap"
+        500:
+          description: Failure to process data. Send body and report to BE immediately.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"        
+    put:
+      description: Edit a minipap. Must be logged in first and have the valid Authorization header.
+      requestBody:
+        content:
+          "multipart/form-data":
+            schema:
+              $ref: "#/components/schemas/minipap"
+      responses:
+        200:
+          description: minipap edited successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        401:
+          description: Unauthorized because user is unauthenticated. Must login first
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        403:
+          description: Forbidden because user do not have sufficient authority to add, edit or delete stuff.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        404:
+          description: Data that needs to be edited not found. 
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        500:
+          description: Failure to process data. Send body and report to BE immediately.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+    delete:
+      description: Delete a minipap. Must be logged in first and have the valid Authorization header.
+      responses:
+        200:
+          description: minipap deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        401:
+          description: Unauthorized because user is unauthenticated. Must login first
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        403:
+          description: Forbidden because user do not have sufficient authority to add, edit or delete stuff.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        404:
+          description: Data that needs to be edited not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse" 
+        500:
+          description: Failure to process data. Send body and report to BE immediately.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+
+  /factor:
+    get:
+      summary: Get all factor 
+      description: Fetch all factor struct from table factor. 
+      responses:
+        200:
+          description: All factor struct on the table factor
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/factorArrayResponse"
+        500:
+          description: Failure to process data. Send body and report to BE immediately.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+    post:
+      summary: Add a factor
+      description: Add a factor. Must be logged in first and have the valid Authorization header.
+      requestBody:
+        content:
+          "multipart/form-data":
+            schema:
+              $ref: "#/components/schemas/factor"
+      responses:
+        200:
+          description: factor added successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        401:
+          description: Unauthorized because user is unauthenticated. Must login first
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        403:
+          description: Forbidden because user do not have sufficient authority to add, edit or delete stuff.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        500:
+          description: Failure to process data. Send body and report to BE immediately.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+  /factor/{factor_id}:
+    parameters:
+      - name: factor_id
+        in: path
+        required: true
+        schema:
+          $ref: "#/components/schemas/factor/properties/Factor_ID"
+    get:
+      summary: Get a factor corresponding to the provided `factor_id`
+      responses:
+        200:
+          description: The factor corresponding to the provided `factor_id`
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/factor"
+        500:
+          description: Failure to process data. Send body and report to BE immediately.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"        
+    put:
+      description: Edit a factor. Must be logged in first and have the valid Authorization header.
+      requestBody:
+        content:
+          "multipart/form-data":
+            schema:
+              $ref: "#/components/schemas/factor"
+      responses:
+        200:
+          description: factor edited successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        401:
+          description: Unauthorized because user is unauthenticated. Must login first
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        403:
+          description: Forbidden because user do not have sufficient authority to add, edit or delete stuff.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        404:
+          description: Data that needs to be edited not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse" 
+        500:
+          description: Failure to process data. Send body and report to BE immediately.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+    delete:
+      description: Delete a factor. Must be logged in first and have the valid Authorization header.
+      responses:
+        200:
+          description: factor deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        401:
+          description: Unauthorized because user is unauthenticated. Must login first
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        403:
+          description: Forbidden because user do not have sufficient authority to add, edit or delete stuff.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        404:
+          description: Data that needs to be edited not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse" 
+        500:
+          description: Failure to process data. Send body and report to BE immediately.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+  /factor/entire:
+    post:
+      summary: Add a complete factor. 
+      description: Add a factor with the needed association. Must be logged in first and have the valid Authorization header.
+      requestBody:
+        content:
+          "multipart/form-data":
+            schema:
+              $ref: "#/components/schemas/factorResponse"
+      responses:
+        200:
+          description: factor added successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        401:
+          description: Unauthorized because user is unauthenticated. Must login first
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        403:
+          description: Forbidden because user do not have sufficient authority to add, edit or delete stuff.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        500:
+          description: Failure to process data. Send body and report to BE immediately.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+  /factor/entire/{factor_id}:
+    parameters:
+      - name: factor_id
+        in: path
+        required: true
+        schema:
+          $ref: "#/components/schemas/factor/properties/Factor_ID"
+    put:
+      description: Edit a factor with it's associated content. Must be logged in first and have the valid Authorization header.
+      requestBody:
+        content:
+          "multipart/form-data":
+            schema:
+              $ref: "#/components/schemas/factorResponse"
+      responses:
+        200:
+          description: factor edited successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        401:
+          description: Unauthorized because user is unauthenticated. Must login first
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        403:
+          description: Forbidden because user do not have sufficient authority to add, edit or delete stuff.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        404:
+          description: Data that needs to be edited not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse" 
+        500:
+          description: Failure to process data. Send body and report to BE immediately.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+    delete:
+      description: Delete a factor with it's associated content. Must be logged in first and have the valid Authorization header.
+      responses:
+        200:
+          description: factor deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        401:
+          description: Unauthorized because user is unauthenticated. Must login first
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        403:
+          description: Forbidden because user do not have sufficient authority to add, edit or delete stuff.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        404:
+          description: Data that needs to be edited not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse" 
+        500:
+          description: Failure to process data. Send body and report to BE immediately.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+
+  /result:
+    get:
+      summary: Get all result 
+      description: Fetch all result struct from table result. 
+      responses:
+        200:
+          description: All result struct on the table result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/resultArrayResponse"
+        500:
+          description: Failure to process data. Send body and report to BE immediately.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+    post:
+      summary: Add a result
+      description: Add a result. Must be logged in first and have the valid Authorization header.
+      requestBody:
+        content:
+          "multipart/form-data":
+            schema:
+              $ref: "#/components/schemas/result"
+      responses:
+        200:
+          description: result added successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        401:
+          description: Unauthorized because user is unauthenticated. Must login first
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        403:
+          description: Forbidden because user do not have sufficient authority to add, edit or delete stuff.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        500:
+          description: Failure to process data. Send body and report to BE immediately.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+  /result/{result_id}:
+    parameters:
+      - name: result_id
+        in: path
+        required: true
+        schema:
+          $ref: "#/components/schemas/result/properties/Result_ID"
+    get:
+      summary: Get a result corresponding to the provided `result_id`
+      responses:
+        200:
+          description: The result corresponding to the provided `result_id`
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/result"
+        500:
+          description: Failure to process data. Send body and report to BE immediately.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"        
+    put:
+      description: Edit a result. Must be logged in first and have the valid Authorization header.
+      requestBody:
+        content:
+          "multipart/form-data":
+            schema:
+              $ref: "#/components/schemas/result"
+      responses:
+        200:
+          description: result edited successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        401:
+          description: Unauthorized because user is unauthenticated. Must login first
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        403:
+          description: Forbidden because user do not have sufficient authority to add, edit or delete stuff.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        404:
+          description: Data that needs to be edited not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse" 
+        500:
+          description: Failure to process data. Send body and report to BE immediately.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+    delete:
+      description: Delete a result. Must be logged in first and have the valid Authorization header.
+      responses:
+        200:
+          description: result deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        401:
+          description: Unauthorized because user is unauthenticated. Must login first
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        403:
+          description: Forbidden because user do not have sufficient authority to add, edit or delete stuff.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        404:
+          description: Data that needs to be edited not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse" 
+        500:
+          description: Failure to process data. Send body and report to BE immediately.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+  /result/entire:
+    post:
+      summary: Add a complete result. 
+      description: Add a result with the needed association. Must be logged in first and have the valid Authorization header.
+      requestBody:
+        content:
+          "multipart/form-data":
+            schema:
+              $ref: "#/components/schemas/resultResponse"
+      responses:
+        200:
+          description: result added successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        401:
+          description: Unauthorized because user is unauthenticated. Must login first
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        403:
+          description: Forbidden because user do not have sufficient authority to add, edit or delete stuff.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        500:
+          description: Failure to process data. Send body and report to BE immediately.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+  /result/entire/{result_id}:
+    parameters:
+      - name: result_id
+        in: path
+        required: true
+        schema:
+          $ref: "#/components/schemas/result/properties/Result_ID"
+    put:
+      description: Edit a result with it's associated content. Must be logged in first and have the valid Authorization header.
+      requestBody:
+        content:
+          "multipart/form-data":
+            schema:
+              $ref: "#/components/schemas/resultResponse"
+      responses:
+        200:
+          description: result edited successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        401:
+          description: Unauthorized because user is unauthenticated. Must login first
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        403:
+          description: Forbidden because user do not have sufficient authority to add, edit or delete stuff.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        404:
+          description: Data that needs to be edited not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse" 
+        500:
+          description: Failure to process data. Send body and report to BE immediately.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+    delete:
+      description: Delete a result with it's associated content.Must be logged in first and have the valid Authorization header.
+      responses:
+        200:
+          description: result deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        401:
+          description: Unauthorized because user is unauthenticated. Must login first
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        403:
+          description: Forbidden because user do not have sufficient authority to add, edit or delete stuff.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        404:
+          description: Data that needs to be edited not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse" 
+        500:
+          description: Failure to process data. Send body and report to BE immediately.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+
+  /item:
+    get:
+      summary: Get all item 
+      description: Fetch all item struct from table item. 
+      responses:
+        200:
+          description: All item struct on the table item
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/item"
+        500:
+          description: Failure to process data. Send body and report to BE immediately.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+    post:
+      summary: Add a item
+      description: Add a item. Must be logged in first and have the valid Authorization header.
+      requestBody:
+        content:
+          "multipart/form-data":
+            schema:
+              $ref: "#/components/schemas/item"
+      responses:
+        200:
+          description: item added successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        401:
+          description: Unauthorized because user is unauthenticated. Must login first
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        403:
+          description: Forbidden because user do not have sufficient authority to add, edit or delete stuff.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        500:
+          description: Failure to process data. Send body and report to BE immediately.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+  /item/{item_id}:
+    parameters:
+      - name: item_id
+        in: path
+        required: true
+        schema:
+          $ref: "#/components/schemas/item/properties/Item_ID"
+    get:
+      summary: Get a item corresponding to the provided `item_id`
+      responses:
+        200:
+          description: The item corresponding to the provided `item_id`
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/item"
+        500:
+          description: Failure to process data. Send body and report to BE immediately.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"        
+    put:
+      description: Edit a item. Must be logged in first and have the valid Authorization header.
+      requestBody:
+        content:
+          "multipart/form-data":
+            schema:
+              $ref: "#/components/schemas/item"
+      responses:
+        200:
+          description: item edited successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        401:
+          description: Unauthorized because user is unauthenticated. Must login first
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        403:
+          description: Forbidden because user do not have sufficient authority to add, edit or delete stuff.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        404:
+          description: Data that needs to be edited not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse" 
+        500:
+          description: Failure to process data. Send body and report to BE immediately.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+    delete:
+      description: Delete a item. Must be logged in first and have the valid Authorization header.
+      responses:
+        200:
+          description: item deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        401:
+          description: Unauthorized because user is unauthenticated. Must login first
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        403:
+          description: Forbidden because user do not have sufficient authority to add, edit or delete stuff.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        404:
+          description: Data that needs to be edited not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse" 
+        500:
+          description: Failure to process data. Send body and report to BE immediately.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+  /item/entire:
+    post:
+      summary: Add a complete item. 
+      description: Add a item with the needed association. Must be logged in first and have the valid Authorization header.
+      requestBody:
+        content:
+          "multipart/form-data":
+            schema:
+              $ref: "#/components/schemas/itemResponse"
+      responses:
+        200:
+          description: item added successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        401:
+          description: Unauthorized because user is unauthenticated. Must login first
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        403:
+          description: Forbidden because user do not have sufficient authority to add, edit or delete stuff.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        500:
+          description: Failure to process data. Send body and report to BE immediately.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+  /item/entire/{item_id}:
+    parameters:
+      - name: item_id
+        in: path
+        required: true
+        schema:
+          $ref: "#/components/schemas/item/properties/Item_ID"
+    put:
+      description: Edit a item with it's associated content. Must be logged in first and have the valid Authorization header.
+      requestBody:
+        content:
+          "multipart/form-data":
+            schema:
+              $ref: "#/components/schemas/itemResponse"
+      responses:
+        200:
+          description: item edited successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        401:
+          description: Unauthorized because user is unauthenticated. Must login first
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        403:
+          description: Forbidden because user do not have sufficient authority to add, edit or delete stuff.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        404:
+          description: Data that needs to be edited not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse" 
+        500:
+          description: Failure to process data. Send body and report to BE immediately.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+    delete:
+      description: Delete a item with it's associated content. Must be logged in first and have the valid Authorization header.
+      responses:
+        200:
+          description: item deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        401:
+          description: Unauthorized because user is unauthenticated. Must login first
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        403:
+          description: Forbidden because user do not have sufficient authority to add, edit or delete stuff.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        404:
+          description: Data that needs to be edited not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse" 
+        500:
+          description: Failure to process data. Send body and report to BE immediately.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+
+  /yearly:
+    get:
+      summary: Get all yearly 
+      description: Fetch all yearly struct from table yearly. 
+      responses:
+        200:
+          description: All yearly struct on the table yearly
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/yearly"
+        500:
+          description: Failure to process data. Send body and report to BE immediately.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+    post:
+      summary: Add a yearly
+      description: Add a yearly. Must be logged in first and have the valid Authorization header.
+      requestBody:
+        content:
+          "multipart/form-data":
+            schema:
+              $ref: "#/components/schemas/yearly"
+      responses:
+        200:
+          description: yearly added successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        401:
+          description: Unauthorized because user is unauthenticated. Must login first
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        403:
+          description: Forbidden because user do not have sufficient authority to add, edit or delete stuff.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        500:
+          description: Failure to process data. Send body and report to BE immediately.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+  /yearly/{yearly_id}:
+    parameters:
+      - name: yearly_id
+        in: path
+        required: true
+        schema:
+          $ref: "#/components/schemas/yearly/properties/Year"
+    get:
+      summary: Get a yearly corresponding to the provided `yearly_id`
+      responses:
+        200:
+          description: The yearly corresponding to the provided `yearly_id`
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/yearly"
+        500:
+          description: Failure to process data. Send body and report to BE immediately.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"        
+    put:
+      description: Edit a yearly. Must be logged in first and have the valid Authorization header.
+      requestBody:
+        content:
+          "multipart/form-data":
+            schema:
+              $ref: "#/components/schemas/yearly"
+      responses:
+        200:
+          description: yearly edited successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        401:
+          description: Unauthorized because user is unauthenticated. Must login first
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        403:
+          description: Forbidden because user do not have sufficient authority to add, edit or delete stuff.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        404:
+          description: Data that needs to be edited not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse" 
+        500:
+          description: Failure to process data. Send body and report to BE immediately.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+    delete:
+      description: Delete a yearly. Must be logged in first and have the valid Authorization header.
+      responses:
+        200:
+          description: yearly deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        401:
+          description: Unauthorized because user is unauthenticated. Must login first
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        403:
+          description: Forbidden because user do not have sufficient authority to add, edit or delete stuff.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        404:
+          description: Data that needs to be edited not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse" 
+        500:
+          description: Failure to process data. Send body and report to BE immediately.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+  /yearly/entire:
+    post:
+      summary: Add a complete yearly. 
+      description: Add a yearly with the needed association. Must be logged in first and have the valid Authorization header.
+      requestBody:
+        content:
+          "multipart/form-data":
+            schema:
+              $ref: "#/components/schemas/yearlyResponse"
+      responses:
+        200:
+          description: yearly added successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        401:
+          description: Unauthorized because user is unauthenticated. Must login first
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        403:
+          description: Forbidden because user do not have sufficient authority to add, edit or delete stuff.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        500:
+          description: Failure to process data. Send body and report to BE immediately.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+  /yearly/entire/{yearly_id}:
+    parameters:
+      - name: yearly_id
+        in: path
+        required: true
+        schema:
+          $ref: "#/components/schemas/yearly/properties/Year"
+    put:
+      description: Edit a yearly with it's associated content. Must be logged in first and have the valid Authorization header.
+      requestBody:
+        content:
+          "multipart/form-data":
+            schema:
+              $ref: "#/components/schemas/yearlyResponse"
+      responses:
+        200:
+          description: yearly edited successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        401:
+          description: Unauthorized because user is unauthenticated. Must login first
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        403:
+          description: Forbidden because user do not have sufficient authority to add, edit or delete stuff.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        404:
+          description: Data that needs to be edited not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse" 
+        500:
+          description: Failure to process data. Send body and report to BE immediately.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+    delete:
+      description: Delete a yearly with it's associated content. Must be logged in first and have the valid Authorization header.
+      responses:
+        200:
+          description: yearly deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        401:
+          description: Unauthorized because user is unauthenticated. Must login first
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        403:
+          description: Forbidden because user do not have sufficient authority to add, edit or delete stuff.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        404:
+          description: Data that needs to be edited not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse" 
+        500:
+          description: Failure to process data. Send body and report to BE immediately.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+
+  /masalah:
+    get:
+      summary: Get all masalah 
+      description: Fetch all masalah struct from table masalah. 
+      responses:
+        200:
+          description: All masalah struct on the table masalah
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/masalah"
+        500:
+          description: Failure to process data. Send body and report to BE immediately.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+    post:
+      summary: Add a masalah
+      description: Add a masalah. Must be logged in first and have the valid Authorization header.
+      requestBody:
+        content:
+          "multipart/form-data":
+            schema:
+              $ref: "#/components/schemas/masalah"
+      responses:
+        200:
+          description: masalah added successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        401:
+          description: Unauthorized because user is unauthenticated. Must login first
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        403:
+          description: Forbidden because user do not have sufficient authority to add, edit or delete stuff.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        500:
+          description: Failure to process data. Send body and report to BE immediately.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+  /masalah/{masalah_id}:
+    parameters:
+      - name: masalah_id
+        in: path
+        required: true
+        schema:
+          $ref: "#/components/schemas/masalah/properties/Masalah_ID"
+    get:
+      summary: Get a masalah corresponding to the provided `masalah_id`
+      responses:
+        200:
+          description: The masalah corresponding to the provided `masalah_id`
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/masalah"
+        500:
+          description: Failure to process data. Send body and report to BE immediately.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"        
+    put:
+      description: Edit a masalah. Must be logged in first and have the valid Authorization header.
+      requestBody:
+        content:
+          "multipart/form-data":
+            schema:
+              $ref: "#/components/schemas/masalah"
+      responses:
+        200:
+          description: masalah edited successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        401:
+          description: Unauthorized because user is unauthenticated. Must login first
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        403:
+          description: Forbidden because user do not have sufficient authority to add, edit or delete stuff.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        404:
+          description: Data that needs to be edited not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse" 
+        500:
+          description: Failure to process data. Send body and report to BE immediately.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+    delete:
+      description: Delete a masalah. Must be logged in first and have the valid Authorization header.
+      responses:
+        200:
+          description: masalah deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        401:
+          description: Unauthorized because user is unauthenticated. Must login first
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        403:
+          description: Forbidden because user do not have sufficient authority to add, edit or delete stuff.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        404:
+          description: Data that needs to be edited not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse" 
+        500:
+          description: Failure to process data. Send body and report to BE immediately.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+
+  /summary:
+    get:
+      summary: Get all summary 
+      description: Fetch all summary struct from table summary. 
+      responses:
+        200:
+          description: All summary struct on the table summary
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/summary"
+        500:
+          description: Failure to process data. Send body and report to BE immediately.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+    post:
+      summary: Add a summary
+      description: Add a summary. Must be logged in first and have the valid Authorization header.
+      requestBody:
+        content:
+          "multipart/form-data":
+            schema:
+              $ref: "#/components/schemas/summary"
+      responses:
+        200:
+          description: summary added successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        401:
+          description: Unauthorized because user is unauthenticated. Must login first
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        403:
+          description: Forbidden because user do not have sufficient authority to add, edit or delete stuff.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        500:
+          description: Failure to process data. Send body and report to BE immediately.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+  /summary/{summary_id}:
+    parameters:
+      - name: summary_id
+        in: path
+        required: true
+        schema:
+          $ref: "#/components/schemas/summary/properties/Summary_ID"
+    get:
+      summary: Get a summary corresponding to the provided `summary_id`
+      responses:
+        200:
+          description: The summary corresponding to the provided `summary_id`
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/summary"
+        500:
+          description: Failure to process data. Send body and report to BE immediately.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"        
+    put:
+      description: Edit a summary. Must be logged in first and have the valid Authorization header.
+      requestBody:
+        content:
+          "multipart/form-data":
+            schema:
+              $ref: "#/components/schemas/summary"
+      responses:
+        200:
+          description: summary edited successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        401:
+          description: Unauthorized because user is unauthenticated. Must login first
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        403:
+          description: Forbidden because user do not have sufficient authority to add, edit or delete stuff.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        404:
+          description: Data that needs to be edited not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse" 
+        500:
+          description: Failure to process data. Send body and report to BE immediately.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+    delete:
+      description: Delete a summary. Must be logged in first and have the valid Authorization header.
+      responses:
+        200:
+          description: summary deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        401:
+          description: Unauthorized because user is unauthenticated. Must login first
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        403:
+          description: Forbidden because user do not have sufficient authority to add, edit or delete stuff.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        404:
+          description: Data that needs to be edited not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse" 
+        500:
+          description: Failure to process data. Send body and report to BE immediately.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+  /summary/entire:
+    post:
+      summary: Add a complete summary. 
+      description: Add a summary with the needed association. Must be logged in first and have the valid Authorization header.
+      requestBody:
+        content:
+          "multipart/form-data":
+            schema:
+              $ref: "#/components/schemas/summaryResponse"
+      responses:
+        200:
+          description: summary added successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        401:
+          description: Unauthorized because user is unauthenticated. Must login first
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        403:
+          description: Forbidden because user do not have sufficient authority to add, edit or delete stuff.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        500:
+          description: Failure to process data. Send body and report to BE immediately.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+  /summary/entire/{summary_id}:
+    parameters:
+      - name: summary_id
+        in: path
+        required: true
+        schema:
+          $ref: "#/components/schemas/summary/properties/Summary_ID"
+    put:
+      description: Edit a summary with it's associated content. Must be logged in first and have the valid Authorization header.
+      requestBody:
+        content:
+          "multipart/form-data":
+            schema:
+              $ref: "#/components/schemas/summaryResponse"
+      responses:
+        200:
+          description: summary edited successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        401:
+          description: Unauthorized because user is unauthenticated. Must login first
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        403:
+          description: Forbidden because user do not have sufficient authority to add, edit or delete stuff.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        404:
+          description: Data that needs to be edited not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse" 
+        500:
+          description: Failure to process data. Send body and report to BE immediately.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+    delete:
+      description: Delete a summary with it's associated content. Must be logged in first and have the valid Authorization header.
+      responses:
+        200:
+          description: summary deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        401:
+          description: Unauthorized because user is unauthenticated. Must login first
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        403:
+          description: Forbidden because user do not have sufficient authority to add, edit or delete stuff.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        404:
+          description: Data that needs to be edited not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse" 
+        500:
+          description: Failure to process data. Send body and report to BE immediately.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+
+  /project:
+    get:
+      summary: Get all project 
+      description: Fetch all project struct from table project. 
+      responses:
+        200:
+          description: All project struct on the table project
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/project"
+        500:
+          description: Failure to process data. Send body and report to BE immediately.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+    post:
+      summary: Add a project
+      description: Add a project. Must be logged in first and have the valid Authorization header.
+      requestBody:
+        content:
+          "multipart/form-data":
+            schema:
+              $ref: "#/components/schemas/project"
+      responses:
+        200:
+          description: project added successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        401:
+          description: Unauthorized because user is unauthenticated. Must login first
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        403:
+          description: Forbidden because user do not have sufficient authority to add, edit or delete stuff.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        500:
+          description: Failure to process data. Send body and report to BE immediately.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+  /project/{project_id}:
+    parameters:
+      - name: project_id
+        in: path
+        required: true
+        schema:
+          $ref: "#/components/schemas/project/properties/Project_ID"
+    get:
+      summary: Get a project corresponding to the provided `project_id`
+      responses:
+        200:
+          description: The project corresponding to the provided `project_id`
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/project"
+        500:
+          description: Failure to process data. Send body and report to BE immediately.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"        
+    put:
+      description: Edit a project. Must be logged in first and have the valid Authorization header.
+      requestBody:
+        content:
+          "multipart/form-data":
+            schema:
+              $ref: "#/components/schemas/project"
+      responses:
+        200:
+          description: project edited successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        401:
+          description: Unauthorized because user is unauthenticated. Must login first
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        403:
+          description: Forbidden because user do not have sufficient authority to add, edit or delete stuff.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        404:
+          description: Data that needs to be edited not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse" 
+        500:
+          description: Failure to process data. Send body and report to BE immediately.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+    delete:
+      description: Delete a project. Must be logged in first and have the valid Authorization header.
+      responses:
+        200:
+          description: project deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        401:
+          description: Unauthorized because user is unauthenticated. Must login first
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        403:
+          description: Forbidden because user do not have sufficient authority to add, edit or delete stuff.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        404:
+          description: Data that needs to be edited not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse" 
+        500:
+          description: Failure to process data. Send body and report to BE immediately.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+
+  /analisa:
+    get:
+      summary: Get all analisa 
+      description: Fetch all analisa struct from table analisa. 
+      responses:
+        200:
+          description: All analisa struct on the table analisa
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/analisa"
+        500:
+          description: Failure to process data. Send body and report to BE immediately.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+    post:
+      summary: Add a analisa
+      description: Add a analisa. Must be logged in first and have the valid Authorization header.
+      requestBody:
+        content:
+          "multipart/form-data":
+            schema:
+              $ref: "#/components/schemas/analisa"
+      responses:
+        200:
+          description: analisa added successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        401:
+          description: Unauthorized because user is unauthenticated. Must login first
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        403:
+          description: Forbidden because user do not have sufficient authority to add, edit or delete stuff.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        500:
+          description: Failure to process data. Send body and report to BE immediately.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+  /analisa/{analisa_id}:
+    parameters:
+      - name: analisa_id
+        in: path
+        required: true
+        schema:
+          $ref: "#/components/schemas/analisa/properties/Year"
+    get:
+      summary: Get a analisa corresponding to the provided `analisa_id`
+      responses:
+        200:
+          description: The analisa corresponding to the provided `analisa_id`
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/analisa"
+        500:
+          description: Failure to process data. Send body and report to BE immediately.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"        
+    put:
+      description: Edit a analisa. Must be logged in first and have the valid Authorization header.
+      requestBody:
+        content:
+          "multipart/form-data":
+            schema:
+              $ref: "#/components/schemas/analisa"
+      responses:
+        200:
+          description: analisa edited successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        401:
+          description: Unauthorized because user is unauthenticated. Must login first
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        403:
+          description: Forbidden because user do not have sufficient authority to add, edit or delete stuff.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        404:
+          description: Data that needs to be edited not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse" 
+        500:
+          description: Failure to process data. Send body and report to BE immediately.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+    delete:
+      description: Delete an analisa. Must be logged in first and have the valid Authorization header.
+      responses:
+        200:
+          description: analisa deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        401:
+          description: Unauthorized because user is unauthenticated. Must login first
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        403:
+          description: Forbidden because user do not have sufficient authority to add, edit or delete stuff.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        404:
+          description: Data that needs to be edited not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse" 
+        500:
+          description: Failure to process data. Send body and report to BE immediately.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+  /analisa/entire:
+    post:
+      summary: Add a complete analisa. 
+      description: Add a analisa with the needed association. Must be logged in first and have the valid Authorization header.
+      requestBody:
+        content:
+          "multipart/form-data":
+            schema:
+              $ref: "#/components/schemas/analisa"
+      responses:
+        200:
+          description: analisa added successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        401:
+          description: Unauthorized because user is unauthenticated. Must login first
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        403:
+          description: Forbidden because user do not have sufficient authority to add, edit or delete stuff.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        500:
+          description: Failure to process data. Send body and report to BE immediately.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+  /analisa/entire/{analisa_id}:
+    parameters:
+      - name: analisa_id
+        in: path
+        required: true
+        schema:
+          $ref: "#/components/schemas/analisa/properties/Year"
+    put:
+      description: Edit a analisa with it's associated content. Must be logged in first and have the valid Authorization header.
+      requestBody:
+        content:
+          "multipart/form-data":
+            schema:
+              $ref: "#/components/schemas/analisa"
+      responses:
+        200:
+          description: analisa edited successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        401:
+          description: Unauthorized because user is unauthenticated. Must login first
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        403:
+          description: Forbidden because user do not have sufficient authority to add, edit or delete stuff.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        404:
+          description: Data that needs to be edited not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse" 
+        500:
+          description: Failure to process data. Send body and report to BE immediately.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+    delete:
+      description: Delete a analisa with it's associated content. Must be logged in first and have the valid Authorization header.
+      responses:
+        200:
+          description: analisa deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        401:
+          description: Unauthorized because user is unauthenticated. Must login first
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        403:
+          description: Forbidden because user do not have sufficient authority to add, edit or delete stuff.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        404:
+          description: Data that needs to be edited not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse" 
+        500:
+          description: Failure to process data. Send body and report to BE immediately.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+
+components:
+  schemas:
+    monthly:
+      description: An object to store a monthly data from January to December, including Remarks
+      type: object
+      properties:
+        Monthly_ID:
+          description: Primary key of a monthly object. Auto-Incremented, so don't bother filling this while creating this new object.
+          type: integer
+        Minipap:
+          $ref: "#/components/schemas/minipap"
+        January:
+          description: The value in month January. Declare value as zero if not exist.
+          type: integer
+        February:
+          description: The value in month February. Declare value as zero if not exist.
+          type: integer
+        March:
+          description: The value in month March. Declare value as zero if not exist.
+          type: integer
+        April:
+          description: The value in month April. Declare value as zero if not exist.
+          type: integer
+        May:
+          description: The value in month May. Declare value as zero if not exist.
+          type: integer
+        June:
+          description: The value in month June. Declare value as zero if not exist.
+          type: integer
+        July:
+          description: The value in month July. Declare value as zero if not exist.
+          type: integer
+        August:
+          description: The value in month August. Declare value as zero if not exist.
+          type: integer
+        September:
+          description: The value in month September. Declare value as zero if not exist.
+          type: integer
+        October:
+          description: The value in month October. Declare value as zero if not exist.
+          type: integer
+        November:
+          description: The value in month November. Declare value as zero if not exist.
+          type: integer
+        December:
+          description: The value in month December. Declare value as zero if not exist.
+          type: integer
+        Remarks:
+          description: Optional remarks on the monthly object. 
+          type: string
+        minipap_id:
+          description: The ID of the Minipap Object it connected to. Optional.
+          type: integer
+          $ref: "#/components/schemas/minipap/properties/Minipap_ID"
+    attendance:
+      description: An object to store attendance data. Storing 5 different monthly, in which every stored monthly should have no minipap_id. Might be deprecated in later version.
+      type: object
+      required:
+        - Year
+      properties:
+        Year:
+          description: Primary key of an attendance object. Does not Auto-Incremented so need to be inputted manually.
+          type: integer
+        plan_id:
+          description: ID of the monthly used as the plan. Might be deprecated on later version.
+          type: integer
+          $ref: "#/components/schemas/monthly/properties/Monthly_ID"
+        plan:
+          description: Object of the monthly plan.
+          type: object
+          $ref: "#/components/schemas/monthly"
+        actual_id:
+          description: ID of the monthly used as the actual.Might be deprecated on later version.
+          type: integer
+          $ref: "#/components/schemas/monthly/properties/Monthly_ID"
+        actual:
+          description: Object of the monthly actual.
+          type: object
+          $ref: "#/components/schemas/monthly"
+        cuti_id:
+          description: ID of the monthly used as the cuti.Might be deprecated on later version.
+          type: integer
+          $ref: "#/components/schemas/monthly/properties/Monthly_ID"
+        cuti:
+          description: Object of the monthly cuti.
+          type: object
+          $ref: "#/components/schemas/monthly"
+        izin_id:
+          description: ID of the monthly used as the izin.Might be deprecated on later version.
+          type: integer
+          $ref: "#/components/schemas/monthly/properties/Monthly_ID"
+        izin:
+          description: Object of the monthly izin.
+          type: object
+          $ref: "#/components/schemas/monthly"
+        lain_id:
+          description: ID of the monthly used as the lain.Might be deprecated on later version.
+          type: integer
+          $ref: "#/components/schemas/monthly/properties/Monthly_ID"
+        lain:
+          description: Object of the monthly lain.
+          type: object
+          $ref: "#/components/schemas/monthly"
+    minipap:
+      description: An object to store multiple monthly as a "Plan, Actual, Percentage" part of KPI.
+      type: object
+      properties:
+        Minipap_ID:
+          description: Primary key for Minipap object. Auto-Incremented. 
+          type: integer
+    factor:
+      description: An object to store factor.
+      type: object
+      required:
+        - Title
+        - Unit
+        - Target
+      properties:
+        Factor_ID:
+          description: Primary key for Factor object. Auto-Incremented. 
+          type: integer
+        Title: 
+          description: The title of the factor.
+          type: string
+        Unit: 
+          description: The unit of the factor.
+          type: string
+        Target: 
+          description: The target of the factor.
+          type: string
+        plan_id:
+          description: ID of the minipap used as the plan. Might be deprecated on later version.
+          type: integer
+          $ref: "#/components/schemas/minipap/properties/Minipap_ID"
+        plan:
+          description: Object of the minipap plan.
+          type: object
+          $ref: "#/components/schemas/minipap"
+        actual_id:
+          description: ID of the minipap used as the actual. Might be deprecated on later version.
+          type: integer
+          $ref: "#/components/schemas/minipap/properties/Minipap_ID"
+        actual:
+          description: Object of the minipap actual.
+          type: object
+          $ref: "#/components/schemas/minipap"
+        result_id:
+          description: The result object this factor connected to. Optional.
+          type: integer
+          $ref: "#/components/schemas/result/properties/Result_ID"
+        result:
+          description: Object of the result. Optional. Might be deprecated on later version.
+          type: object
+          $ref: "#/components/schemas/result"
+    result:
+      description: An object to store multiple factors as a result of KPI.
+      type: object
+      required:
+        - Name
+      properties:
+        Result_ID:
+          description: Primary key for Result object. Auto-Incremented. 
+          type: integer
+        Name:
+          description: Name for the result object.
+          type: string
+        item_id:
+          description: The item object this result connected to. Optional.
+          type: integer
+          $ref: "#/components/schemas/item/properties/Item_ID"
+        item:
+          description: Object of the item. Optional. Might be deprecated on later version.
+          type: object
+          $ref: "#/components/schemas/item"
+    item:
+      description: An object to store multiple results as an item of KPI.
+      type: object
+      required:
+        - Name
+      properties:
+        Item_ID:
+          description: Primary key for item object. Auto-Incremented. 
+          type: integer
+        Name:
+          description: Name for the item object.
+          type: string
+        year_id:
+          description: The yearly object this item connected to. Optional.
+          type: integer
+          $ref: "#/components/schemas/yearly/properties/Year"
+        yearly:
+          description: Object of the year. Optional. Might be deprecated on later version.
+          type: object
+          $ref: "#/components/schemas/yearly"
+    yearly:
+      description: An object to store each year's report.
+      type: object
+      required:
+        - Year
+      properties:
+        Year:
+          description: Primary key for yearly object. Not Auto-Incremented, so needs to be filled manually. 
+          type: integer
+        attendance_id:
+          description: The attendance object this yearly connected to. Optional.
+          type: integer
+          $ref: "#/components/schemas/attendance/properties/Year"
+        attendance:
+          description: Object of the attendance. Optional. Might be deprecated on later version.
+          type: object
+          $ref: "#/components/schemas/attendance"    
+    masalah:
+      description: An object to store a single problem for KPI analysis problem.
+      type: object
+      properties:
+        Masalah_ID:
+          description: Primary key for Masalah object. Auto-Incremented. 
+          type: integer
+        Masalah:
+          description: The name of the problem.
+          type: string
+        Why:
+          description: Reasoning behind the problem.
+          type: array
+          items: 
+            type: string
+        tindakan:
+          description: Action that acts as the solution to the problem.
+          type: string
+        pic:
+          description: Person responsible for resolving the problem.
+          type: string
+        target:
+          description: Deadline for resolving the problem.
+          type: string
+        fol_date:
+          description: Date decided to follow up the situation. Use date time format.
+          type: integer
+        status:
+          description: The status of the problem.
+          type: string
+        Year: 
+          description: the time in which the problem is reviewed.
+          $ref: "#/components/schemas/analisa/properties/Year"
+    analisa:
+      description: An object to store multiple masalah in a year on KPI problem analysis sheet.
+      type: object
+      properties:
+        Year:
+          description: Primary key for analisa object. Does not Auto-Incremented, so need to manually input the year.
+          type: integer
+    project:
+      description: An object to store a single project plan in a KPI project summary sheet.
+      type: object
+      properties:
+        Project_ID:
+          description: Primary key for project object. Auto-Incremented.
+          type: integer
+        Name:
+          description: The name of the plan in which the project is based on.
+          type: string
+        summary_id:
+          description: a foreign key for connecting the project with the summary object.
+          $ref: "#/components/schemas/summary/properties/Summary_ID"
+        INYS:
+          description: Number of project items which not yet started
+          type: integer
+        QNYS:
+          description: Number of project quantities which not yet started
+          type: integer
+        IDR:
+          description: Number of project items which is on DR
+          type: integer
+        QDR:
+          description: Number of project quantities which is on DR
+          type: integer
+        IPR:
+          description: Number of project items which is on PR to PO
+          type: integer
+        QPR:
+          description: Number of project quantities which is on PR to PO
+          type: integer
+        II:
+          description: Number of project items which is installed
+          type: integer
+        QI:
+          description: Number of project quantities which is installed
+          type: integer
+        IF:
+          description: Number of project items which is finished
+          type: integer
+        QF:
+          description: Number of project quantities which is finished
+          type: integer
+        IC:
+          description: Number of project items which is cancelled
+          type: integer
+        QC:
+          description: Number of project quantities which is cancelled
+          type: integer
+    summary:
+      description: An object to hold all the project plans on a year.
+      type: object
+      properties:
+        Summary_ID:
+          description: Primary key of the summary object. Auto-Incremented.
+          type: integer
+        Issued_date:
+          description: the issued date of the planned project. Needs to be on date time format.
+          type: integer
+    user:
+      description: An object to hold the user's credential
+      type: object
+      properties:
+        id:
+          description: User's unique identifier
+          type: integer
+        username:
+          description: User's name
+          type: string
+        email:
+          description: User's registered email
+          type: string
+        password:
+          description: User's password. Encrypted using bcrypt.
+          type: string
+        role:
+          description: User's authorities. Divided into member or admin.
+          type: string
+    session:
+      description: An object to hold an account's session information
+      type: object
+      properties:
+        id:
+          description: This object's unique identifier
+          type: integer
+        token:
+          description: This account's session token.
+          type: string
+        email:
+          description: This session's user's connected email
+          type: string
+        expiry:
+          description: This session's expiry date. Should be on a date format.
+          type: integer
+    
+
+    attendanceResponse:
+      description: Simplified version of attendance.
+      type: object
+      required:
+        - Year
+      properties:
+        Year:
+          description: Primary key of an attendance object. Does not Auto-Incremented so need to be inputted manually.
+          type: integer
+        plan:
+          description: Object of the monthly plan.
+          type: object
+          $ref: "#/components/schemas/monthly"
+        actual:
+          description: Object of the monthly actual.
+          type: object
+          $ref: "#/components/schemas/monthly"
+        cuti:
+          description: Object of the monthly cuti.
+          type: object
+          $ref: "#/components/schemas/monthly"
+        izin:
+          description: Object of the monthly izin.
+          type: object
+          $ref: "#/components/schemas/monthly"
+        lain:
+          description: Object of the monthly lain.
+          type: object
+          $ref: "#/components/schemas/monthly"
+    factorResponse:
+      description: simplified factor object.
+      type: object
+      required:
+        - Title
+        - Unit
+        - Target
+      properties:
+        Factor_ID:
+          description: Primary key for Factor object. Auto-Incremented. 
+          type: integer
+        Title: 
+          description: The title of the factor.
+          type: string
+        Unit: 
+          description: The unit of the factor.
+          type: string
+        Target: 
+          description: The target of the factor.
+          type: string
+        plan:
+          description: Object of the minipap plan.
+          type: object
+          $ref: "#/components/schemas/minipap"
+        actual:
+          description: Object of the minipap actual.
+          type: object
+          $ref: "#/components/schemas/minipap"
+        percentage:
+          description: The percentage from division of plan and action value of each monthly.
+          type: array
+          items:
+            type: array
+            items:
+              $ref: "#/components/schemas/monthly"
+    resultResponse:
+      description: An object to store multiple factors as a result of KPI.
+      type: object
+      required:
+        - Name
+      properties:
+        Result_ID:
+          description: Primary key for Result object. Auto-Incremented. 
+          type: integer
+        Name:
+          description: Name for the result object.
+          type: string
+        factors:
+          description: Object of the item. Optional. Might be deprecated on later version.
+          type: array
+          items:
+            $ref: "#/components/schemas/factorResponse"
+    itemResponse:
+      description: simplified version of item object.
+      type: object
+      required:
+        - Name
+      properties:
+        Item_ID:
+          description: Primary key for item object. Auto-Incremented. 
+          type: integer
+        Name:
+          description: Name for the item object.
+          type: string
+        results:
+          description: the result associated with this item.
+          type: array
+          items:
+            $ref: "#/components/schemas/resultResponse"
+    yearlyResponse:
+      description: Simplified version of Yearly object.
+      type: object
+      required:
+        - Year
+      properties:
+        Year:
+          description: Primary key for yearly object. Not Auto-Incremented, so needs to be filled manually. 
+          type: integer
+        items:
+          description: The item object this yearly connected to.
+          type: array
+          items:
+            $ref: "#/components/schemas/itemResponse"
+        attendance:
+          description: Object of the attendance. 
+          type: object
+          $ref: "#/components/schemas/attendanceResponse"    
+    projectResponse:
+      description: Simplified version of project object.
+      type: object
+      properties:
+        Project_ID:
+          description: Primary key for project object. Auto-Incremented.
+          type: integer
+        Name:
+          description: The name of the plan in which the project is based on.
+          type: string
+        Item:
+          description: The simplified version of all project item
+          type: object
+          properties:
+            Not Yet Start Issued FR: 
+              description: For INYS
+              type: integer
+            DR: 
+              description: For IDR
+              type: integer
+            PR to PO: 
+              description: For IPR
+              type: integer
+            Install: 
+              description: For II
+              type: integer
+            Finished: 
+              description: For IF
+              type: integer
+            Cancelled:
+              description: For IC
+              type: integer
+        Quantity:
+          description: The simplified version of all project quantity
+          type: object
+          properties:
+            Not Yet Start Issued FR: 
+              description: For QNYS
+              type: integer
+            DR: 
+              description: For QDR
+              type: integer
+            PR to PO: 
+              description: For QPR
+              type: integer
+            Install: 
+              description: For QI
+              type: integer
+            Finished: 
+              description: For QF
+              type: integer
+            Cancelled:
+              description: For QC
+              type: integer
+    summaryResponse:
+      description: Simplified version of summary object.
+      type: object
+      properties:
+        Summary_ID:
+          description: Primary key of the summary object. Auto-Incremented.
+          type: integer
+        Projects:
+          description: project related to the summary.
+          type: object
+          $ref: "#/components/schemas/projectResponse"
+        Issued_date:
+          description: the issued date of the planned project. Needs to be on date time format.
+          type: integer
+    userResponse:
+      description: User object without password
+      type: object
+      properties:
+        id:
+          description: User's unique identifier
+          type: integer
+        username:
+          description: User's name
+          type: string
+        email:
+          description: User's registered email
+          type: string
+        role:
+          description: User's authorities. Divided into member or admin.
+          type: string
+    loginResponse:
+      description: An object to hold this session's token after login
+      type: object
+      properties:
+        message:
+          description: stating the success message
+          type: string
+        token:
+          description: this session's token. Use it in Authorization header with format  "Bearer [Token]"
+          type: string
+
+    monthlyArrayResponse:
+      description: An object to store multiple monthly.
+      type: object
+      properties:
+        Message:
+          description: Message indicating if the request is successful
+          type: integer
+        Data:
+          description: The object stored
+          type: array
+          items:
+            $ref: "#/components/schemas/monthly"      
+    attendanceArrayResponse:
+      description: An object to store multiple attendance.
+      type: object
+      properties:
+        Message:
+          description: Message indicating if the request is successful
+          type: integer
+        Data:
+          description: The object stored
+          type: array
+          items:
+            $ref: "#/components/schemas/attendanceResponse"    
+    minipapArrayResponse:
+      description: An object to store multiple minipap.
+      type: object
+      properties:
+        Message:
+          description: Message indicating if the request is successful
+          type: integer
+        Data:
+          description: The object stored
+          type: array
+          items:
+            $ref: "#/components/schemas/minipap"
+    factorArrayResponse:
+      description: An object to store multiple factor.
+      type: object
+      properties:
+        Message:
+          description: Message indicating if the request is successful
+          type: integer
+        Data:
+          description: The object stored
+          type: array
+          items:
+            $ref: "#/components/schemas/factorResponse"
+    resultArrayResponse:
+      description: An object to store multiple result.
+      type: object
+      properties:
+        Message:
+          description: Message indicating if the request is successful
+          type: integer
+        Data:
+          description: The object stored
+          type: array
+          items:
+            $ref: "#/components/schemas/resultResponse"
+    itemArrayResponse:
+      description: An object to store multiple item.
+      type: object
+      properties:
+        Message:
+          description: Message indicating if the request is successful
+          type: integer
+        Data:
+          description: The object stored
+          type: array
+          items:
+            $ref: "#/components/schemas/itemResponse"
+    yearlyArrayResponse:
+      description: An object to store multiple yearly.
+      type: object
+      properties:
+        Message:
+          description: Message indicating if the request is successful
+          type: integer
+        Data:
+          description: The object stored
+          type: array
+          items:
+            $ref: "#/components/schemas/yearlyResponse"    
+    masalahArrayResponse:
+      description: An object to store multiple masalah.
+      type: object
+      properties:
+        Message:
+          description: Message indicating if the request is successful
+          type: integer
+        Data:
+          description: The object stored
+          type: array
+          items:
+            $ref: "#/components/schemas/masalah"
+    analisaArrayResponse:
+      description: An object to store multiple analisa.
+      type: object
+      properties:
+        Message:
+          description: Message indicating if the request is successful
+          type: integer
+        Data:
+          description: The object stored
+          type: array
+          items:
+            $ref: "#/components/schemas/analisa"
+    projectArrayResponse:
+      description: An object to store multiple project.
+      type: object
+      properties:
+        Message:
+          description: Message indicating if the request is successful
+          type: integer
+        Data:
+          description: The object stored
+          type: array
+          items:
+            $ref: "#/components/schemas/projectResponse"
+    summaryArrayResponse:
+      description: An object to store multiple summary.
+      type: object
+      properties:
+        Message:
+          description: Message indicating if the request is successful
+          type: integer
+        Data:
+          description: The object stored
+          type: array
+          items:
+            $ref: "#/components/schemas/summaryResponse"
+    userArrayResponse:
+      description: An object to store multiple user.
+      type: object
+      properties:
+        Message:
+          description: Message indicating if the request is successful
+          type: integer
+        Data:
+          description: The object stored
+          type: array
+          items:
+            $ref: "#/components/schemas/userResponse"
+    sessionArrayResponse:
+      description: An object to store multiple session.
+      type: object
+      properties:
+        Message:
+          description: Message indicating if the request is successful
+          type: integer
+        Data:
+          description: The object stored
+          type: array
+          items:
+            $ref: "#/components/schemas/session"
+
+    userLogin:
+      description: An object to hold login credential
+      type: object
+      properties:
+        username:
+          description: This login's username
+          type: string
+        password:
+          description: This login's password. Decrypted using bcrypt.
+          type: string
+    registerInput:
+      description: An object to hold a registration credential
+      type: object
+      properties:
+        username: 
+          description: The registered username
+          type: string
+        email:
+          description: The registered email
+          type: string
+        password:
+          description: The registered password
+          type: string
+        confirm_password:
+          description: Must be the same with password
+          type: string
+
+    messageResponse:
+      description: An object to hold an error or success response with it's cause
+      type: object
+      properties:
+        message: 
+          description: A message about the error or success response
+          type: string
+  securitySchemes:
+    ApiKey:
+      type: http
+      scheme: bearer
+
+security:
+  - ApiKey: []

@@ -1600,6 +1600,7 @@ components:
         message: 
           description: A message about the error or success response
           type: string
+
   securitySchemes:
     ApiKey:
       type: http
