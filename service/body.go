@@ -25,7 +25,7 @@ type CrudService interface {
 
 	//Create cascade
 	AddEntireYearly(input *model.YearlyResponse) error
-	AddEntireItem(wg *sync.WaitGroup, input *model.ItemResponse, id *int, errs chan error)
+	AddEntireItem(wg *sync.WaitGroup, input model.ItemResponse, id *int, errs chan error)
 	AddEntireResult(input *model.ResultResponse, id *int) error
 	AddEntireFactor(input *model.FactorResponse, id *int) error
 	AddEntireAttendance(input *model.AttendanceResponse, year *int) error

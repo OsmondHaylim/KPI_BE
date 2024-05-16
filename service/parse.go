@@ -389,8 +389,6 @@ func (ps *parseService) ParseSummary (input multipart.File) (*model.SummaryRespo
 		if sheet.Name == "Summary Project" {
 			fmt.Println("found")
 			Summary := model.SummaryResponse{}
-			
-			
 			for i := 3; i <= len(sheet.Rows[2].Cells); i+=2{
 				if sheet.Rows[2].Cells[i].String() != "REMARKS" && !strings.Contains(sheet.Rows[2].Cells[i].String(), "vs"){
 					tempProject := model.ProjectResponse{}

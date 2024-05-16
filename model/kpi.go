@@ -22,7 +22,7 @@ type Monthly struct{
 	Dec 			float64		`gorm:"notNull" json:"December"`
 	Ytd 			float64		`json:"YTD"`
 	Remarks 		*string		`json:"Remarks"`
-	MinipapID		*int			/* `json:"minipap_id"` */
+	MinipapID		*int		`json:"minipap_id"`
 }
 
 type Attendance struct{

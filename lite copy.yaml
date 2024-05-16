@@ -1,0 +1,1175 @@
+openapi: '3.0.0'
+info:
+  version: '1.0.0'
+  title: 'KPIV API'
+  description: API for Key Performance Indicator Visualizer
+
+servers:
+    - url: "http://localhost:8080/kpi/"
+
+paths:
+  /login:
+    post:
+      summary: Login
+      security: []
+      requestBody:
+        content:
+          "multipart-form-data":
+            schema:
+              properties:
+                username:
+                  description: The name of an user
+                  type: string
+                password:
+                  description: The password needed for an user to log in to the application
+                  type: string
+      responses:
+        200:
+          description: Logged in
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  apiKey:
+                    type: string
+                  user:
+                    $ref: "#/components/schemas/user"
+        400:
+          description: Wrong username or password
+          content:
+            application/json:
+              schema:
+                properties:
+                  error:
+                    $ref: "#/components/schemas/error"
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                properties:
+                  error:
+                    $ref: "#/components/schemas/error"
+  /logout:
+    post:
+      summary: Logout
+      responses:
+        200:
+          description: Logged out
+  /register:
+    post:
+      summary: Create a new account
+      requestBody:
+        content:
+          "multipart-form-data":
+            schema:
+              properties:
+                username:
+                  description: The name of an user. Should be unique and consist of 3 to 30 alphanumeric characters
+                  type: string
+                email:
+                  description: Email to connect to user account. Should be a valid email address
+                  type: string
+                password:
+                  description: The password needed for an user to log in to the application. Should be between 8 and 50 characters in length
+                  type: string
+                confirm_password:
+                  description: Typing the password the second time to ensure no typo and confirmation. Should be the same as password
+                  type: string
+      responses:
+        200:
+          description: Account succesfully created
+        400: 
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                properties:
+                  error:
+                    $ref: "#/components/schemas/error"
+        409: 
+          description: Account username or email already existed
+          content:
+            application/json:
+              schema:
+                properties:
+                  error:
+                    $ref: "#/components/schemas/error"
+        500: 
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                properties:
+                  error:
+                    $ref: "#/components/schemas/error"
+
+  /centres:
+    get:
+      summary: Get all arcade centres
+      description: Get all arcade centres. Fetches 10 items at a time
+      parameters:
+        - name: page
+          description: defaults to 1 (first page) if not provided
+          in: query
+          schema:
+            type: integer
+        - name: search
+          in: query
+          description: |
+            mostly for creator page \
+            If using search query, page query will not apply (fetch all results) \
+            Search query should be >3 characters in length to take effect
+          schema:
+            type: string
+      responses:
+        '200':
+          description: All arcade centres on the specified page
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/centre"
+  /centres/{centre_id}:
+    parameters:
+      - name: centre_id
+        in: path
+        required: true
+        schema:
+          $ref: "#/components/schemas/centre_id"
+    get:
+      summary: Get a centre corresponding to the provided `centre_id`
+      responses:
+        "200":
+          description: The centre corresponding to the provided `centre_id`
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/centre"
+  /admin/centres:
+    post:
+      summary: Add a centre
+      description: Add a centre. Only user with roles of 'maintainer' or 'admin' is able to add, edit, or delete stuff.
+      requestBody:
+        content:
+          "multipart/form-data":
+            schema:
+              properties:
+                name:
+                  type: string
+                centre_id:
+                  $ref: "#/components/schemas/centre_id"
+                cover_image:
+                  type: string
+                  format: binary
+                  description: Not required. If not provided, the existing cover image will be kept
+                currency:
+                  type: string
+                currency_rate:
+                  type: number
+      responses:
+        "200":
+          description: The added centre
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/centre"
+        "401":
+          description: Unauthorized because user is unauthenticated. Must login first
+        "403":
+          description: Forbidden because user do not have sufficient authority to add, edit or delete stuff.
+  /admin/centres/{centre_id}:
+    parameters:
+      - name: centre_id
+        in: path
+        required: true
+        schema:
+          $ref: "#/components/schemas/centre_id"
+    put:
+      summary: Edit a centre
+      description: Edit a centre. Only user with roles of 'maintainer' or 'admin' is able to add, edit, or delete stuff.
+      requestBody:
+        content:
+          "multipart/form-data":
+            schema:
+              properties:
+                name:
+                  type: string
+                centre_id:
+                  $ref: "#/components/schemas/centre_id"
+                cover_image:
+                  type: string
+                  format: binary
+                  description: Not required. If not provided, the existing cover image will be kept
+                currency:
+                  type: string
+                currency_rate:
+                  type: number
+      responses:
+        "200":
+          description: The edited centre
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/centre"
+        "401":
+          description: Unauthorized because user is unauthenticated. Must login first
+        "403":
+          description: Forbidden because user do not have sufficient authority to add, edit or delete stuff.
+    delete:
+      summary: Delete a centre
+      description: Can only be done by user with the role 'admin' or 'maintainer'
+      responses:
+        "200":
+          description: Centre deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/centre"
+        "401":
+          description: Unauthorized because user is unauthenticated. Must login first
+        "403":
+          description: Forbidden because user do not have sufficient authority to add, edit or delete stuff.
+  
+  /cities:
+    get:
+      summary: Get all cities
+      description: Get all city. Fetches 10 at a time
+      parameters:
+        - name: page
+          description: defaults to 1 (first page) if not provided
+          in: query
+          schema:
+            type: integer
+        - name: search
+          in: query
+          description: |
+            mostly for creator page \
+            If using search query, page query will not apply (fetch all results) \
+            Search query should be >3 characters in length to take effect
+          schema:
+            type: string
+      responses:
+        '200':
+          description: All cities on the specified page
+          content: 
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/city"
+  /cities/{city_id}:
+    parameters:
+      - name: city_id
+        in: path
+        required: true
+        schema:
+          $ref: "#/components/schemas/city_id"
+    get:
+      summary: Get a city corresponding to the provided `city_id`
+      responses:
+        "200":
+          description: The city corresponding to the provided `city_id`
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/city"
+  /admin/cities:
+    post:
+      summary: Add a city
+      description: Add a city. Only user with roles of 'maintainer' or 'admin' is able to add, edit, or delete stuff.
+      requestBody:
+        content:
+          "multipart/form-data":
+            schema:
+              properties:
+                name:
+                  type: string
+                city_id:
+                  $ref: "#/components/schemas/city_id"
+                cover_image:
+                  type: string
+                  format: binary
+                  description: Not required. If not provided, the existing cover image will be kept
+      responses:
+        "200":
+          description: The added city
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/city"
+        "401":
+          description: Unauthorized because user is unauthenticated. Must login first
+        "403":
+          description: Forbidden because user do not have sufficient authority to add, edit or delete stuff.
+  /admin/cities/{city_id}:
+    parameters:
+      - name: city_id
+        in: path
+        required: true
+        schema:
+          $ref: "#/components/schemas/city_id"
+    put:
+      summary: Edit a city
+      description: Edit a city. Only user with roles of 'maintainer' or 'admin' is able to add, edit, or delete stuff.
+      requestBody:
+        content:
+          "multipart/form-data":
+            schema:
+              properties:
+                name:
+                  type: string
+                city_id:
+                  $ref: "#/components/schemas/city_id"
+                cover_image:
+                  type: string
+                  format: binary
+                  description: Not required. If not provided, the existing cover image will be kept
+      responses:
+        "200":
+          description: The edited city
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/city"
+        "401":
+          description: Unauthorized because user is unauthenticated. Must login first
+        "403":
+          description: Forbidden because user do not have sufficient authority to add, edit or delete stuff.
+    delete:
+      summary: Delete a city. 
+      description: Can only be done by user with the role 'admin' or 'maintainer'
+      responses:
+        "200":
+          description: City deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/city"
+        "401":
+          description: Unauthorized because user is unauthenticated. Must login first
+        "403":
+          description: Forbidden because user do not have sufficient authority to add, edit or delete stuff.
+
+  /locations:
+    get:
+      summary: Get the location to the corresponding 'location_id'
+      description: Get all locations. Fetches 10 at a time
+      parameters:
+        - name: centre
+          description: defaults to all centre if not provided
+          in: query
+          schema: 
+            $ref: "#/components/schemas/centre"
+        - name: city
+          description: defaults to all city if not provided
+          in: query
+          schema: 
+            $ref: "#/components/schemas/city"
+        - name: page
+          description: defaults to 1 (first page) if not provided
+          in: query
+          schema:
+            type: integer
+        - name: search
+          in: query
+          description: |
+            mostly for creator page \
+            If using search query, page query will not apply (fetch all results) \
+            Search query should be >3 characters in length to take effect
+          schema:
+            type: string
+      responses:
+        '200':
+          description: All cities on the specified page
+          content: 
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/city"
+  /locations/{location_id}:
+    parameters:
+      - name: location_id
+        in: path
+        required: true
+        schema:
+          $ref: "#/components/schemas/location_id"
+    get:
+      summary: Get a location corresponding to the provided `location_id`
+      responses:
+        "200":
+          description: The location corresponding to the provided `location_id`
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/location"
+  /admin/locations:
+    post:
+      summary: Add a location
+      description: Add a location. Only user with roles of 'maintainer' or 'admin' is able to add, edit, or delete stuff.
+      requestBody:
+        content:
+          "multipart/form-data":
+            schema:
+              properties:
+                name:
+                  type: string
+                location_id:
+                  $ref: "#/components/schemas/location_id"
+                cover_image:
+                  type: string
+                  format: binary
+                  description: Not required. If not provided, the existing cover image will be kept
+                city_id:
+                  $ref: "#/components/schemas/city_id"
+                centre_id:
+                  $ref: "#/components/schemas/centre_id"
+      responses:
+        "200":
+          description: The added location
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/location"
+        "401":
+          description: Unauthorized because user is unauthenticated. Must login first
+        "403":
+          description: Forbidden because user do not have sufficient authority to edit or delete stuff.
+  /admin/locations/{location_id}:
+    parameters:
+      - name: location_id
+        in: path
+        required: true
+        schema:
+          $ref: "#/components/schemas/location_id"
+    put:
+      summary: Edit a location
+      description: Edit a location. Only user with roles of 'maintainer' or 'admin' is able to add, edit, or delete stuff.
+      requestBody:
+        content:
+          "multipart/form-data":
+            schema:
+              properties:
+                name:
+                  type: string
+                location_id:
+                  $ref: "#/components/schemas/location_id"
+                cover_image:
+                  type: string
+                  format: binary
+                  description: Not required. If not provided, the existing cover image will be kept
+                city_id:
+                  $ref: "#/components/schemas/city_id"
+                centre_id:
+                  $ref: "#/components/schemas/centre_id"
+      responses:
+        "200":
+          description: The edited location
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/location"
+        "401":
+          description: Unauthorized because user is unauthenticated. Must login first
+        "403":
+          description: Forbidden because user do not have sufficient authority to edit or delete stuff.
+    delete:
+      summary: Delete a location
+      description: Can only be done by user with the role 'admin' or 'maintainer'
+      responses:
+        "200":
+          description: Location deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/location"
+        "401":
+          description: Unauthorized because user is unauthenticated. Must login first
+        "403":
+          description: Forbidden because user do not have sufficient authority to edit or delete stuff.
+    
+  /machines:
+    get:
+      summary: Get all arcade machines
+      description: Get all arcade machines. Fetches 10 items at a time
+      parameters:
+        - name: version
+          description: defaults to all version if not provided
+          in: query
+          schema:
+            $ref: "#/components/schemas/version_id"
+        - name: location
+          description: defaults to all location if not provided
+          in: query
+          schema:
+            $ref: "#/components/schemas/location_id"
+        - name: page
+          description: defaults to 1 (first page) if not provided
+          in: query
+          schema:
+            type: integer
+        - name: search
+          in: query
+          description: |
+            mostly for creator page \
+            If using search query, page query will not apply (fetch all results) \
+            Search query should be >3 characters in length to take effect
+          schema:
+            type: string
+      responses:
+        '200':
+          description: All arcade machines on the specified page
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/machine"
+  /machines/{machine_id}:
+    parameters:
+      - name: machine_id
+        in: path
+        required: true
+        schema:
+          $ref: "#/components/schemas/machine_id"
+    get:
+      summary: Get a machine
+      responses:
+        "200":
+          description: The machine corresponding to the provided `machine_id`
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/machine"
+  /admin/machines:
+    post:
+      summary: Add a machine
+      description: Add a machine. Only user with roles of 'maintainer' or 'admin' is able to add, edit, or delete stuff.
+      requestBody:
+        content:
+          "multipart/form-data":
+            schema:
+              properties:
+                name:
+                  type: string
+                machine_id:
+                  $ref: "#/components/schemas/machine_id"
+                cover_image:
+                  type: string
+                  format: binary
+                  description: Not required. If not provided, the existing cover image will be kept
+                location_id:
+                  $ref: "#/components/schemas/location_id"
+                version_id:
+                  $ref: '#/components/schemas/version_id'
+                machine_count:
+                  description: The amount of a machine in an arcade centre
+                  type: integer
+                price:
+                  description: The price for each play of a machine
+                  type: integer
+      responses:
+        "200":
+          description: The added machine
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/machine"
+        "401":
+          description: Unauthorized because user is unauthenticated. Must login first
+        "403":
+          description: Forbidden because user do not have sufficient authority to edit or delete stuff.
+  /admin/machines/{machine_id}:
+    parameters:
+      - name: machine_id
+        in: path
+        required: true
+        schema:
+          $ref: "#/components/schemas/machine_id"
+    put:
+      summary: Edit a machine
+      description: Edit a machine. Only user with roles of 'maintainer' or 'admin' is able to add, edit, or delete stuff.
+      requestBody:
+        content:
+          "multipart/form-data":
+            schema:
+              properties:
+                name:
+                  type: string
+                machine_id:
+                  $ref: "#/components/schemas/machine_id"
+                cover_image:
+                  type: string
+                  format: binary
+                  description: Not required. If not provided, the existing cover image will be kept
+                location_id:
+                  $ref: "#/components/schemas/location_id"
+                version_id:
+                  $ref: '#/components/schemas/version_id'
+                machine_count:
+                  description: The amount of a machine in an arcade centre
+                  type: integer
+                price:
+                  description: The price for each play of a machine
+                  type: integer
+      responses:
+        "200":
+          description: The edited machine
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/machine"
+        "401":
+          description: Unauthorized because user is unauthenticated. Must login first
+        "403":
+          description: Forbidden because user do not have sufficient authority to edit or delete stuff.
+    delete:
+      summary: Delete a machine
+      description: Can only be done by user with the role 'admin' or 'maintainer'
+      responses:
+        "200":
+          description: Machine deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/machine"
+        "401":
+          description: Unauthorized because user is unauthenticated. Must login first
+        "403":
+          description: Forbidden because user do not have sufficient authority to edit or delete stuff.
+
+  /versions:
+    get:
+      summary: Get all arcade machine versions
+      description: Get all arcade machine versions. Fetches 10 items at a time
+      parameters:
+        - name: title
+          description: defaults to all title if not provided
+          in: query
+          schema:
+            $ref: "#/components/schemas/title_id"
+        - name: page
+          description: defaults to 1 (first page) if not provided
+          in: query
+          schema:
+            type: integer
+        - name: search
+          in: query
+          description: |
+            mostly for creator page \
+            If using search query, page query will not apply (fetch all results) \
+            Search query should be >3 characters in length to take effect
+          schema:
+            type: string
+      responses:
+        '200':
+          description: All arcade machine versions on the specified page
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/version"
+  /versions/{version_id}:
+    parameters:
+      - name: version_id
+        in: path
+        required: true
+        schema:
+          $ref: "#/components/schemas/version_id"
+    get:
+      summary: Get a version
+      responses:
+        "200":
+          description: The version corresponding to the provided `version_id`
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/version"
+  /admin/versions:
+    post:
+      summary: Add a version
+      description: Add a version. Only user with roles of 'maintainer' or 'admin' is able to add, edit, or delete stuff.
+      requestBody:
+        content:
+          "multipart/form-data":
+            schema:
+              properties:
+                name:
+                  type: string
+                version_id:
+                  $ref: "#/components/schemas/version_id"
+                cover_image:
+                  type: string
+                  format: binary
+                  description: Not required. If not provided, the existing cover image will be kept
+                title_id:
+                  $ref: '#/components/schemas/title_id'
+                price:
+                  description: The price for each play of a version
+                  type: integer
+      responses:
+        "200":
+          description: The added version
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/version"
+        "401":
+          description: Unauthorized because user is unauthenticated. Must login first
+        "403":
+          description: Forbidden because user do not have sufficient authority to edit or delete stuff.
+  /admin/versions/{version_id}:
+    parameters:
+      - name: version_id
+        in: path
+        required: true
+        schema:
+          $ref: "#/components/schemas/version_id"
+    put:
+      summary: Edit a version
+      description: Edit a version. Only user with roles of 'maintainer' or 'admin' is able to add, edit, or delete stuff.
+      requestBody:
+        content:
+          "multipart/form-data":
+            schema:
+              properties:
+                name:
+                  type: string
+                version_id:
+                  $ref: "#/components/schemas/version_id"
+                cover_image:
+                  type: string
+                  format: binary
+                  description: Not required. If not provided, the existing cover image will be kept
+                title_id:
+                  $ref: '#/components/schemas/title_id'
+                price:
+                  description: The price for each play of a version
+                  type: integer
+      responses:
+        "200":
+          description: The edited version
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/version"
+        "401":
+          description: Unauthorized because user is unauthenticated. Must login first
+        "403":
+          description: Forbidden because user do not have sufficient authority to edit or delete stuff.
+    delete:
+      summary: Delete a version
+      description: Can only be done by user with the role 'admin' or 'maintainer'
+      responses:
+        "200":
+          description: Version deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/version"
+        "401":
+          description: Unauthorized because user is unauthenticated. Must login first
+        "403":
+          description: Forbidden because user do not have sufficient authority to edit or delete stuff.
+
+  /titles:
+    get:
+      summary: Get all arcade machine titles
+      description: Get all arcade machine titles. Fetches 10 items at a time
+      parameters:
+        - name: page
+          description: defaults to 1 (first page) if not provided
+          in: query
+          schema:
+            type: integer
+        - name: search
+          in: query
+          description: |
+            mostly for creator page \
+            If using search query, page query will not apply (fetch all results) \
+            Search query should be >3 characters in length to take effect
+          schema:
+            type: string
+      responses:
+        '200':
+          description: All arcade machine titles on the specified page
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/title"
+  /titles/{title_id}:
+    parameters:
+      - name: title_id
+        in: path
+        required: true
+        schema:
+          $ref: "#/components/schemas/title_id"
+    get:
+      summary: Get a title
+      responses:
+        "200":
+          description: The title corresponding to the provided `title_id`
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/title"
+  /admin/titles:
+    post:
+      summary: Add a title
+      description: Add a title. Only user with roles of 'maintainer' or 'admin' is able to add, edit, or delete stuff.
+      requestBody:
+        content:
+          "multipart/form-data":
+            schema:
+              properties:
+                name:
+                  type: string
+                title_id:
+                  $ref: "#/components/schemas/title_id"
+                cover_image:
+                  type: string
+                  format: binary
+                  description: Not required. If not provided, the existing cover image will be kept
+      responses:
+        "200":
+          description: The added title
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/title"
+        "401":
+          description: Unauthorized because user is unauthenticated. Must login first
+        "403":
+          description: Forbidden because user do not have sufficient authority to edit or delete stuff.
+  /admin/titles/{title_id}:
+    parameters:
+      - name: title_id
+        in: path
+        required: true
+        schema:
+          $ref: "#/components/schemas/title_id"
+    put:
+      summary: Edit a title
+      description: Edit a title. Only user with roles of 'maintainer' or 'admin' is able to add, edit, or delete stuff.
+      requestBody:
+        content:
+          "multipart/form-data":
+            schema:
+              properties:
+                name:
+                  type: string
+                title_id:
+                  $ref: "#/components/schemas/title_id"
+                cover_image:
+                  type: string
+                  format: binary
+                  description: Not required. If not provided, the existing cover image will be kept
+      responses:
+        "200":
+          description: The edited title
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/title"
+        "401":
+          description: Unauthorized because user is unauthenticated. Must login first
+        "403":
+          description: Forbidden because user do not have sufficient authority to edit or delete stuff.
+    delete:
+      summary: Delete a title
+      description: Can only be done by user with the role 'admin' or 'maintainer'
+      responses:
+        "200":
+          description: Title deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/title"
+        "401":
+          description: Unauthorized because user is unauthenticated. Must login first
+        "403":
+          description: Forbidden because user do not have sufficient authority to edit or delete stuff.
+
+  /users/{user_id}:
+    parameters:
+      - name: user_id
+        in: path
+        required: true
+        schema:
+          $ref: "#/components/schemas/user_id"
+    get:
+      summary: Get an user
+      responses:
+        "200":
+          description: The user corresponding to the provided `user_id`
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/user"
+  /admin/users:
+    get:
+      summary: Get all users
+      description: Get all users. Fetches 10 items at a time
+      parameters:
+        - name: page
+          description: defaults to 1 (first page) if not provided
+          in: query
+          schema:
+            type: integer
+        - name: search
+          in: query
+          description: |
+            mostly for creator page \
+            If using search query, page query will not apply (fetch all results) \
+            Search query should be >3 characters in length to take effect
+          schema:
+            type: string
+      responses:
+        '200':
+          description: All users on the specified page
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/user"
+    post:
+      summary: Add a user
+      description: Add a user. Only user with roles of 'maintainer' or 'admin' is able to add, edit, or delete stuff.
+      requestBody:
+        content:
+          "multipart/form-data":
+            schema:
+              properties:
+                name:
+                  type: string
+                user_id:
+                  $ref: "#/components/schemas/user_id"
+                cover_image:
+                  type: string
+                  format: binary
+                  description: Not required. If not provided, the existing cover image will be kept
+      responses:
+        "200":
+          description: The added user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/user"
+        "401":
+          description: Unauthorized because user is unauthenticated. Must login first
+        "403":
+          description: Forbidden because user do not have sufficient authority to edit or delete stuff.
+  /admin/users/{user_id}:
+    parameters:
+      - name: user_id
+        in: path
+        required: true
+        schema:
+          $ref: "#/components/schemas/title_id"
+    put:
+      summary: Edit a user
+      description: Edit a user. Only user with roles of 'maintainer' or 'admin' is able to add, edit, or delete stuff.
+      requestBody:
+        content:
+          "multipart/form-data":
+            schema:
+              properties:
+                username:
+                  type: string
+                user_id:
+                  $ref: "#/components/schemas/user_id"
+                cover_image:
+                  type: string
+                  format: binary
+                  description: Not required. If not provided, the existing cover image will be kept
+                password:
+                  description: The password needed for an user to log in to the application
+                  type: string
+                role:
+                  description: The roles assigned to an user
+                  type: string
+                  enum:
+                    - member
+                    - admin
+                    - maintainer
+      responses:
+        "200":
+          description: The edited user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/user"
+        "401":
+          description: Unauthorized because user is unauthenticated. Must login first
+        "403":
+          description: Forbidden because user do not have sufficient authority to edit or delete stuff.
+    delete:
+      summary: Delete a user
+      description: Can only be done by user with the role 'admin' or 'maintainer'
+      responses:
+        "200":
+          description: User deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/user"
+        "401":
+          description: Unauthorized because user is unauthenticated. Must login first
+        "403":
+          description: Forbidden because user do not have sufficient authority to edit or delete stuff.
+
+
+components:
+  schemas:
+    centre_id:
+      description: The unique identifier of an arcade centre
+      type: string
+    centre:
+      description: A centre object
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          $ref: '#/components/schemas/centre_id'
+        name:
+          description: The name of an arcade centre
+          type: string
+        currency:
+          description: The currency of an arcade centre
+          type: string
+        currency_rate:
+          description: The rate in which money in rupiah currency is converted to centre's currency
+          type: number
+    city_id:
+      description: The unique identifier of a city
+      type: string
+    city:
+      description: A city object
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/city_id'
+        name:
+          description: The name of a city
+          type: string
+    error:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          description: A human readable error message
+          type: string
+    location_id:
+      description: The unique identifier of a location
+      type: string
+    location:
+      description: A location object
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/location_id'
+        centre:
+          $ref: '#/components/schemas/centre'
+        machines:
+          type: array
+          items:
+            $ref: '#/components/schemas/machine'
+        city:
+          $ref: '#/components/schemas/city'
+        name:
+          description: The name of a location
+          type: string
+    machine_id:
+      description: The unique identifier of an arcade machine
+      type: string    
+    machine:
+      description: A machine object
+      type: object
+      properties:
+        machine_id:
+          $ref: '#/components/schemas/machine_id'
+        location:
+          $ref: "#/components/schemas/location"
+        version:
+          $ref: '#/components/schemas/version'
+        machine_count:
+          description: The amount of a machine in an arcade centre
+          type: integer
+        price:
+          description: The price for each play of a machine
+          type: integer
+    version_id:
+      description: The unique identifier of the version of an arcade machine
+      type: string
+    version:
+      description: A version object
+      type: object
+      properties:
+        version_id:
+          $ref: '#/components/schemas/version_id'
+        title:
+          $ref: '#/components/schemas/title'
+        version_name:
+          description: The name of a version
+          type: string
+        price:
+          description: The price for each play of a version
+          type: integer
+    title_id:
+      description: The unique identifier of a title
+      type: string
+    title:
+      description: A title object
+      type: object
+      properties:
+        title_id:
+          $ref: '#/components/schemas/title_id'
+        title_name:
+          description: The name of the title
+          type: string
+    user_id:
+      description: The user identifier of an user
+      type: string
+      format: uuid
+    user:
+      description: An user object
+      type: object
+      required:
+        - user_id
+        - username
+        - password
+      properties:
+        user_id:
+          $ref: '#/components/schemas/user_id'
+        username:
+          description: The name of an user
+          type: string
+        email:
+          description: The email connected to user
+          type: string
+        password:
+          description: The password needed for an user to log in to the application
+          type: string
+        role:
+          description: The roles assigned to an user
+          type: string
+          enum:
+            - member
+            - admin
+            - maintainer
+  securitySchemes:
+    ApiKey:
+      type: http
+      scheme: bearer
+
+security:
+  - ApiKey: []
