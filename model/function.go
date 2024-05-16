@@ -188,6 +188,7 @@ func (f Factor) ToResponse() FactorResponse {
 		Plan: f.Plan,
 		Actual: f.Actual,
 		Percentage: f.ToPercentage(),	
+		Result_ID: f.ResultID,
 	}
 }
 func (f FactorResponse) Back() Factor{
@@ -198,6 +199,7 @@ func (f FactorResponse) Back() Factor{
 		Target: f.Target,
 		Plan: f.Plan,
 		Actual: f.Actual,
+		ResultID: f.Result_ID,
 	}
 }
 
@@ -205,6 +207,7 @@ func (r Result) ToResponse() ResultResponse{
 	newRes := ResultResponse{
 		Result_ID: r.Result_ID,
 		Name: r.Name,
+		Item_ID: r.ItemID,
 	}
 	for _, data := range r.Factors{
 		newRes.Factors = append(newRes.Factors, data.ToResponse())
@@ -215,6 +218,7 @@ func (r ResultResponse) Back() Result{
 	newRes := Result{
 		Result_ID: r.Result_ID,
 		Name: r.Name,
+		ItemID: r.Item_ID,
 	}
 	for _, data := range r.Factors{
 		temp := data.Back()
@@ -228,6 +232,7 @@ func (i Item) ToResponse() ItemResponse{
 	newItem := ItemResponse{
 		Item_ID: i.Item_ID,
 		Name: i.Name,
+		Year: i.YearID,
 	}
 	for _, Result := range i.Results{		
 		newItem.Results = append(newItem.Results, Result.ToResponse())
@@ -238,6 +243,7 @@ func (i ItemResponse) Back() Item{
 	newItem := Item{
 		Item_ID: i.Item_ID,
 		Name: i.Name,
+		YearID: i.Year,
 	}
 	for _, Result := range i.Results{	
 		temp := Result.Back()	
@@ -279,7 +285,8 @@ func (y YearlyResponse) Back() Yearly{
 func (p Project) ToResponse() ProjectResponse{
 	return ProjectResponse{
 		Project_ID: p.Project_ID,				
-		Name: p.Name,		
+		Name: p.Name,	
+		Summary_ID: p.Summary_ID,	
 		Item: map[string]int{
 			"Not Yet Start Issued FR":p.INYS,
 			"DR":p.IDR,
@@ -301,7 +308,8 @@ func (p Project) ToResponse() ProjectResponse{
 func (p ProjectResponse) Back() Project{
 	return Project{
 		Project_ID: p.Project_ID,				
-		Name: p.Name,	
+		Name: p.Name,
+		Summary_ID: p.Summary_ID,	
 		INYS: p.Item["Not Yet Start Issued FR"],
 		QNYS: p.Quantity["Not Yet Start Issued FR"],
 		IDR: p.Item["DR"],
