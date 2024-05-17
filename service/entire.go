@@ -1,8 +1,10 @@
 package service
 
 import (
+	"fmt"
 	"goreact/model"
 	"sync"
+	"strconv"
 )
 
 // Add Entire
@@ -196,6 +198,7 @@ func (cs *crudService) DeleteEntireYearly(input int) error{
 	if temp.Items != nil {
 		wg, errs := model.GoRoutineInit()
 		for _, item := range temp.Items{
+			fmt.Println("Deleting item id " + item.Name + " from " + strconv.Itoa(*item.Year))
 			wg.Add(1)
 			go cs.DeleteEntireItem(&wg, item.Item_ID, errs)
 		}

@@ -48,7 +48,8 @@ type AttendanceResponse struct{
 	Actual 		*Monthly	`json:"Actual"`
 	Cuti 		*Monthly	`json:"Cuti"`
 	Izin 		*Monthly	`json:"Izin"`
-	Lain 		*Monthly	`json:"Lain"`}
+	Lain 		*Monthly	`json:"Lain"`
+}
 type FactorResponse struct{
 	Factor_ID	int			`json:"Factor_ID"`
 	Title 		string		`json:"Title"`
@@ -57,26 +58,26 @@ type FactorResponse struct{
 	Plan 		*MiniPAP		`json:"Planned"`
 	Actual 		*MiniPAP		`json:"Actual"`
 	Percentage	[][]Monthly		`json:"Percentage"`
-	Result_ID 	*int		`json:"Result_ID"`
+	Result_ID	*int		`json:"Result_ID"`
 }
 type ResultResponse struct{
 	Result_ID	int					`json:"Result_ID"`
 	Name		string				`json:"Name"`
 	Factors 	[]FactorResponse	`json:"Factors"`
-	Item_ID		*int					`json:"Item_ID"`
+	Item_ID		*int 				`json:"Item_ID"`
 }
 type ItemResponse struct{
 	Item_ID		int					`json:"Item_ID"`
 	Name		string				`json:"Name"`
 	Results		[]ResultResponse	`json:"Results"`
-	Year 		*int 				`json:"Year"`
+	Year 		*int				`json:"Year"`
 }
 type ProjectResponse struct{
 	Project_ID		int				
 	Name 			string		
 	Item			map[string]int	
 	Quantity		map[string]int
-	Summary_ID		*int
+	Summary_ID 		*int
 }
 type SummaryResponse struct{
 	Summary_ID		int				
