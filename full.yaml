@@ -250,7 +250,6 @@ paths:
               schema:
                 $ref: "#/components/schemas/messageResponse"
           
-
   /monthly:
     get:
       summary: Get all monthly 
@@ -2862,7 +2861,7 @@ components:
         target:
           description: Deadline for resolving the problem.
           type: string
-        fol_date:
+        folDate:
           description: Date decided to follow up the situation. Use date time format.
           type: integer
         status:

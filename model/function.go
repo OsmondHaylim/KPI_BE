@@ -304,7 +304,6 @@ func (p Project) ToResponse() ProjectResponse{
 			"Finish":p.QF,
 			"Cancelled":p.QC,
 		},
-		Summary_ID: p.Summary_ID,
 	}
 }
 func (p ProjectResponse) Back() Project{

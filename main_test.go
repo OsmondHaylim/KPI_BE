@@ -182,6 +182,11 @@ func TestMain(t *testing.T){
 				router.ServeHTTP(w, req)
 				// getSuccess(w.Body)
 				assert.Equal(t, http.StatusOK, w.Code)
+
+				req, _ = http.NewRequest("GET", "/kpi/monthly/1", nil)
+				req.Header.Set("Authorization", "Bearer "+ apiKey)
+				w = httptest.NewRecorder()
+				router.ServeHTTP(w, req)
 			})
 			
 			t.Run("Delete Single", func(t *testing.T){
@@ -4176,6 +4181,7 @@ func TestMain(t *testing.T){
 				w := httptest.NewRecorder()
 				router.ServeHTTP(w, req)
 				// getSuccess(w.Body)
+				fmt.Printf(w.Body.String()) 
 				assert.Equal(t, http.StatusOK, w.Code)
 			})
 			t.Run("Update Single", func(t *testing.T){
