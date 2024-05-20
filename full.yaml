@@ -8,7 +8,7 @@ servers:
     - url: "http://localhost:8080/kpi/"
 
 paths:
-  /login:
+  /user/login:
     post:
       summary: Login
       security: []
@@ -42,7 +42,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/messageResponse"
-  /logout:
+  /user/logout:
     post:
       summary: Logout
       responses:
@@ -52,7 +52,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/messageResponse"
-  /register:
+  /user/register:
     post:
       summary: Create a new account
       requestBody:
@@ -97,6 +97,159 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/messageResponse"
+  /user/profile:
+    get:
+      summary: Get the user's profile
+      responses:
+        200:
+          description: User's profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/userResponse"
+        500:
+          description: Failure to process data. Send body and report to BE immediately.
+
+  /file/kpi:
+    post:
+      summary: Add a complete yearly using excel binary file. 
+      description: Add a yearly with the needed association. Must be logged in first and have the valid Authorization header.
+      requestBody:
+        content:
+          "application/octet-stream":
+            schema:
+              type: string
+              format: binary
+      responses:
+        200:
+          description: yearly added successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/yearlyResponse"
+        401:
+          description: Unauthorized because user is unauthenticated. Must login first
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        403:
+          description: Forbidden because user do not have sufficient authority to add, edit or delete stuff.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        500:
+          description: Failure to process data. Send body and report to BE immediately.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+  /file/analisa:
+    post:
+      summary: Add a complete analisa using excel binary file. 
+      description: Add a analisa with the needed association. Must be logged in first and have the valid Authorization header.
+      requestBody:
+        content:
+          "application/octet-stream":
+            schema:
+              type: string
+              format: binary
+      responses:
+        200:
+          description: analisa added successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/analisa"
+        401:
+          description: Unauthorized because user is unauthenticated. Must login first
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        403:
+          description: Forbidden because user do not have sufficient authority to add, edit or delete stuff.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        500:
+          description: Failure to process data. Send body and report to BE immediately.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+  /file/summary:
+    post:
+      summary: Add a complete summary using excel binary file. 
+      description: Add a summary with the needed association. Must be logged in first and have the valid Authorization header.
+      requestBody:
+        content:
+          "application/octet-stream":
+            schema:
+              type: string
+              format: binary
+      responses:
+        200:
+          description: summary added successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/summaryResponse"
+        401:
+          description: Unauthorized because user is unauthenticated. Must login first
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        403:
+          description: Forbidden because user do not have sufficient authority to add, edit or delete stuff.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        500:
+          description: Failure to process data. Send body and report to BE immediately.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+  /file/save:
+    post:
+      summary: upload a file to server
+      requestBody:
+        content:
+          "application/octet-stream":
+            schema:
+              type: string
+              format: binary
+      responses:
+        200:
+          description: file added successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        401:
+          description: Unauthorized because user is unauthenticated. Must login first
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        403:
+          description: Forbidden because user do not have sufficient authority to add, edit or delete stuff.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        500:
+          description: Failure to process data. Send body and report to BE immediately.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+          
 
   /monthly:
     get:
@@ -353,6 +506,262 @@ paths:
       responses:
         200:
           description: minipap deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        401:
+          description: Unauthorized because user is unauthenticated. Must login first
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        403:
+          description: Forbidden because user do not have sufficient authority to add, edit or delete stuff.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        404:
+          description: Data that needs to be edited not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse" 
+        500:
+          description: Failure to process data. Send body and report to BE immediately.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+
+  /attendance:
+    get:
+      summary: Get all attendance 
+      description: Fetch all attendance struct from table attendance. 
+      responses:
+        200:
+          description: All attendance struct on the table attendance
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/attendanceArrayResponse"
+        500:
+          description: Failure to process data. Send body and report to BE immediately.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+    post:
+      summary: Add a attendance
+      description: Add a attendance. Must be logged in first and have the valid Authorization header.
+      requestBody:
+        content:
+          "multipart/form-data":
+            schema:
+              $ref: "#/components/schemas/attendance"
+      responses:
+        200:
+          description: attendance added successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        401:
+          description: Unauthorized because user is unauthenticated. Must login first
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        403:
+          description: Forbidden because user do not have sufficient authority to add, edit or delete stuff.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        500:
+          description: Failure to process data. Send body and report to BE immediately.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+  /attendance/{year}:
+    parameters:
+      - name: year
+        in: path
+        required: true
+        schema:
+          $ref: "#/components/schemas/attendance/properties/Year"
+    get:
+      summary: Get a attendance corresponding to the provided `year`
+      responses:
+        200:
+          description: The attendance corresponding to the provided `year`
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/attendance"
+        500:
+          description: Failure to process data. Send body and report to BE immediately.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"        
+    put:
+      description: Edit a attendance. Must be logged in first and have the valid Authorization header.
+      requestBody:
+        content:
+          "multipart/form-data":
+            schema:
+              $ref: "#/components/schemas/attendance"
+      responses:
+        200:
+          description: attendance edited successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        401:
+          description: Unauthorized because user is unauthenticated. Must login first
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        403:
+          description: Forbidden because user do not have sufficient authority to add, edit or delete stuff.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        404:
+          description: Data that needs to be edited not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse" 
+        500:
+          description: Failure to process data. Send body and report to BE immediately.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+    delete:
+      description: Delete a attendance. Must be logged in first and have the valid Authorization header.
+      responses:
+        200:
+          description: attendance deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        401:
+          description: Unauthorized because user is unauthenticated. Must login first
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        403:
+          description: Forbidden because user do not have sufficient authority to add, edit or delete stuff.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        404:
+          description: Data that needs to be edited not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse" 
+        500:
+          description: Failure to process data. Send body and report to BE immediately.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+  /attendance/entire:
+    post:
+      summary: Add a complete attendance. 
+      description: Add a attendance with the needed association. Must be logged in first and have the valid Authorization header.
+      requestBody:
+        content:
+          "multipart/form-data":
+            schema:
+              $ref: "#/components/schemas/attendanceResponse"
+      responses:
+        200:
+          description: attendance added successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        401:
+          description: Unauthorized because user is unauthenticated. Must login first
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        403:
+          description: Forbidden because user do not have sufficient authority to add, edit or delete stuff.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        500:
+          description: Failure to process data. Send body and report to BE immediately.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+  /attendance/entire/{Year}:
+    parameters:
+      - name: Year
+        in: path
+        required: true
+        schema:
+          $ref: "#/components/schemas/attendance/properties/Year"
+    put:
+      description: Edit a attendance with it's associated content. Must be logged in first and have the valid Authorization header.
+      requestBody:
+        content:
+          "multipart/form-data":
+            schema:
+              $ref: "#/components/schemas/attendanceResponse"
+      responses:
+        200:
+          description: attendance edited successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        401:
+          description: Unauthorized because user is unauthenticated. Must login first
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        403:
+          description: Forbidden because user do not have sufficient authority to add, edit or delete stuff.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+        404:
+          description: Data that needs to be edited not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse" 
+        500:
+          description: Failure to process data. Send body and report to BE immediately.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/messageResponse"
+    delete:
+      description: Delete a attendance with it's associated content. Must be logged in first and have the valid Authorization header.
+      responses:
+        200:
+          description: attendance deleted successfully
           content:
             application/json:
               schema:
