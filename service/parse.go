@@ -375,7 +375,7 @@ func (ps *parseService) ParseAnalisis (input multipart.File) (*model.Analisa, er
 	return nil, nil
 }
 
-func (ps *parseService) ParseSummary (input multipart.File) (*model.SummaryResponse, error){
+func (ps *parseService) ParseSummary (input multipart.File) (*model.Summary, error){
 	//Create temp file
 	out, err := os.CreateTemp("", "upload-*.xlsx")
 	if err != nil {return nil, err}	
@@ -388,42 +388,26 @@ func (ps *parseService) ParseSummary (input multipart.File) (*model.SummaryRespo
 	for _, sheet := range excel.Sheets {
 		if sheet.Name == "Summary Project" {
 			fmt.Println("found")
-			Summary := model.SummaryResponse{}
+			Summary := model.Summary{}
+			for i := 4; i <= len(sheet.Rows); i++{
+				if sheet.Rows[i].Cells[2].String() != "" && sheet.Rows[i].Cells[2].String() != "PERSENTAGE FINISH" {
+					Summary.Status = append(Summary.Status, sheet.Rows[i].Cells[2].String()) 
+				}else {break}
+			}
 			for i := 3; i <= len(sheet.Rows[2].Cells); i+=2{
 				if sheet.Rows[2].Cells[i].String() != "REMARKS" && !strings.Contains(sheet.Rows[2].Cells[i].String(), "vs"){
-					tempProject := model.ProjectResponse{}
-					item := make(map[string]int)
-					qty := make(map[string]int)
+					tempProject := model.Project{}
+					item := []int32{}
+					qty := []int32{}
 					tempProject.Name = sheet.Rows[2].Cells[i].String()
-					fmt.Println(tempProject.Name)
-					item["Not Yet Start Issued FR"], err = sheet.Rows[5].Cells[i].Int()
-					fmt.Println(item["Not Yet Start Issued FR"])
-					if err != nil {return nil, err}
-					qty["Not Yet Start Issued FR"], err = sheet.Rows[5].Cells[i+1].Int()
-					if err != nil {return nil, err}
-					item["DR"], err = sheet.Rows[6].Cells[i].Int()
-					fmt.Println(item["DR"])
-					if err != nil {return nil, err}
-					qty["DR"], err = sheet.Rows[6].Cells[i+1].Int()
-					if err != nil {return nil, err}
-					item["PR to PO"], err = sheet.Rows[7].Cells[i].Int()
-					fmt.Println(item["PR to PO"])
-					if err != nil {return nil, err}
-					qty["PR to PO"], err = sheet.Rows[7].Cells[i+1].Int()
-					if err != nil {return nil, err}
-					item["Install"], err = sheet.Rows[8].Cells[i].Int()
-					fmt.Println(item["Install"])
-					if err != nil {return nil, err}
-					qty["Install"], err = sheet.Rows[8].Cells[i+1].Int()
-					if err != nil {return nil, err}
-					item["Finish"], err = sheet.Rows[9].Cells[i].Int()
-					if err != nil {return nil, err}
-					qty["Finish"], err = sheet.Rows[9].Cells[i+1].Int()
-					if err != nil {return nil, err}
-					item["Cancelled"], err = sheet.Rows[10].Cells[i].Int()
-					if err != nil {return nil, err}
-					qty["Cancelled"], err = sheet.Rows[10].Cells[i+1].Int()
-					if err != nil {return nil, err}
+					for j := 0; j < len(Summary.Status); j++{
+						data, err := sheet.Rows[j+5].Cells[i].Int()
+						if err != nil{return nil, err}
+						item = append(item, int32(data))
+						data, err = sheet.Rows[j+5].Cells[i+1].Int()
+						if err != nil{return nil, err}
+						item = append(item, int32(data))
+					}
 					tempProject.Item = item
 					tempProject.Quantity = qty
 					Summary.Projects = append(Summary.Projects, tempProject)

@@ -4181,7 +4181,7 @@ func TestMain(t *testing.T){
 				w := httptest.NewRecorder()
 				router.ServeHTTP(w, req)
 				// getSuccess(w.Body)
-				fmt.Printf(w.Body.String()) 
+				// fmt.Printf(w.Body.String()) 
 				assert.Equal(t, http.StatusOK, w.Code)
 			})
 			t.Run("Update Single", func(t *testing.T){

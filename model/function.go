@@ -2,7 +2,7 @@ package model
 
 import (
 	"fmt"
-	"math"
+	// "math"
 	"net/http"
 	"strconv"
 	"sync"
@@ -72,19 +72,8 @@ func (s Summary) Comparison() []Project{
 			temp := Project{
 				Name: first.Name + " vs " + data.Name,
 				Summary_ID: &s.Summary_ID,
-				INYS: int(math.Abs(float64(first.INYS - data.INYS))),
-				QNYS: int(math.Abs(float64(first.QNYS - data.QNYS))),
-				IDR: int(math.Abs(float64(first.IDR - data.IDR))),
-				QDR: int(math.Abs(float64(first.QDR - data.QDR))),
-				IPR: int(math.Abs(float64(first.IPR - data.IPR))),
-				QPR: int(math.Abs(float64(first.QPR - data.QPR))),
-				II: int(math.Abs(float64(first.II - data.II))),
-				QI: int(math.Abs(float64(first.QI - data.QI))),
-				IF: int(math.Abs(float64(first.IF - data.IF))),
-				QF: int(math.Abs(float64(first.QF - data.QF))),
-				IC: int(math.Abs(float64(first.IC - data.IC))),
-				QC: int(math.Abs(float64(first.QC - data.QC))),
 			}
+
 			result = append(result, temp)
 		}
 	}
@@ -283,71 +272,60 @@ func (y YearlyResponse) Back() Yearly{
 	return newYear
 }
 
-func (p Project) ToResponse() ProjectResponse{
-	return ProjectResponse{
-		Project_ID: p.Project_ID,				
-		Name: p.Name,	
-		Summary_ID: p.Summary_ID,	
-		Item: map[string]int{
-			"Not Yet Start Issued FR":p.INYS,
-			"DR":p.IDR,
-			"PR to PO":p.IPR,
-			"Install":p.II,
-			"Finish":p.IF,
-			"Cancelled":p.IC,
-		},
-		Quantity: map[string]int{
-			"Not Yet Start Issued FR":p.QNYS,
-			"DR":p.QDR,
-			"PR to PO":p.QPR,
-			"Install":p.QI,
-			"Finish":p.QF,
-			"Cancelled":p.QC,
-		},
-	}
-}
-func (p ProjectResponse) Back() Project{
-	return Project{
-		Project_ID: p.Project_ID,	
-		Summary_ID: p.Summary_ID,			
-		Name: p.Name,	
-		INYS: p.Item["Not Yet Start Issued FR"],
-		QNYS: p.Quantity["Not Yet Start Issued FR"],
-		IDR: p.Item["DR"],
-		QDR: p.Quantity["DR"],
-		IPR: p.Item["PR to PO"],
-		QPR: p.Quantity["PR to PO"],
-		II: p.Item["Install"],
-		QI: p.Quantity["Install"],
-		IF: p.Item["Finish"],
-		QF: p.Quantity["Finish"],
-		IC: p.Item["Cancelled"],
-		QC: p.Quantity["Cancelled"],
-	}
-}
+// func (p Project) ToResponse() ProjectResponse{
+// 	return ProjectResponse{
+// 		Project_ID: p.Project_ID,				
+// 		Name: p.Name,	
+// 		Summary_ID: p.Summary_ID,	
+// 		Item: map[string]int{
+// 			"Not Yet Start Issued FR":p.INYS,
+// 			"DR":p.IDR,
+// 			"PR to PO":p.IPR,
+// 			"Install":p.II,
+// 			"Finish":p.IF,
+// 			"Cancelled":p.IC,
+// 		},
+// 		Quantity: map[string]int{
+// 			"Not Yet Start Issued FR":p.QNYS,
+// 			"DR":p.QDR,
+// 			"PR to PO":p.QPR,
+// 			"Install":p.QI,
+// 			"Finish":p.QF,
+// 			"Cancelled":p.QC,
+// 		},
+// 	}
+// }
+// func (p ProjectResponse) Back() Project{
+// 	data := Project{
+// 		Project_ID: p.Project_ID,	
+// 		Summary_ID: p.Summary_ID,			
+// 		Name: p.Name,
+// 	}
+// 	return data
+// }
 
-func (s Summary) ToResponse() SummaryResponse{
-	newSummary := SummaryResponse{
-		Summary_ID: s.Summary_ID,
-		IssuedDate: s.IssuedDate,
-	}
-	for _, Project := range s.Projects{
-		newSummary.Projects = append(newSummary.Projects, Project.ToResponse())
-	}
-	return newSummary
-}
-func (s SummaryResponse) Back() Summary{
-	newSummary := Summary{
-		Summary_ID: s.Summary_ID,
-		IssuedDate: s.IssuedDate,
-	}
-	for _, Project := range s.Projects{
-		temp := Project.Back()
-		temp.Summary_ID = &s.Summary_ID
-		newSummary.Projects = append(newSummary.Projects, temp)
-	}
-	return newSummary
-}
+// func (s Summary) ToResponse() SummaryResponse{
+// 	newSummary := SummaryResponse{
+// 		Summary_ID: s.Summary_ID,
+// 		IssuedDate: s.IssuedDate,
+// 	}
+// 	for _, Project := range s.Projects{
+// 		newSummary.Projects = append(newSummary.Projects, Project.ToResponse())
+// 	}
+// 	return newSummary
+// }
+// func (s SummaryResponse) Back() Summary{
+// 	newSummary := Summary{
+// 		Summary_ID: s.Summary_ID,
+// 		IssuedDate: s.IssuedDate,
+// 	}
+// 	for _, Project := range s.Projects{
+// 		temp := Project.Back()
+// 		temp.Summary_ID = &s.Summary_ID
+// 		newSummary.Projects = append(newSummary.Projects, temp)
+// 	}
+// 	return newSummary
+// }
 
 func (m Monthly) Reseted() Monthly{
 	return Monthly{
@@ -416,9 +394,7 @@ func ErrorChanCheck(k *gin.Context, errChan chan error) bool{
     }
 }
 func SimpleErrorChanCheck(wg *sync.WaitGroup, errChan chan error) error{
-	fmt.Println("waiting?")
 	wg.Wait()
-	fmt.Println("waiting done?")
 	close(errChan)
 	for {
         select {

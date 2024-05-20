@@ -108,13 +108,13 @@ func (aa *projectAPI) GetSummaryList(k *gin.Context) {
 }
 
 func (aa *projectAPI) AddEntireSummary(k *gin.Context){
-	var newSummary model.SummaryResponse
+	var newSummary model.Summary
 	if model.ErrorCheck(k, k.ShouldBindJSON(&newSummary)){return}
 	if model.ErrorCheck(k, aa.crudService.AddEntireSummary(&newSummary)){return}
 	k.JSON(http.StatusCreated, model.SuccessResponse{Message: "add Summary success"})
 }
 func (aa *projectAPI) UpdateEntireSummary(k *gin.Context){
-	var newSummary model.SummaryResponse
+	var newSummary model.Summary
 	if model.ErrorCheck(k, k.ShouldBindJSON(&newSummary)){return}
 	KpiID, err := strconv.Atoi(k.Param("id"))
 	if model.ErrorCheck(k, err){return}

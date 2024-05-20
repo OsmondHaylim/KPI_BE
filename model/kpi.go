@@ -101,22 +101,13 @@ type Project struct{
 	Project_ID		int				`gorm:"primaryKey;autoIncrement;uniqueIndex"`
 	Name 			string			`gorm:"notNull" json:"Name"`
 	Summary_ID		*int					
-	INYS			int
-	QNYS			int
-	IDR				int
-	QDR				int
-	IPR				int
-	QPR				int
-	II				int
-	QI				int
-	IF				int
-	QF				int
-	IC				int
-	QC				int
+	Item			pq.Int32Array	`gorm:"type:int[]"`
+	Quantity		pq.Int32Array	`gorm:"type:int[]"`
 }
 
 type Summary struct{
 	Summary_ID		int			`gorm:"primaryKey;autoIncrement;uniqueIndex"`
 	Projects		[]Project	`gorm:"foreignKey:Summary_ID"`
+	Status			pq.StringArray	`gorm:"type:text[]"`
 	IssuedDate		*time.Time
 }

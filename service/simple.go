@@ -328,31 +328,17 @@ func (cs *crudService) GetItemByID(input int) (*model.ItemResponse, error){
 	newInput := tempInput.ToResponse()
 	return &newInput, err
 }
-func (cs *crudService) GetMasalahByID(input int) (*model.Masalah, error){
-	tempInput, err := cs.masalahRepo.GetByID(input)
-	if err != nil {return nil, err}
-	return tempInput, err
-}
+func (cs *crudService) GetMasalahByID(input int) (*model.Masalah, error){return cs.masalahRepo.GetByID(input)}
 func (cs *crudService) GetMinipapByID(input int) (*model.MiniPAP, error){return cs.minipapRepo.GetByID(input)}
 func (cs *crudService) GetMonthlyByID(input int) (*model.Monthly, error){return cs.monthlyRepo.GetByID(input)}
-func (cs *crudService) GetProjectByID(input int) (*model.ProjectResponse, error){
-	tempInput, err := cs.projectRepo.GetByID(input)
-	if err != nil {return nil, err}
-	newInput := tempInput.ToResponse()
-	return &newInput, err
-}
+func (cs *crudService) GetProjectByID(input int) (*model.Project, error){return cs.projectRepo.GetByID(input)}
 func (cs *crudService) GetResultByID(input int) (*model.ResultResponse, error){
 	tempInput, err := cs.resultRepo.GetByID(input)
 	if err != nil {return nil, err}
 	newInput := tempInput.ToResponse()
 	return &newInput, err
 }
-func (cs *crudService) GetSummaryByID(input int) (*model.SummaryResponse, error){
-	tempInput, err := cs.summaryRepo.GetByID(input)
-	if err != nil {return nil, err}
-	newInput := tempInput.ToResponse()
-	return &newInput, err
-}
+func (cs *crudService) GetSummaryByID(input int) (*model.Summary, error){return cs.summaryRepo.GetByID(input)}
 func (cs *crudService) GetUserByID(input int) (*model.UserResponse, error){
 	tempInput, err := cs.userRepo.GetByID(input)
 	if err != nil {return nil, err}
@@ -423,9 +409,9 @@ func (cs *crudService) GetMonthlyList() (model.MonthlyArrayResponse, error){
 func (cs *crudService) GetProjectList() (model.ProjectArrayResponse, error){
 	tempInput, err := cs.projectRepo.GetList()
 	var newInput model.ProjectArrayResponse
-	newInput.Project = []model.ProjectResponse{}
+	newInput.Project = []model.Project{}
 	for _, temp := range tempInput{
-		newInput.Project = append(newInput.Project, temp.ToResponse())	
+		newInput.Project = append(newInput.Project, temp)	
 	}
 	return newInput, err
 }
@@ -441,9 +427,9 @@ func (cs *crudService) GetResultList() (model.ResultArrayResponse, error){
 func (cs *crudService) GetSummaryList() (model.SummaryArrayResponse, error){
 	tempInput, err := cs.summaryRepo.GetList()
 	var newInput model.SummaryArrayResponse
-	newInput.Summary = []model.SummaryResponse{}
+	newInput.Summary = []model.Summary{}
 	for _, temp := range tempInput{
-		newInput.Summary = append(newInput.Summary, temp.ToResponse())	
+		newInput.Summary = append(newInput.Summary, temp)	
 	}
 	return newInput, err
 }

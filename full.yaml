@@ -196,7 +196,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/summaryResponse"
+                $ref: "#/components/schemas/summary"
         401:
           description: Unauthorized because user is unauthenticated. Must login first
           content:
@@ -2117,7 +2117,7 @@ paths:
         content:
           "multipart/form-data":
             schema:
-              $ref: "#/components/schemas/summaryResponse"
+              $ref: "#/components/schemas/summary"
       responses:
         200:
           description: summary added successfully
@@ -2156,7 +2156,7 @@ paths:
         content:
           "multipart/form-data":
             schema:
-              $ref: "#/components/schemas/summaryResponse"
+              $ref: "#/components/schemas/summary"
       responses:
         200:
           description: summary edited successfully
@@ -2890,42 +2890,16 @@ components:
         summary_id:
           description: a foreign key for connecting the project with the summary object.
           $ref: "#/components/schemas/summary/properties/Summary_ID"
-        INYS:
-          description: Number of project items which not yet started
-          type: integer
-        QNYS:
-          description: Number of project quantities which not yet started
-          type: integer
-        IDR:
-          description: Number of project items which is on DR
-          type: integer
-        QDR:
-          description: Number of project quantities which is on DR
-          type: integer
-        IPR:
-          description: Number of project items which is on PR to PO
-          type: integer
-        QPR:
-          description: Number of project quantities which is on PR to PO
-          type: integer
-        II:
-          description: Number of project items which is installed
-          type: integer
-        QI:
-          description: Number of project quantities which is installed
-          type: integer
-        IF:
-          description: Number of project items which is finished
-          type: integer
-        QF:
-          description: Number of project quantities which is finished
-          type: integer
-        IC:
-          description: Number of project items which is cancelled
-          type: integer
-        QC:
-          description: Number of project quantities which is cancelled
-          type: integer
+        Item:
+          description: the amount of project items. Must have the same length as the status array from summary object.
+          type: array
+          items:
+            type: integer
+        Quantity:
+          description: the amount of project based on quantities. Must have the same length as the status array from summary object.
+          type: array
+          items:
+            type: integer
     summary:
       description: An object to hold all the project plans on a year.
       type: object
@@ -2936,6 +2910,11 @@ components:
         Issued_date:
           description: the issued date of the planned project. Needs to be on date time format.
           type: integer
+        status:
+          description: status of each of the item and quantities of project
+          type: array
+          items:
+            type: string
     user:
       description: An object to hold the user's credential
       type: object
@@ -3098,77 +3077,6 @@ components:
           description: Object of the attendance. 
           type: object
           $ref: "#/components/schemas/attendanceResponse"    
-    projectResponse:
-      description: Simplified version of project object.
-      type: object
-      properties:
-        Project_ID:
-          description: Primary key for project object. Auto-Incremented.
-          type: integer
-        Name:
-          description: The name of the plan in which the project is based on.
-          type: string
-        Item:
-          description: The simplified version of all project item
-          type: object
-          properties:
-            Not Yet Start Issued FR: 
-              description: For INYS
-              type: integer
-            DR: 
-              description: For IDR
-              type: integer
-            PR to PO: 
-              description: For IPR
-              type: integer
-            Install: 
-              description: For II
-              type: integer
-            Finished: 
-              description: For IF
-              type: integer
-            Cancelled:
-              description: For IC
-              type: integer
-        Quantity:
-          description: The simplified version of all project quantity
-          type: object
-          properties:
-            Not Yet Start Issued FR: 
-              description: For QNYS
-              type: integer
-            DR: 
-              description: For QDR
-              type: integer
-            PR to PO: 
-              description: For QPR
-              type: integer
-            Install: 
-              description: For QI
-              type: integer
-            Finished: 
-              description: For QF
-              type: integer
-            Cancelled:
-              description: For QC
-              type: integer
-        Summary_ID:
-          description: Foreign key for connecting this factor to a Summary. 
-          $ref: "#/components/schemas/summary/properties/Summary_ID"
-    summaryResponse:
-      description: Simplified version of summary object.
-      type: object
-      properties:
-        Summary_ID:
-          description: Primary key of the summary object. Auto-Incremented.
-          type: integer
-        Projects:
-          description: project related to the summary.
-          type: object
-          $ref: "#/components/schemas/projectResponse"
-        Issued_date:
-          description: the issued date of the planned project. Needs to be on date time format.
-          type: integer
     userResponse:
       description: User object without password
       type: object
@@ -3315,7 +3223,7 @@ components:
           description: The object stored
           type: array
           items:
-            $ref: "#/components/schemas/projectResponse"
+            $ref: "#/components/schemas/project"
     summaryArrayResponse:
       description: An object to store multiple summary.
       type: object
@@ -3327,7 +3235,7 @@ components:
           description: The object stored
           type: array
           items:
-            $ref: "#/components/schemas/summaryResponse"
+            $ref: "#/components/schemas/summary"
     userArrayResponse:
       description: An object to store multiple user.
       type: object

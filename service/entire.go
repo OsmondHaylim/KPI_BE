@@ -1,10 +1,10 @@
 package service
 
 import (
-	"fmt"
+	// "fmt"
 	"goreact/model"
 	"sync"
-	"strconv"
+	// "strconv"
 )
 
 // Add Entire
@@ -162,28 +162,15 @@ func (cs *crudService) AddEntireAnalisa(input *model.Analisa) error{
 	}
 	return nil
 }
-func (cs *crudService) AddEntireSummary(input *model.SummaryResponse) error{
-	var newSummary = model.Summary{
-		IssuedDate: input.IssuedDate,
-	}
-	err := cs.AddSummary(&newSummary)
+func (cs *crudService) AddEntireSummary(input *model.Summary) error{
+	err := cs.AddSummary(input)
 	if err != nil {return err}
 	for _, data := range input.Projects{
 		var newProject = model.Project{
 			Name: data.Name,
-			Summary_ID: &newSummary.Summary_ID,
-			INYS: data.Item["Not Yet Start Issued FR"],
-			QNYS: data.Quantity["Not Yet Start Issued FR"],
-			IDR: data.Item["DR"],
-			QDR: data.Quantity["DR"],
-			IPR: data.Item["PR to PO"],
-			QPR: data.Quantity["PR to PO"],
-			II: data.Item["Install"],
-			QI: data.Quantity["Install"],
-			IF: data.Item["Finish"],
-			QF: data.Quantity["Finish"],
-			IC: data.Item["Cancelled"],
-			QC: data.Quantity["Cancelled"],
+			Summary_ID: &input.Summary_ID,
+			Item: data.Item,
+			Quantity: data.Quantity,
 		}
 		err := cs.AddProject(&newProject)
 		if err != nil {return err}
@@ -198,7 +185,6 @@ func (cs *crudService) DeleteEntireYearly(input int) error{
 	if temp.Items != nil {
 		wg, errs := model.GoRoutineInit()
 		for _, item := range temp.Items{
-			fmt.Println("Deleting item id " + item.Name + " from " + strconv.Itoa(*item.Year))
 			wg.Add(1)
 			go cs.DeleteEntireItem(&wg, item.Item_ID, errs)
 		}
@@ -542,10 +528,9 @@ func (cs *crudService) UpdateEntireAnalisa(id int, input model.Analisa) error{
 	}
 	return cs.UpdateAnalisa(id, input)
 }
-func (cs *crudService) UpdateEntireSummary(id int, input model.SummaryResponse) error{
+func (cs *crudService) UpdateEntireSummary(id int, input model.Summary) error{
 	before, err := cs.summaryRepo.GetByID(id)
 	if err != nil {return err}
-	newSummary := input.Back()
 
 	if before.Projects != nil{
 		for _, data := range before.Projects{
@@ -553,12 +538,12 @@ func (cs *crudService) UpdateEntireSummary(id int, input model.SummaryResponse) 
 			if err != nil {return err}
 		}
 	}
-	if newSummary.Projects != nil{
-		for _, data := range newSummary.Projects{
+	if input.Projects != nil{
+		for _, data := range input.Projects{
 			data.Summary_ID = &id
 			err = cs.AddProject(&data)
 			if err != nil {return err}
 		}
 	}
-	return cs.UpdateSummary(id, newSummary)
+	return cs.UpdateSummary(id, input)
 }

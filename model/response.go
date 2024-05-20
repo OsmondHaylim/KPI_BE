@@ -1,6 +1,6 @@
 package model
 
-import "time"
+// import "time"
 
 // Success/Error Response
 type ErrorResponse struct {
@@ -31,13 +31,13 @@ type MonthlyArrayResponse struct {
 	Monthly 	[]Monthly 		`json:"data"`}
 type ProjectArrayResponse struct {
 	Message  	string				`json:"message"`
-	Project		[]ProjectResponse 	`json:"data"`}
+	Project		[]Project 	`json:"data"`}
 type ResultArrayResponse struct {
 	Message  	string					`json:"message"`
 	Result 		[]ResultResponse 		`json:"data"`}
 type SummaryArrayResponse struct{
 	Message  	string					`json:"message"`
-	Summary 	[]SummaryResponse		`json:"data"`}
+	Summary 	[]Summary		`json:"data"`}
 type YearlyArrayResponse struct {
 	Message  	string					`json:"message"`
 	Yearly 		[]YearlyResponse 		`json:"data"`}
@@ -77,17 +77,18 @@ type ItemResponse struct{
 	Results		[]ResultResponse	`json:"Results"`
 	Year 		*int				`json:"Year"`
 }
-type ProjectResponse struct{
-	Project_ID		int				
-	Name 			string		
-	Item			map[string]int	
-	Quantity		map[string]int
-	Summary_ID 		*int
-}
-type SummaryResponse struct{
-	Summary_ID		int				
-	Projects		[]ProjectResponse
-	IssuedDate		*time.Time}
+// type ProjectResponse struct{
+// 	Project_ID		int				
+// 	Name 			string		
+// 	Item			map[string]int	
+// 	Quantity		map[string]int
+// 	Summary_ID 		*int
+// }
+// type SummaryResponse struct{
+// 	Summary_ID		int				
+// 	Projects		[]ProjectResponse
+// 	IssuedDate		*time.Time
+// }
 type YearlyResponse struct{
 	Year			int						`json:"Year"`
 	Items			[]ItemResponse			`json:"Items"`
