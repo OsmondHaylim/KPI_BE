@@ -304,12 +304,13 @@ func (p Project) ToResponse() ProjectResponse{
 			"Finish":p.QF,
 			"Cancelled":p.QC,
 		},
+		Summary_ID: p.Summary_ID,
 	}
 }
 func (p ProjectResponse) Back() Project{
 	return Project{
-		Project_ID: p.Project_ID,
-		Summary_ID: p.Summary_ID,				
+		Project_ID: p.Project_ID,	
+		Summary_ID: p.Summary_ID,			
 		Name: p.Name,	
 		INYS: p.Item["Not Yet Start Issued FR"],
 		QNYS: p.Quantity["Not Yet Start Issued FR"],
@@ -416,15 +417,16 @@ func ErrorChanCheck(k *gin.Context, errChan chan error) bool{
     }
 }
 func SimpleErrorChanCheck(wg *sync.WaitGroup, errChan chan error) error{
-	go func() {
-		wg.Wait()
-		close(errChan)
-	}()
+	fmt.Println("waiting?")
+	wg.Wait()
+	fmt.Println("waiting done?")
+	close(errChan)
 	for {
         select {
 			case err := <-errChan:
 				return err
 			default:
+				fmt.Println("safe?")
 				return nil
         }
     }

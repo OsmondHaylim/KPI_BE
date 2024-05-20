@@ -24,7 +24,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func start() (*gin.Engine, *sync.WaitGroup){
+func start(port string) (*gin.Engine, *sync.WaitGroup){
 	gin.SetMode(gin.ReleaseMode)
 	config := &db.Config{
 		Host:     "aws-0-ap-southeast-1.pooler.supabase.com",
@@ -61,11 +61,11 @@ func start() (*gin.Engine, *sync.WaitGroup){
 	go func() {
 		defer wg.Done()
 		router = RunServer(conn, router)
-		fmt.Println("Test Server is running on port 8080")
-		err := router.Run(":8080")
+		err := router.Run(port)
 		if err != nil {
 			panic(err)
 		}
+		fmt.Println("Test Server is running on port " + port)
 	}()
 	return router, &wg
 }
@@ -92,7 +92,7 @@ func stop(router *gin.Engine, wg *sync.WaitGroup){
 
 func TestMain(t *testing.T){
 	t.Run("Running Server", func(t *testing.T){
-		router, wg := start() 
+		router, wg := start(":8080") 
 		defer stop(router, wg)
 		time.Sleep(1 * time.Second)
 		apiKey := ""
