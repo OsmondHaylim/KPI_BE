@@ -15,11 +15,9 @@ func (cs *crudService) AddEntireYearly(input *model.YearlyResponse) error {
 	newYearly.Year = input.Year
 	newYearly.AttendanceID = &input.Year
 	//Store Attendance
-	err := cs.AddEntireAttendance(input.Attendance, &newYearly.Year)
-	if err != nil {return err}
+	if err := cs.AddEntireAttendance(input.Attendance, &newYearly.Year); err != nil {return err}
 	//Creating Yearly
-	err = cs.AddYearly(&newYearly)
-	if err != nil {return err}
+	if err := cs.AddYearly(&newYearly); err != nil {return err}
 	//Storing Items
 	for _, item := range input.Items{
 		wg.Add(1)
@@ -94,7 +92,7 @@ func (cs *crudService) AddEntireFactor(input *model.FactorResponse, id *int) err
 }
 func (cs *crudService) AddEntireAttendance(input *model.AttendanceResponse, id *int) error{
 	// Storing Attendance
-	var newAttendance model.Attendance
+	newAttendance := input.Back()
 	if id != nil {newAttendance.Year = *id} else {newAttendance.Year = input.Year}
 	
 	// // Creating monthly from attendance(apparently the addAttendance already add the monthly)
@@ -134,9 +132,8 @@ func (cs *crudService) AddEntireAttendance(input *model.AttendanceResponse, id *
 	// 	newAttendance.Lain = &newMonthly
 	// }
 	// Creating attendance
-	err := cs.AddAttendance(&newAttendance)
-	if err != nil {return err}
-	return nil
+	return cs.AddAttendance(&newAttendance)
+
 }
 func (cs *crudService) AddEntireAnalisa(input *model.Analisa) error{
 	var newAnalisa model.Analisa
