@@ -31,7 +31,7 @@ func (cs *crudService) AddEntireItem(wg *sync.WaitGroup, input model.ItemRespons
 	defer wg.Done()
 	//Storing Items
 	var newItem model.Item
-	if id != nil {newItem.YearID = id}
+	if id != nil {newItem.YearID = id} else {newItem.YearID = input.Year}
 	newItem.Name = input.Name
 	//Creating Items to get id
 	err := cs.AddItem(&newItem)
@@ -45,7 +45,7 @@ func (cs *crudService) AddEntireResult(input *model.ResultResponse, id *int) err
 	//Storing Results
 	var newResult model.Result
 	newResult.Name = input.Name
-	if id != nil {newResult.ItemID = id}
+	if id != nil {newResult.ItemID = id} else {newResult.ItemID = input.Item_ID}
 	//Creating Results to get id
 	if err := cs.AddResult(&newResult);err != nil {return err}
 	//Storing Factors
@@ -60,7 +60,7 @@ func (cs *crudService) AddEntireFactor(input *model.FactorResponse, id *int) err
 		Unit: input.Unit,
 		Target: input.Target,
 	}
-	if id != nil {newFactor.ResultID = id}
+	if id != nil {newFactor.ResultID = id} else {newFactor.ResultID = input.Result_ID}
 	if input.Plan != nil{
 		//Storing MiniPAP Plan
 		var newMinipap model.MiniPAP
