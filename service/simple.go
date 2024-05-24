@@ -410,9 +410,7 @@ func (cs *crudService) GetProjectList() (model.ProjectArrayResponse, error){
 	tempInput, err := cs.projectRepo.GetList()
 	var newInput model.ProjectArrayResponse
 	newInput.Project = []model.Project{}
-	for _, temp := range tempInput{
-		newInput.Project = append(newInput.Project, temp)	
-	}
+	newInput.Project = append(newInput.Project, tempInput...)
 	return newInput, err
 }
 func (cs *crudService) GetResultList() (model.ResultArrayResponse, error){
@@ -428,9 +426,7 @@ func (cs *crudService) GetSummaryList() (model.SummaryArrayResponse, error){
 	tempInput, err := cs.summaryRepo.GetList()
 	var newInput model.SummaryArrayResponse
 	newInput.Summary = []model.Summary{}
-	for _, temp := range tempInput{
-		newInput.Summary = append(newInput.Summary, temp)	
-	}
+	newInput.Summary = append(newInput.Summary, tempInput...)	
 	return newInput, err
 }
 func (cs *crudService) GetUserList() (model.UserArrayResponse, error){

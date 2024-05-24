@@ -447,67 +447,51 @@ func (cs *crudService) UpdateEntireAttendance(id int, input model.AttendanceResp
 
 	if newAtt.Plan != nil{
 		if before.PlanID != nil{
-			cs.UpdateMonthly(*before.PlanID, *newAtt.Plan)
-			if err != nil {return err}
+			if cs.UpdateMonthly(*before.PlanID, *newAtt.Plan) != nil {return err}
 		}else{
-			cs.AddMonthly(newAtt.Plan)
-			if err != nil {return err}
+			
+			if cs.AddMonthly(newAtt.Plan) != nil {return err}
 		}
 	}else if before.PlanID != nil{
-		cs.DeleteMonthly(*before.PlanID)
-		if err != nil {return err}
+		if cs.DeleteMonthly(*before.PlanID) != nil {return err}
 	}
 	if newAtt.Actual != nil{
 		if before.ActualID != nil{
-			cs.UpdateMonthly(*before.ActualID, *newAtt.Actual)
-			if err != nil {return err}
+			if cs.UpdateMonthly(*before.ActualID, *newAtt.Actual) != nil {return err}
 		}else{
-			cs.AddMonthly(newAtt.Actual)
-			if err != nil {return err}
+			if cs.AddMonthly(newAtt.Actual) != nil {return err}
 		}
 	}else if before.ActualID != nil{
-		cs.DeleteMonthly(*before.ActualID)
-		if err != nil {return err}
+		if cs.DeleteMonthly(*before.ActualID) != nil {return err}
 	}
 	if newAtt.Cuti != nil{
 		if before.CutiID != nil{
-			cs.UpdateMonthly(*before.CutiID, *newAtt.Cuti)
-			if err != nil {return err}
+			if cs.UpdateMonthly(*before.CutiID, *newAtt.Cuti) != nil {return err}
 		}else{
-			cs.AddMonthly(newAtt.Cuti)
-			if err != nil {return err}
+			if cs.AddMonthly(newAtt.Cuti) != nil {return err}
 		}
 	}else if before.CutiID != nil{
-		cs.DeleteMonthly(*before.CutiID)
-		if err != nil {return err}
+		if cs.DeleteMonthly(*before.CutiID) != nil {return err}
 	}
 	if newAtt.Izin != nil{
 		if before.IzinID != nil{
-			cs.UpdateMonthly(*before.IzinID, *newAtt.Izin)
-			if err != nil {return err}
+			if cs.UpdateMonthly(*before.IzinID, *newAtt.Izin) != nil {return err}
 		}else{
-			cs.AddMonthly(newAtt.Izin)
-			if err != nil {return err}
+			if cs.AddMonthly(newAtt.Izin) != nil {return err}
 		}
 	}else if before.IzinID != nil{
-		cs.DeleteMonthly(*before.IzinID)
-		if err != nil {return err}
+		if cs.DeleteMonthly(*before.IzinID) != nil {return err}
 	}
 	if newAtt.Lain != nil{
 		if before.LainID != nil{
-			cs.UpdateMonthly(*before.LainID, *newAtt.Lain)
-			if err != nil {return err}
+			if cs.UpdateMonthly(*before.LainID, *newAtt.Lain) != nil {return err}
 		}else{
-			cs.AddMonthly(newAtt.Lain)
-			if err != nil {return err}
+			if cs.AddMonthly(newAtt.Lain) != nil {return err}
 		}
 	}else if before.LainID != nil{
-		cs.DeleteMonthly(*before.LainID)
-		if err != nil {return err}
+		if cs.DeleteMonthly(*before.LainID) != nil {return err}
 	}
-	err = cs.UpdateAttendance(id, newAtt)
-	if err != nil {return err}
-	return nil
+	return cs.UpdateAttendance(id, newAtt)
 }
 func (cs *crudService) UpdateEntireAnalisa(id int, input model.Analisa) error{
 	before, err := cs.analisaRepo.GetByID(id)
