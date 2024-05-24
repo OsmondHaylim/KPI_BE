@@ -15,7 +15,10 @@ func (cs *crudService) AddEntireYearly(input *model.YearlyResponse) error {
 	newYearly.Year = input.Year
 	newYearly.AttendanceID = &input.Year
 	//Store Attendance
-	if err := cs.AddEntireAttendance(input.Attendance, &newYearly.Year); err != nil {return err}
+	if err := cs.AddEntireAttendance(input.Attendance, &newYearly.Year); err != nil {
+		if cs.DeleteEntireAttendance(newYearly.Year) != nil {return err}
+		if cs.AddEntireAttendance(input.Attendance, &newYearly.Year) != nil {return err}
+	}
 	//Creating Yearly
 	if err := cs.AddYearly(&newYearly); err != nil {return err}
 	//Storing Items
