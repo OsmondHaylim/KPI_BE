@@ -36,7 +36,17 @@ func (cs *crudService) AddEntireItem(wg *sync.WaitGroup, input model.ItemRespons
 	newItem.Name = input.Name
 	//Creating Items to get id
 	err := cs.AddItem(&newItem)
-	if err != nil {errChan <- err; return}
+	if err != nil {
+		tempYear := model.Yearly{
+			Year: *newItem.YearID,
+		}
+		_, err = cs.GetAttendanceByID(*newItem.YearID)
+		if err == nil {tempYear.AttendanceID = newItem.YearID}
+		err = cs.AddYearly(&tempYear)
+		if err != nil {errChan <- err; return}
+		err = cs.AddItem(&newItem)
+		if err != nil {errChan <- err; return}
+	} 
 	//Storing Results
 	for _, result := range input.Results{
 		if err := cs.AddEntireResult(&result, &newItem.Item_ID);err != nil{errChan <- err; return}
