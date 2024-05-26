@@ -1,0 +1,652 @@
+{
+    "Item_ID": 543,
+    "Name": "S",
+    "Results": [
+        {
+            "Result_ID": 596,
+            "Name": "Fire, Work & Traffic \naccident",
+            "Factors": [
+                {
+                    "Factor_ID": 595,
+                    "Title": "Zero Fire, Work & Traffic accident",
+                    "Unit": "A",
+                    "Target": "AA",
+                    "Planned": {
+                        "Minipap_ID": 827,
+                        "Monthly": [
+                            {
+                                "Monthly_ID": 1194,
+                                "MiniPAP": null,
+                                "January": 33,
+                                "February": 44,
+                                "March": 33,
+                                "April": 0,
+                                "May": 0,
+                                "June": 0,
+                                "July": 0,
+                                "August": 0,
+                                "September": 0,
+                                "October": 0,
+                                "November": 0,
+                                "December": 0,
+                                "YTD": 110,
+                                "Remarks": null,
+                                "minipap_id": 827
+                            }
+                        ]
+                    },
+                    "Actual": {
+                        "Minipap_ID": 828,
+                        "Monthly": [
+                            {
+                                "Monthly_ID": 1195,
+                                "MiniPAP": null,
+                                "January": 22,
+                                "February": 12,
+                                "March": 13,
+                                "April": 0,
+                                "May": 0,
+                                "June": 0,
+                                "July": 0,
+                                "August": 0,
+                                "September": 0,
+                                "October": 0,
+                                "November": 0,
+                                "December": 0,
+                                "YTD": 47,
+                                "Remarks": null,
+                                "minipap_id": 828
+                            }
+                        ]
+                    },
+                    "Percentage": [
+                        [
+                            {
+                                "Monthly_ID": 0,
+                                "MiniPAP": null,
+                                "January": 66.66666666666666,
+                                "February": 27.27272727272727,
+                                "March": 39.39393939393939,
+                                "April": 0,
+                                "May": 0,
+                                "June": 0,
+                                "July": 0,
+                                "August": 0,
+                                "September": 0,
+                                "October": 0,
+                                "November": 0,
+                                "December": 0,
+                                "YTD": 234.04255319148936,
+                                "Remarks": "Percentage for Plan MonthlyID 1194 actual MonthlyID 1195 in Factor ID 595",
+                                "minipap_id": null
+                            }
+                        ]
+                    ],
+                    "Result_ID": 596
+                }
+            ],
+            "Item_ID": 543
+        },
+        {
+            "Result_ID": 597,
+            "Name": "Safety minded/awareness",
+            "Factors": [
+                {
+                    "Factor_ID": 596,
+                    "Title": "LKK",
+                    "Unit": "B",
+                    "Target": "BB",
+                    "Planned": {
+                        "Minipap_ID": 829,
+                        "Monthly": [
+                            {
+                                "Monthly_ID": 1196,
+                                "MiniPAP": null,
+                                "January": 35,
+                                "February": 43,
+                                "March": 23,
+                                "April": 0,
+                                "May": 0,
+                                "June": 0,
+                                "July": 0,
+                                "August": 0,
+                                "September": 0,
+                                "October": 0,
+                                "November": 0,
+                                "December": 0,
+                                "YTD": 101,
+                                "Remarks": null,
+                                "minipap_id": 829
+                            }
+                        ]
+                    },
+                    "Actual": {
+                        "Minipap_ID": 830,
+                        "Monthly": [
+                            {
+                                "Monthly_ID": 1197,
+                                "MiniPAP": null,
+                                "January": 11,
+                                "February": 12,
+                                "March": 13,
+                                "April": 0,
+                                "May": 0,
+                                "June": 0,
+                                "July": 0,
+                                "August": 0,
+                                "September": 0,
+                                "October": 0,
+                                "November": 0,
+                                "December": 0,
+                                "YTD": 36,
+                                "Remarks": null,
+                                "minipap_id": 830
+                            }
+                        ]
+                    },
+                    "Percentage": [
+                        [
+                            {
+                                "Monthly_ID": 0,
+                                "MiniPAP": null,
+                                "January": 31.428571428571427,
+                                "February": 27.906976744186046,
+                                "March": 56.52173913043478,
+                                "April": 0,
+                                "May": 0,
+                                "June": 0,
+                                "July": 0,
+                                "August": 0,
+                                "September": 0,
+                                "October": 0,
+                                "November": 0,
+                                "December": 0,
+                                "YTD": 280.55555555555554,
+                                "Remarks": "Percentage for Plan MonthlyID 1196 actual MonthlyID 1197 in Factor ID 596",
+                                "minipap_id": null
+                            }
+                        ]
+                    ],
+                    "Result_ID": 597
+                },
+                {
+                    "Factor_ID": 597,
+                    "Title": "LKBK",
+                    "Unit": "C",
+                    "Target": "CC",
+                    "Planned": {
+                        "Minipap_ID": 831,
+                        "Monthly": [
+                            {
+                                "Monthly_ID": 1198,
+                                "MiniPAP": null,
+                                "January": 32,
+                                "February": 35,
+                                "March": 43,
+                                "April": 0,
+                                "May": 0,
+                                "June": 0,
+                                "July": 0,
+                                "August": 0,
+                                "September": 0,
+                                "October": 0,
+                                "November": 0,
+                                "December": 0,
+                                "YTD": 110,
+                                "Remarks": null,
+                                "minipap_id": 831
+                            }
+                        ]
+                    },
+                    "Actual": {
+                        "Minipap_ID": 832,
+                        "Monthly": [
+                            {
+                                "Monthly_ID": 1199,
+                                "MiniPAP": null,
+                                "January": 11,
+                                "February": 22,
+                                "March": 33,
+                                "April": 0,
+                                "May": 0,
+                                "June": 0,
+                                "July": 0,
+                                "August": 0,
+                                "September": 0,
+                                "October": 0,
+                                "November": 0,
+                                "December": 0,
+                                "YTD": 66,
+                                "Remarks": null,
+                                "minipap_id": 832
+                            }
+                        ]
+                    },
+                    "Percentage": [
+                        [
+                            {
+                                "Monthly_ID": 0,
+                                "MiniPAP": null,
+                                "January": 34.375,
+                                "February": 62.857142857142854,
+                                "March": 76.74418604651163,
+                                "April": 0,
+                                "May": 0,
+                                "June": 0,
+                                "July": 0,
+                                "August": 0,
+                                "September": 0,
+                                "October": 0,
+                                "November": 0,
+                                "December": 0,
+                                "YTD": 166.66666666666669,
+                                "Remarks": "Percentage for Plan MonthlyID 1198 actual MonthlyID 1199 in Factor ID 597",
+                                "minipap_id": null
+                            }
+                        ]
+                    ],
+                    "Result_ID": 597
+                }
+            ],
+            "Item_ID": 543
+        },
+        {
+            "Result_ID": 598,
+            "Name": "BSFA Activity",
+            "Factors": [
+                {
+                    "Factor_ID": 598,
+                    "Title": "3S Activity & Assessment",
+                    "Unit": "D",
+                    "Target": "DD",
+                    "Planned": {
+                        "Minipap_ID": 833,
+                        "Monthly": [
+                            {
+                                "Monthly_ID": 1200,
+                                "MiniPAP": null,
+                                "January": 32,
+                                "February": 36,
+                                "March": 33,
+                                "April": 0,
+                                "May": 0,
+                                "June": 0,
+                                "July": 0,
+                                "August": 0,
+                                "September": 0,
+                                "October": 0,
+                                "November": 0,
+                                "December": 0,
+                                "YTD": 101,
+                                "Remarks": null,
+                                "minipap_id": 833
+                            }
+                        ]
+                    },
+                    "Actual": {
+                        "Minipap_ID": 834,
+                        "Monthly": [
+                            {
+                                "Monthly_ID": 1201,
+                                "MiniPAP": null,
+                                "January": 11,
+                                "February": 12,
+                                "March": 13,
+                                "April": 0,
+                                "May": 0,
+                                "June": 0,
+                                "July": 0,
+                                "August": 0,
+                                "September": 0,
+                                "October": 0,
+                                "November": 0,
+                                "December": 0,
+                                "YTD": 36,
+                                "Remarks": null,
+                                "minipap_id": 834
+                            }
+                        ]
+                    },
+                    "Percentage": [
+                        [
+                            {
+                                "Monthly_ID": 0,
+                                "MiniPAP": null,
+                                "January": 34.375,
+                                "February": 33.33333333333333,
+                                "March": 39.39393939393939,
+                                "April": 0,
+                                "May": 0,
+                                "June": 0,
+                                "July": 0,
+                                "August": 0,
+                                "September": 0,
+                                "October": 0,
+                                "November": 0,
+                                "December": 0,
+                                "YTD": 280.55555555555554,
+                                "Remarks": "Percentage for Plan MonthlyID 1200 actual MonthlyID 1201 in Factor ID 598",
+                                "minipap_id": null
+                            }
+                        ]
+                    ],
+                    "Result_ID": 598
+                },
+                {
+                    "Factor_ID": 599,
+                    "Title": "KY Small group (4 group)",
+                    "Unit": "E",
+                    "Target": "EE",
+                    "Planned": {
+                        "Minipap_ID": 835,
+                        "Monthly": [
+                            {
+                                "Monthly_ID": 1202,
+                                "MiniPAP": null,
+                                "January": 44,
+                                "February": 55,
+                                "March": 65,
+                                "April": 0,
+                                "May": 0,
+                                "June": 0,
+                                "July": 0,
+                                "August": 0,
+                                "September": 0,
+                                "October": 0,
+                                "November": 0,
+                                "December": 0,
+                                "YTD": 164,
+                                "Remarks": null,
+                                "minipap_id": 835
+                            }
+                        ]
+                    },
+                    "Actual": {
+                        "Minipap_ID": 836,
+                        "Monthly": [
+                            {
+                                "Monthly_ID": 1203,
+                                "MiniPAP": null,
+                                "January": 33,
+                                "February": 22,
+                                "March": 12,
+                                "April": 0,
+                                "May": 0,
+                                "June": 0,
+                                "July": 0,
+                                "August": 0,
+                                "September": 0,
+                                "October": 0,
+                                "November": 0,
+                                "December": 0,
+                                "YTD": 67,
+                                "Remarks": null,
+                                "minipap_id": 836
+                            }
+                        ]
+                    },
+                    "Percentage": [
+                        [
+                            {
+                                "Monthly_ID": 0,
+                                "MiniPAP": null,
+                                "January": 75,
+                                "February": 40,
+                                "March": 18.461538461538463,
+                                "April": 0,
+                                "May": 0,
+                                "June": 0,
+                                "July": 0,
+                                "August": 0,
+                                "September": 0,
+                                "October": 0,
+                                "November": 0,
+                                "December": 0,
+                                "YTD": 244.77611940298507,
+                                "Remarks": "Percentage for Plan MonthlyID 1202 actual MonthlyID 1203 in Factor ID 599",
+                                "minipap_id": null
+                            }
+                        ]
+                    ],
+                    "Result_ID": 598
+                },
+                {
+                    "Factor_ID": 600,
+                    "Title": "Follow Up Hopper",
+                    "Unit": "F",
+                    "Target": "FF",
+                    "Planned": {
+                        "Minipap_ID": 837,
+                        "Monthly": [
+                            {
+                                "Monthly_ID": 1204,
+                                "MiniPAP": null,
+                                "January": 43,
+                                "February": 64,
+                                "March": 32,
+                                "April": 0,
+                                "May": 0,
+                                "June": 0,
+                                "July": 0,
+                                "August": 0,
+                                "September": 0,
+                                "October": 0,
+                                "November": 0,
+                                "December": 0,
+                                "YTD": 139,
+                                "Remarks": null,
+                                "minipap_id": 837
+                            }
+                        ]
+                    },
+                    "Actual": {
+                        "Minipap_ID": 838,
+                        "Monthly": [
+                            {
+                                "Monthly_ID": 1205,
+                                "MiniPAP": null,
+                                "January": 22,
+                                "February": 11,
+                                "March": 44,
+                                "April": 0,
+                                "May": 0,
+                                "June": 0,
+                                "July": 0,
+                                "August": 0,
+                                "September": 0,
+                                "October": 0,
+                                "November": 0,
+                                "December": 0,
+                                "YTD": 77,
+                                "Remarks": null,
+                                "minipap_id": 838
+                            }
+                        ]
+                    },
+                    "Percentage": [
+                        [
+                            {
+                                "Monthly_ID": 0,
+                                "MiniPAP": null,
+                                "January": 51.162790697674424,
+                                "February": 17.1875,
+                                "March": 137.5,
+                                "April": 0,
+                                "May": 0,
+                                "June": 0,
+                                "July": 0,
+                                "August": 0,
+                                "September": 0,
+                                "October": 0,
+                                "November": 0,
+                                "December": 0,
+                                "YTD": 180.5194805194805,
+                                "Remarks": "Percentage for Plan MonthlyID 1204 actual MonthlyID 1205 in Factor ID 600",
+                                "minipap_id": null
+                            }
+                        ]
+                    ],
+                    "Result_ID": 598
+                },
+                {
+                    "Factor_ID": 601,
+                    "Title": "Follow Up RA Cat III ",
+                    "Unit": "G",
+                    "Target": "GG",
+                    "Planned": {
+                        "Minipap_ID": 839,
+                        "Monthly": [
+                            {
+                                "Monthly_ID": 1206,
+                                "MiniPAP": null,
+                                "January": 33,
+                                "February": 22,
+                                "March": 55,
+                                "April": 0,
+                                "May": 0,
+                                "June": 0,
+                                "July": 0,
+                                "August": 0,
+                                "September": 0,
+                                "October": 0,
+                                "November": 0,
+                                "December": 0,
+                                "YTD": 110,
+                                "Remarks": null,
+                                "minipap_id": 839
+                            }
+                        ]
+                    },
+                    "Actual": {
+                        "Minipap_ID": 840,
+                        "Monthly": [
+                            {
+                                "Monthly_ID": 1207,
+                                "MiniPAP": null,
+                                "January": 11,
+                                "February": 12,
+                                "March": 55,
+                                "April": 0,
+                                "May": 0,
+                                "June": 0,
+                                "July": 0,
+                                "August": 0,
+                                "September": 0,
+                                "October": 0,
+                                "November": 0,
+                                "December": 0,
+                                "YTD": 78,
+                                "Remarks": null,
+                                "minipap_id": 840
+                            }
+                        ]
+                    },
+                    "Percentage": [
+                        [
+                            {
+                                "Monthly_ID": 0,
+                                "MiniPAP": null,
+                                "January": 33.33333333333333,
+                                "February": 54.54545454545454,
+                                "March": 100,
+                                "April": 0,
+                                "May": 0,
+                                "June": 0,
+                                "July": 0,
+                                "August": 0,
+                                "September": 0,
+                                "October": 0,
+                                "November": 0,
+                                "December": 0,
+                                "YTD": 141.02564102564102,
+                                "Remarks": "Percentage for Plan MonthlyID 1206 actual MonthlyID 1207 in Factor ID 601",
+                                "minipap_id": null
+                            }
+                        ]
+                    ],
+                    "Result_ID": 598
+                },
+                {
+                    "Factor_ID": 602,
+                    "Title": "Re-inforcement Building \nStructure",
+                    "Unit": "H",
+                    "Target": "HH",
+                    "Planned": {
+                        "Minipap_ID": 841,
+                        "Monthly": [
+                            {
+                                "Monthly_ID": 1208,
+                                "MiniPAP": null,
+                                "January": 33,
+                                "February": 44,
+                                "March": 33,
+                                "April": 0,
+                                "May": 0,
+                                "June": 0,
+                                "July": 0,
+                                "August": 0,
+                                "September": 0,
+                                "October": 0,
+                                "November": 0,
+                                "December": 0,
+                                "YTD": 110,
+                                "Remarks": null,
+                                "minipap_id": 841
+                            }
+                        ]
+                    },
+                    "Actual": {
+                        "Minipap_ID": 842,
+                        "Monthly": [
+                            {
+                                "Monthly_ID": 1209,
+                                "MiniPAP": null,
+                                "January": 22,
+                                "February": 22,
+                                "March": 22,
+                                "April": 0,
+                                "May": 0,
+                                "June": 0,
+                                "July": 0,
+                                "August": 0,
+                                "September": 0,
+                                "October": 0,
+                                "November": 0,
+                                "December": 0,
+                                "YTD": 66,
+                                "Remarks": null,
+                                "minipap_id": 842
+                            }
+                        ]
+                    },
+                    "Percentage": [
+                        [
+                            {
+                                "Monthly_ID": 0,
+                                "MiniPAP": null,
+                                "January": 66.66666666666666,
+                                "February": 50,
+                                "March": 66.66666666666666,
+                                "April": 0,
+                                "May": 0,
+                                "June": 0,
+                                "July": 0,
+                                "August": 0,
+                                "September": 0,
+                                "October": 0,
+                                "November": 0,
+                                "December": 0,
+                                "YTD": 166.66666666666669,
+                                "Remarks": "Percentage for Plan MonthlyID 1208 actual MonthlyID 1209 in Factor ID 602",
+                                "minipap_id": null
+                            }
+                        ]
+                    ],
+                    "Result_ID": 598
+                }
+            ],
+            "Item_ID": 543
+        }
+    ],
+    "Year": 2021
+}

@@ -88,6 +88,7 @@ func RunServer(db *gorm.DB, gin *gin.Engine) *gin.Engine {
 			analisa.POST("", apiHandler.AnalisaAPIHandler.AddAnalisa)
 			analisa.POST("/entire", apiHandler.AnalisaAPIHandler.AddEntireAnalisa)
 			analisa.PUT("/:id", apiHandler.AnalisaAPIHandler.UpdateAnalisa)
+			analisa.PUT("/entire/:id", apiHandler.AnalisaAPIHandler.UpdateEntireAnalisa)
 			analisa.DELETE("/:id", apiHandler.AnalisaAPIHandler.DeleteAnalisa)
 			analisa.DELETE("/entire/:id", apiHandler.AnalisaAPIHandler.DeleteEntireAnalisa)
 		}
@@ -99,6 +100,7 @@ func RunServer(db *gorm.DB, gin *gin.Engine) *gin.Engine {
 			attendance.POST("", apiHandler.KpiAPIHandler.AddAttendance)
 			attendance.POST("/entire", apiHandler.KpiAPIHandler.AddEntireAttendance)
 			attendance.PUT("/:id", apiHandler.KpiAPIHandler.UpdateAttendance)
+			attendance.PUT("/entire/:id", apiHandler.KpiAPIHandler.UpdateEntireAttendance)
 			attendance.DELETE("/:id", apiHandler.KpiAPIHandler.DeleteAttendance)
 			attendance.DELETE("/entire/:id", apiHandler.KpiAPIHandler.DeleteEntireAttendance)
 		}
@@ -110,6 +112,7 @@ func RunServer(db *gorm.DB, gin *gin.Engine) *gin.Engine {
 			factor.POST("", apiHandler.KpiAPIHandler.AddFactor)
 			factor.POST("/entire", apiHandler.KpiAPIHandler.AddEntireFactor)
 			factor.PUT("/:id", apiHandler.KpiAPIHandler.UpdateFactor)
+			factor.PUT("/entire/:id", apiHandler.KpiAPIHandler.UpdateEntireFactor)
 			factor.DELETE("/:id", apiHandler.KpiAPIHandler.DeleteFactor)
 			factor.DELETE("/entire/:id", apiHandler.KpiAPIHandler.DeleteEntireFactor)
 		}
@@ -121,6 +124,7 @@ func RunServer(db *gorm.DB, gin *gin.Engine) *gin.Engine {
 			item.POST("", apiHandler.KpiAPIHandler.AddItem)
 			item.POST("/entire", apiHandler.KpiAPIHandler.AddEntireItem)
 			item.PUT("/:id", apiHandler.KpiAPIHandler.UpdateItem)
+			item.PUT("/entire/:id", apiHandler.KpiAPIHandler.UpdateEntireItem)
 			item.DELETE("/:id", apiHandler.KpiAPIHandler.DeleteItem)
 			item.DELETE("/entire/:id", apiHandler.KpiAPIHandler.DeleteEntireItem)
 		}
@@ -168,6 +172,7 @@ func RunServer(db *gorm.DB, gin *gin.Engine) *gin.Engine {
 			result.POST("", apiHandler.KpiAPIHandler.AddResult)
 			result.POST("/entire", apiHandler.KpiAPIHandler.AddEntireResult)
 			result.PUT("/:id", apiHandler.KpiAPIHandler.UpdateResult)
+			result.PUT("/entire/:id", apiHandler.KpiAPIHandler.UpdateEntireResult)
 			result.DELETE("/:id", apiHandler.KpiAPIHandler.DeleteResult)
 			result.DELETE("/entire/:id", apiHandler.KpiAPIHandler.DeleteEntireResult)
 		}
@@ -179,6 +184,7 @@ func RunServer(db *gorm.DB, gin *gin.Engine) *gin.Engine {
 			summary.POST("", apiHandler.ProjectAPIHandler.AddSummary)
 			summary.POST("/entire", apiHandler.ProjectAPIHandler.AddEntireSummary)
 			summary.PUT("/:id", apiHandler.ProjectAPIHandler.UpdateSummary)
+			summary.PUT("/entire/:id", apiHandler.ProjectAPIHandler.UpdateEntireSummary)
 			summary.DELETE("/:id", apiHandler.ProjectAPIHandler.DeleteSummary)
 			summary.DELETE("/entire/:id", apiHandler.ProjectAPIHandler.DeleteEntireSummary)
 		}
@@ -199,6 +205,7 @@ func RunServer(db *gorm.DB, gin *gin.Engine) *gin.Engine {
 			yearly.DELETE("/:id", apiHandler.KpiAPIHandler.DeleteYearly)
 			yearly.POST("/entire", apiHandler.KpiAPIHandler.AddEntireYearly)
 			yearly.DELETE("/entire/:id", apiHandler.KpiAPIHandler.DeleteEntireYearly)
+			yearly.PUT("/entire/:id", apiHandler.KpiAPIHandler.UpdateEntireYearly)
 		}
 		file := kpi.Group("/file", middleware.Auth())
 		{
