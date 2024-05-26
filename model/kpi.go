@@ -40,7 +40,7 @@ type Attendance struct{
 }
 
 type MiniPAP struct{
-	MiniPAP_ID	int			`gorm:"primaryKey;autoIncrement;uniqueIndex" json:"Minipap_ID"`
+	MiniPAP_ID	int			`gorm:"primaryKey;autoIncrement;uniqueIndex" json:"MiniPAP_ID"`
 	Monthly		[]Monthly	`gorm:"foreignKey:MinipapID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL" json:"Monthly"`
 }
 

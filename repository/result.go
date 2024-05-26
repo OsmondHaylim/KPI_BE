@@ -9,6 +9,7 @@ import (
 type ResultRepo interface {
 	Store(Result *model.Result) error
 	Update(id int, result model.Result) error
+	UpdateNecessary(id int, result model.Result) error
 	Saves(result model.Result) error
 	Delete(id int) error
 	GetByID(id int) (*model.Result, error)
@@ -29,6 +30,10 @@ func (rs *resultRepo) Store(result *model.Result) error {
 
 func (rs *resultRepo) Update(id int, result model.Result) error {
 	return rs.db.Where(id).Updates(result).Error
+}
+
+func (rs *resultRepo) UpdateNecessary(id int, result model.Result) error {
+	return rs.db.Where(id).Omit("Factors").Updates(result).Error
 }
 
 func (rs *resultRepo) Saves(result model.Result) error {

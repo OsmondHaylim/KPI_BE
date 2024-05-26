@@ -9,6 +9,7 @@ import (
 type FactorRepo interface {
 	Store(Factor *model.Factor) error
 	Update(id int, factor model.Factor) error
+	UpdateNecessary(id int, factor model.Factor) error
 	Saves(factor model.Factor) error
 	Delete(id int) error
 	GetByID(id int) (*model.Factor, error)
@@ -29,6 +30,10 @@ func (fs *factorRepo) Store(factor *model.Factor) error {
 
 func (fs *factorRepo) Update(id int, factor model.Factor) error {
 	return fs.db.Where(id).Updates(factor).Error
+}
+
+func (fs *factorRepo) UpdateNecessary(id int, factor model.Factor) error {
+	return fs.db.Where(id).Omit("Plan").Omit("Actual").Updates(factor).Error
 }
 
 func (fs *factorRepo) Saves(factor model.Factor) error {

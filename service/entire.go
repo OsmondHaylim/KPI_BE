@@ -2,6 +2,7 @@ package service
 
 import (
 	// "fmt"
+	"fmt"
 	"goreact/model"
 	"sync"
 	// "strconv"
@@ -349,8 +350,10 @@ func (cs *crudService) UpdateEntireItem(id int, input model.ItemResponse) error{
 	before, err := cs.itemRepo.GetByID(id)
 	if err != nil {return err}
 	newItem := input.Back()
+	newItem.Item_ID = id
 	//Updating Yearly
-	err = cs.UpdateItem(id, newItem)
+	fmt.Print("this?")
+	err = cs.itemRepo.UpdateNecessary(id, newItem)
 	if err != nil {return err}
 	//Delete Item (no id in response)
 	for _, result := range before.Results{
@@ -360,16 +363,17 @@ func (cs *crudService) UpdateEntireItem(id int, input model.ItemResponse) error{
 	if err != nil {return err}
 	// Add Back Results
 	for _, result := range input.Results{
+		fmt.Print("or this?")
 		if err :=  cs.AddEntireResult(&result, &id); err != nil{return err}
 	}
-	return model.SimpleErrorChanCheck(&wg, errs)
+	return err
 }
 func (cs *crudService) UpdateEntireResult(id int, input model.ResultResponse) error{
 	before, err := cs.resultRepo.GetByID(id)
 	if err != nil {return err}
 	newResult := input.Back()
 	//Updating Yearly
-	err = cs.UpdateResult(id, newResult)
+	err = cs.resultRepo.UpdateNecessary(id, newResult)
 	if err != nil {return err}
 	//Delete Factor (no id in response)
 	for _, factor := range before.Factors{
@@ -447,7 +451,7 @@ func (cs *crudService) UpdateEntireFactor(id int, input model.FactorResponse) er
 	}
 	err = model.SimpleErrorChanCheck(&wg, errs)
 	if err != nil {return err}
-	return cs.UpdateFactor(id, newFactor)
+	return cs.factorRepo.UpdateNecessary(id, newFactor)
 }
 func (cs *crudService) UpdateEntireAttendance(id int, input model.AttendanceResponse) error{
 	// Storing Attendance

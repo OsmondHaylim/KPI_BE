@@ -9,6 +9,7 @@ import (
 type ItemRepo interface {
 	Store(Item *model.Item) error
 	Update(id int, item model.Item) error
+	UpdateNecessary(id int, item model.Item) error
 	Saves(item model.Item) error
 	Delete(id int) error
 	GetByID(id int) (*model.Item, error)
@@ -29,6 +30,10 @@ func (is *itemRepo) Store(item *model.Item) error {
 
 func (is *itemRepo) Update(id int, item model.Item) error {
 	return is.db.Where(id).Updates(item).Error
+}
+
+func (is *itemRepo) UpdateNecessary(id int, item model.Item) error {
+	return is.db.Where(id).Omit("Results").Updates(item).Error
 }
 
 func (is *itemRepo) Saves(item model.Item) error {
