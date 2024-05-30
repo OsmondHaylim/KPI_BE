@@ -109,5 +109,6 @@ type Summary struct{
 	Summary_ID		int			`gorm:"primaryKey;autoIncrement;uniqueIndex"`
 	Projects		[]Project	`gorm:"foreignKey:Summary_ID"`
 	Status			pq.StringArray	`gorm:"type:text[]"`
+	Remarks			pq.StringArray	`gorm:"type:text[]"`
 	IssuedDate		*time.Time
 }
