@@ -226,7 +226,7 @@ func (f Factor) ToResponse() FactorResponse {
 		Target:     f.Target,
 		Plan:       f.Plan,
 		Actual:     f.Actual,
-		Percentage: f.ToPercentage(),
+		// Percentage: f.ToPercentage(),
 		Result_ID:  f.ResultID,
 	}
 }

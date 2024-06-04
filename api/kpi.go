@@ -1,10 +1,12 @@
 package api
 
 import (
+	"fmt"
 	"goreact/model"
 	"goreact/service"
 	"net/http"
 	"strconv"
+
 	// "strings"
 
 	"github.com/gin-gonic/gin"
@@ -403,7 +405,11 @@ func (ka *kpiAPI) GetItemList(k *gin.Context) {
 	Item, err := ka.crudService.GetItemList()
 	if model.ErrorCheck(k, err) {return}
 	Item.Message = "Getting All Items Success"
-	k.JSON(http.StatusOK, Item)
+	fmt.Print(Item.Item)
+	k.JSON(http.StatusOK, gin.H{
+		"message": Item.Message,
+		"data": Item.Item,
+	})
 }
 func (ka *kpiAPI) GetMinipapList(k *gin.Context) {
 	Minipap, err := ka.crudService.GetMinipapList()

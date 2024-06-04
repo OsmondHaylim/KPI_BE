@@ -63,7 +63,7 @@ type FactorResponse struct{
 	Target 		string		`json:"Target"`
 	Plan 		*MiniPAP	`json:"Planned"`
 	Actual 		*MiniPAP	`json:"Actual"`
-	Percentage	[][]Monthly	`json:"Percentage"`
+	// Percentage	[][]Monthly	`json:"Percentage"`
 	Result_ID	*int		`json:"Result_ID"`}
 type ResultResponse struct{
 	Result_ID	int					`json:"Result_ID"`
