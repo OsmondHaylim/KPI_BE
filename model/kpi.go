@@ -92,7 +92,7 @@ type Masalah struct{
 	Tindakan		string
 	Pic				string
 	Target			string
-	FolDate			*time.Time
+	FolDate			string
 	Status			string		
 	Year			*int			
 }
