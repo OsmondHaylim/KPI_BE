@@ -389,6 +389,15 @@ func (ps *parseService) ParseSummary (input multipart.File) (*model.Summary, err
 		if sheet.Name == "Summary Project" {
 			fmt.Println("found")
 			Summary := model.Summary{}
+			date := sheet.Rows[1].Cells[1].String()
+			parts := strings.Split(date, ": ")
+			if len(parts) < 2 {return nil, errors.New("invalid format")}
+			datePart := parts[1]
+			layout := "02 January 2006"
+			issuedDate, err := time.Parse(layout, datePart)
+			if err != nil {return nil, err}
+			Summary.IssuedDate = &issuedDate
+			
 			for i := 4; i <= len(sheet.Rows); i++{
 				if sheet.Rows[i].Cells[2].String() != "" && sheet.Rows[i].Cells[2].String() != "PERSENTAGE FINISH" {
 					Summary.Status = append(Summary.Status, sheet.Rows[i].Cells[2].String()) 
