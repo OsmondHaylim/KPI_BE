@@ -118,32 +118,32 @@ func (ps *parseService) ParseKpi (input multipart.File) (*model.YearlyResponse, 
 						continue
 					}else if len(row.Cells[6].String()) != 0{
 						monthly.Jan, err = row.Cells[9].Float()
-						if err != nil {return nil, err}
+						if err != nil {monthly.Jan = 0}
 						monthly.Feb, err = row.Cells[10].Float()
-						if err != nil {return nil, err}
+						if err != nil {monthly.Feb = 0}
 						monthly.Mar, err = row.Cells[11].Float()
-						if err != nil {return nil, err}
+						if err != nil {monthly.Mar = 0}
 						monthly.Apr, err = row.Cells[12].Float()
-						if err != nil {return nil, err}
+						if err != nil {monthly.Apr = 0}
 						monthly.May, err = row.Cells[13].Float()
-						if err != nil {return nil, err}
+						if err != nil {monthly.May = 0}
 						monthly.Jun, err = row.Cells[14].Float()
-						if err != nil {return nil, err}
+						if err != nil {monthly.Jun = 0}
 						monthly.Jul, err = row.Cells[15].Float()
-						if err != nil {return nil, err}
+						if err != nil {monthly.Jul = 0}
 						monthly.Aug, err = row.Cells[16].Float()
-						if err != nil {return nil, err}
+						if err != nil {monthly.Aug = 0}
 						monthly.Sep, err = row.Cells[17].Float()
-						if err != nil {return nil, err}
+						if err != nil {monthly.Sep = 0}
 						monthly.Oct, err = row.Cells[18].Float()
-						if err != nil {return nil, err}
+						if err != nil {monthly.Oct = 0}
 						monthly.Nov, err = row.Cells[19].Float()
-						if err != nil {return nil, err}
+						if err != nil {monthly.Nov = 0}
 						monthly.Dec, err = row.Cells[20].Float()
-						if err != nil {return nil, err}
+						if err != nil {monthly.Dec = 0}
 						monthly.Remarks = &remarks
 						//Inputting MiniPAP & Monthly
-						if strings.Contains(row.Cells[6].String(), "vs"){continue}
+						if strings.Contains(row.Cells[6].String(), "vs") || strings.Contains(row.Cells[6].String(), "VS"){continue}
 						switch row.Cells[6].String()[0]{
 						case 'P':
 							if tempFactor.Plan == nil{
@@ -169,14 +169,14 @@ func (ps *parseService) ParseKpi (input multipart.File) (*model.YearlyResponse, 
 					}else if row.Cells[9].Value != "" && row.Cells[9].String()[len(row.Cells[9].String()) - 1] == '%' {
 						monthly.Jan, err = strconv.ParseFloat(row.Cells[9].Value[:len(row.Cells[9].Value)-1], 64)
 					}
-					if err != nil {monthly.Jan = 0}
+					if err != nil {monthly.Jan = 0; err = nil}
 
 					if row.Cells[10].Type() == xlsx.CellTypeNumeric {
 						monthly.Feb, err = strconv.ParseFloat(row.Cells[10].Value, 64)
 					}else if row.Cells[10].Value != "" && row.Cells[10].String()[len(row.Cells[10].String()) - 1] == '%' {
 						monthly.Feb, err = strconv.ParseFloat(row.Cells[10].Value[:len(row.Cells[10].Value)-1], 64)
 					}
-					if err != nil {monthly.Feb = 0}
+					if err != nil {monthly.Feb = 0; err = nil}
 
 					if row.Cells[11].Type() == xlsx.CellTypeNumeric {
 						monthly.Mar, err = strconv.ParseFloat(row.Cells[11].Value, 64)
@@ -185,70 +185,70 @@ func (ps *parseService) ParseKpi (input multipart.File) (*model.YearlyResponse, 
 					}else{
 						monthly.Mar = 0
 					}
-					if err != nil {monthly.Mar = 0}
+					if err != nil {monthly.Mar = 0; err = nil}
 
 					if row.Cells[12].Type() == xlsx.CellTypeNumeric {
 						monthly.Apr, err = strconv.ParseFloat(row.Cells[12].Value, 64)
 					}else if row.Cells[12].Value != "" && row.Cells[11].String()[len(row.Cells[11].String()) - 1] == '%' {
 						monthly.Apr, err = strconv.ParseFloat(row.Cells[12].Value[:len(row.Cells[12].Value)-1], 64)
 					}
-					if err != nil {monthly.Apr = 0}
+					if err != nil {monthly.Apr = 0; err = nil}
 
 					if row.Cells[13].Type() == xlsx.CellTypeNumeric {
 						monthly.May, err = strconv.ParseFloat(row.Cells[13].Value, 64)
 					}else if row.Cells[13].Value != "" && row.Cells[11].String()[len(row.Cells[11].String()) - 1] == '%' {
 						monthly.May, err = strconv.ParseFloat(row.Cells[13].Value[:len(row.Cells[13].Value)-1], 64)
 					}
-					if err != nil {monthly.May = 0}
+					if err != nil {monthly.May = 0; err = nil}
 
 					if row.Cells[14].Type() == xlsx.CellTypeNumeric {
 						monthly.Jun, err = strconv.ParseFloat(row.Cells[14].Value, 64)
 					}else if row.Cells[14].Value != "" && row.Cells[11].String()[len(row.Cells[11].String()) - 1] == '%' {
 						monthly.Jun, err = strconv.ParseFloat(row.Cells[14].Value[:len(row.Cells[14].Value)-1], 64)
 					}
-					if err != nil {monthly.Jun = 0}
+					if err != nil {monthly.Jun = 0; err = nil}
 
 					if row.Cells[15].Type() == xlsx.CellTypeNumeric {
 						monthly.Jul, err = strconv.ParseFloat(row.Cells[15].Value, 64)
 					}else if row.Cells[15].Value != "" && row.Cells[11].String()[len(row.Cells[11].String()) - 1] == '%' {
 						monthly.Jul, err = strconv.ParseFloat(row.Cells[15].Value[:len(row.Cells[15].Value)-1], 64)
 					}
-					if err != nil {monthly.Jul = 0}
+					if err != nil {monthly.Jul = 0; err = nil}
 
 					if row.Cells[16].Type() == xlsx.CellTypeNumeric {
 						monthly.Aug, err = strconv.ParseFloat(row.Cells[16].Value, 64)
 					}else if row.Cells[16].Value != "" && row.Cells[11].String()[len(row.Cells[11].String()) - 1] == '%' {
 						monthly.Aug, err = strconv.ParseFloat(row.Cells[16].Value[:len(row.Cells[16].Value)-1], 64)
 					}
-					if err != nil {monthly.Aug = 0}
+					if err != nil {monthly.Aug = 0; err = nil}
 
 					if row.Cells[17].Type() == xlsx.CellTypeNumeric {
 						monthly.Sep, err = strconv.ParseFloat(row.Cells[17].Value, 64)
 					}else if row.Cells[17].Value != "" && row.Cells[11].String()[len(row.Cells[11].String()) - 1] == '%' {
 						monthly.Sep, err = strconv.ParseFloat(row.Cells[17].Value[:len(row.Cells[17].Value)-1], 64)
 					}
-					if err != nil {monthly.Sep = 0}
+					if err != nil {monthly.Sep = 0; err = nil}
 
 					if row.Cells[18].Type() == xlsx.CellTypeNumeric {
 						monthly.Oct, err = strconv.ParseFloat(row.Cells[18].Value, 64)
 					}else if row.Cells[18].Value != "" && row.Cells[11].String()[len(row.Cells[11].String()) - 1] == '%' {
 						monthly.Oct, err = strconv.ParseFloat(row.Cells[18].Value[:len(row.Cells[18].Value)-1], 64)
 					}
-					if err != nil {monthly.Oct = 0}
+					if err != nil {monthly.Oct = 0; err = nil}
 
 					if row.Cells[19].Type() == xlsx.CellTypeNumeric {
 						monthly.Nov, err = strconv.ParseFloat(row.Cells[19].Value, 64)
 					}else if row.Cells[19].Value != "" && row.Cells[11].String()[len(row.Cells[11].String()) - 1] == '%' {
 						monthly.Nov, err = strconv.ParseFloat(row.Cells[19].Value[:len(row.Cells[19].Value)-1], 64)
 					}
-					if err != nil {monthly.Nov = 0}
+					if err != nil {monthly.Nov = 0; err = nil}
 
 					if row.Cells[20].Type() == xlsx.CellTypeNumeric {
 						monthly.Dec, err = strconv.ParseFloat(row.Cells[20].Value, 64)
 					}else if row.Cells[20].Value != "" && row.Cells[11].String()[len(row.Cells[11].String()) - 1] == '%' {
 						monthly.Dec, err = strconv.ParseFloat(row.Cells[20].Value[:len(row.Cells[20].Value)-1], 64)
 					}
-					if err != nil {monthly.Dec = 0}
+					if err != nil {monthly.Dec = 0; err = nil}
 					monthly.Remarks = &remarks
 					// fmt.Print(monthly)
 					switch attend{
