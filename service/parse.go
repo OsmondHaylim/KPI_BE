@@ -1,7 +1,6 @@
 package service
 
 import (
-	"fmt"
 	"goreact/model"
 	"mime/multipart"
 	"regexp"
@@ -325,7 +324,6 @@ func (ps *parseService) ParseAnalisis (input multipart.File) (*model.Analisa, er
 			prereq := false
 			content := false
 			onHold := false
-			fmt.Println("loop start")
 			for _, row := range sheet.Rows{
 				// fmt.Println(len(row.Cells))
 				prereq = len(row.Cells) >= 12

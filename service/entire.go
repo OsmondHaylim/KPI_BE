@@ -1,8 +1,6 @@
 package service
 
 import (
-	// "fmt"
-	"fmt"
 	"goreact/model"
 	"sync"
 	// "strconv"
@@ -352,7 +350,6 @@ func (cs *crudService) UpdateEntireItem(id int, input model.ItemResponse) error{
 	newItem := input.Back()
 	newItem.Item_ID = id
 	//Updating Yearly
-	fmt.Print("this?")
 	err = cs.itemRepo.UpdateNecessary(id, newItem)
 	if err != nil {return err}
 	//Delete Item (no id in response)
@@ -363,7 +360,6 @@ func (cs *crudService) UpdateEntireItem(id int, input model.ItemResponse) error{
 	if err != nil {return err}
 	// Add Back Results
 	for _, result := range input.Results{
-		fmt.Print("or this?")
 		if err :=  cs.AddEntireResult(&result, &id); err != nil{return err}
 	}
 	return err

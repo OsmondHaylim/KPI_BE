@@ -405,7 +405,6 @@ func (ka *kpiAPI) GetItemList(k *gin.Context) {
 	Item, err := ka.crudService.GetItemList()
 	if model.ErrorCheck(k, err) {return}
 	Item.Message = "Getting All Items Success"
-	fmt.Print(Item.Item)
 	k.JSON(http.StatusOK, gin.H{
 		"message": Item.Message,
 		"data": Item.Item,
