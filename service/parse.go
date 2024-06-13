@@ -386,7 +386,6 @@ func (ps *parseService) ParseSummary (input multipart.File) (*model.Summary, err
 	if err != nil {return nil, err}
 	for _, sheet := range excel.Sheets {
 		if sheet.Name == "Summary Project" {
-			fmt.Println("found")
 			Summary := model.Summary{}
 			date := sheet.Rows[1].Cells[1].String()
 			parts := strings.Split(date, ": ")
@@ -409,12 +408,12 @@ func (ps *parseService) ParseSummary (input multipart.File) (*model.Summary, err
 					qty := []int32{}
 					tempProject.Name = sheet.Rows[2].Cells[i].String()
 					for j := 0; j < len(Summary.Status); j++{
-						data, err := sheet.Rows[j+5].Cells[i].Int()
+						data, err := sheet.Rows[j+4].Cells[i].Int()
 						if err != nil{return nil, err}
 						item = append(item, int32(data))
-						data, err = sheet.Rows[j+5].Cells[i+1].Int()
+						data, err = sheet.Rows[j+4].Cells[i+1].Int()
 						if err != nil{return nil, err}
-						item = append(item, int32(data))
+						qty = append(qty, int32(data))
 					}
 					tempProject.Item = item
 					tempProject.Quantity = qty

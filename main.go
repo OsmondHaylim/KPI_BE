@@ -238,11 +238,11 @@ func main(){
 		Host:     "aws-0-ap-southeast-1.pooler.supabase.com",
 		Port:     "5432",
 		Password: "Technosport@2024",
-		User:     "postgres.kfwmmnkrcdvyysxgbame",
+		// User:     "postgres.kfwmmnkrcdvyysxgbame",
+		User:     "postgres.mjmfiwrmndhoitdltbud",
 		SSLMode:  "disable",
 		DBName:   "postgres",
 	}
-
 
 
 	wg := sync.WaitGroup{}

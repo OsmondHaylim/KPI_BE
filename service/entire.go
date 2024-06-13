@@ -176,16 +176,16 @@ func (cs *crudService) AddEntireAnalisa(input *model.Analisa) error{
 func (cs *crudService) AddEntireSummary(input *model.Summary) error{
 	err := cs.AddSummary(input)
 	if err != nil {return err}
-	for _, data := range input.Projects{
-		var newProject = model.Project{
-			Name: data.Name,
-			Summary_ID: &input.Summary_ID,
-			Item: data.Item,
-			Quantity: data.Quantity,
-		}
-		err := cs.AddProject(&newProject)
-		if err != nil {return err}
-	}
+	// for _, data := range input.Projects{
+	// 	var newProject = model.Project{
+	// 		Name: data.Name,
+	// 		Summary_ID: &input.Summary_ID,
+	// 		Item: data.Item,
+	// 		Quantity: data.Quantity,
+	// 	}
+	// 	err := cs.AddProject(&newProject)
+	// 	if err != nil {return err}
+	// }
 	return nil
 }
 
