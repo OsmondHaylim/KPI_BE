@@ -374,90 +374,65 @@ func (cs *crudService) UpdateEntireItem(id int, input model.ItemResponse) error{
 	return cs.UpdateItem(id, input.Back())
 }
 func (cs *crudService) UpdateEntireResult(id int, input model.ResultResponse) error{
-	// before, err := cs.resultRepo.GetByID(id)
-	// if err != nil {return err}
-	// newResult := input.Back()
-	// //Updating Yearly
-	// err = cs.resultRepo.UpdateNecessary(id, newResult)
-	// if err != nil {return err}
-	// //Delete Factor (no id in response)
-	// for _, factor := range before.Factors{
-	// 	if err := cs.DeleteEntireFactor(factor.Factor_ID); err != nil{return err}
-	// }
-	// // Add Back Factors
-	// for _, factor := range input.Factors{
-	// 	if err := cs.AddEntireFactor(&factor, &id); err != nil{return err}
-	// }
+	before, err := cs.resultRepo.GetByID(id)
+	if err != nil {return err}
+	newResult := input.Back()
+	if len(newResult.Factors) > len(before.Factors){
+		diff := len(newResult.Factors) - len(before.Factors)
+		for i := 0; i < diff; i++{
+			if err := cs.AddFactor(&newResult.Factors[len(before.Factors) + i]); err != nil {return err}
+		}
+	}
+	for i, data := range before.Factors{
+		if i <= len(newResult.Factors) - 1{
+			newResult.Factors[i].Factor_ID = data.Factor_ID
+			if err := cs.UpdateFactor(data.Factor_ID, newResult.Factors[len(before.Factors) + i]); err != nil {return err}
+		}else{
+			if err := cs.DeleteProject(data.Factor_ID); err != nil {return err}
+		}
+	}
 	return cs.UpdateResult(id, input.Back())
 }
 func (cs *crudService) UpdateEntireFactor(id int, input model.FactorResponse) error{
 	// wg, errs := model.GoRoutineInit()
-	// before, err := cs.factorRepo.GetByID(id)
-	// if err != nil {return err}
-	// newFactor := input.Back()
-	// if before.PlanID != nil{
-	// 	wg.Add(1)
-	// 	go func (){
-	// 		defer wg.Done()
-	// 		newFactor.PlanID = before.PlanID
-	// 		for _, monthly := range before.Plan.Monthly{
-	// 			err = cs.DeleteMonthly(monthly.Monthly_ID)
-	// 			if err != nil {errs <- err; return}
-	// 		}
-	// 	}()
-	// }
-	// if before.ActualID != nil{
-	// 	wg.Add(1)
-	// 	go func (){
-	// 		defer wg.Done()
-	// 		newFactor.ActualID = before.ActualID
-	// 		for _, monthly := range before.Actual.Monthly{
-	// 			err = cs.DeleteMonthly(monthly.Monthly_ID)
-	// 			if err != nil {errs <- err; return}
-	// 		}
-	// 	}()
-	// }
-	// err = model.SimpleErrorChanCheck(&wg, errs)
-	// if err != nil {return err}
-
-	// if newFactor.Plan != nil{
-	// 	for _, month := range newFactor.Plan.Monthly{
-	// 		if before.PlanID != nil{
-	// 			month.MinipapID = before.PlanID
-	// 		}else {
-	// 			newMini := model.MiniPAP{}
-	// 			err := cs.AddMinipap(&newMini)
-	// 			if err != nil {return err}
-	// 			newFactor.PlanID = &newMini.MiniPAP_ID
-	// 			month.MinipapID = &newMini.MiniPAP_ID
-	// 		}
-	// 		err := cs.AddMonthly(&month)
-	// 		if err != nil {return err}
-	// 	}
-	// }
-	// if newFactor.Actual != nil{
-	// 	wg.Add(1)
-	// 	go func (){
-	// 		defer wg.Done()
-	// 		for _, month := range newFactor.Actual.Monthly{
-	// 			if before.ActualID != nil{
-	// 				month.MinipapID = before.ActualID
-	// 			}else {
-	// 				newMini := model.MiniPAP{}
-	// 				err := cs.AddMinipap(&newMini)
-	// 				if err != nil {errs <- err}
-	// 				newFactor.ActualID = &newMini.MiniPAP_ID
-	// 				month.MinipapID = &newMini.MiniPAP_ID
-	// 			}
-	// 			err := cs.AddMonthly(&month)
-	// 			if err != nil {errs <- err}
-	// 		}
-	// 	}()
-	// }
-	// err = model.SimpleErrorChanCheck(&wg, errs)
-	// if err != nil {return err}
-	// return cs.factorRepo.UpdateNecessary(id, newFactor)
-	return cs.UpdateFactor(id, input.Back())
+	before, err := cs.factorRepo.GetByID(id)
+	if err != nil {return err}
+	newFactor := input.Back()
+	//Plan
+	newFactor.PlanID = before.PlanID
+	newFactor.Plan.MiniPAP_ID = before.Plan.MiniPAP_ID
+	if len(newFactor.Plan.Monthly) > len(before.Plan.Monthly){
+		diff := len(newFactor.Plan.Monthly) - len(before.Plan.Monthly)
+		for i := 0; i < diff; i++{
+			if err := cs.AddMonthly(&newFactor.Plan.Monthly[len(before.Plan.Monthly) + i]); err != nil {return err}
+		}
+	}
+	for i, data := range before.Plan.Monthly{
+		if i <= len(newFactor.Plan.Monthly) - 1{
+			newFactor.Plan.Monthly[i].Monthly_ID = data.Monthly_ID
+			if err := cs.UpdateMonthly(data.Monthly_ID, newFactor.Plan.Monthly[len(before.Plan.Monthly) + i]); err != nil {return err}
+		}else{
+			if err := cs.DeleteProject(data.Monthly_ID); err != nil {return err}
+		}
+	}
+	//Actual
+	newFactor.ActualID = before.ActualID
+	newFactor.Actual.MiniPAP_ID = before.Actual.MiniPAP_ID
+	if len(newFactor.Actual.Monthly) > len(before.Actual.Monthly){
+		diff := len(newFactor.Actual.Monthly) - len(before.Actual.Monthly)
+		for i := 0; i < diff; i++{
+			if err := cs.AddMonthly(&input.Actual.Monthly[len(before.Actual.Monthly) + i]); err != nil {return err}
+		}
+	}
+	for i, data := range before.Actual.Monthly{
+		if i <= len(newFactor.Actual.Monthly) - 1{
+			newFactor.Actual.Monthly[i].Monthly_ID = data.Monthly_ID
+			if err := cs.UpdateMonthly(data.Monthly_ID, input.Actual.Monthly[len(before.Actual.Monthly) + i]); err != nil {return err}
+		}else{
+			if err := cs.DeleteProject(data.Monthly_ID); err != nil {return err}
+		}
+	}
+	return cs.UpdateFactor(id, newFactor)
 }
 func (cs *crudService) UpdateEntireAttendance(id int, input model.AttendanceResponse) error{
 	// // Storing Attendance

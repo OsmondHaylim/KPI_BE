@@ -87,6 +87,10 @@ func (cs *crudService) UpdateFactor(id int, input model.Factor) error{
 	for _, data := range list{
 		if data.Factor_ID == id{
 			input.Factor_ID = id
+			input.PlanID = data.PlanID
+			input.Plan.MiniPAP_ID = data.Plan.MiniPAP_ID
+			input.ActualID = data.ActualID
+			input.Actual.MiniPAP_ID = data.Actual.MiniPAP_ID
 			return cs.factorRepo.Saves(input)
 		}
 	}
