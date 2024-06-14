@@ -1,7 +1,6 @@
 package api
 
 import (
-	"fmt"
 	"goreact/model"
 	"goreact/service"
 	"net/http"

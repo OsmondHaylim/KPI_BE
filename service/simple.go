@@ -42,6 +42,16 @@ func (cs *crudService) UpdateAttendance(id int, input model.Attendance) error{
 	for _, data := range list{
 		if data.Year == id{
 			input.Year = id
+			input.PlanID = data.PlanID
+			input.Plan.Monthly_ID = *data.PlanID
+			input.ActualID = data.ActualID
+			input.Actual.Monthly_ID = *data.ActualID
+			input.CutiID = data.CutiID
+			input.Cuti.Monthly_ID = *data.CutiID
+			input.IzinID = data.IzinID
+			input.Izin.Monthly_ID = *data.IzinID
+			input.LainID = data.LainID
+			input.Lain.Monthly_ID = *data.LainID
 			return cs.attendanceRepo.Saves(input)
 		}
 	}
@@ -53,6 +63,19 @@ func (cs *crudService) UpdateAnalisa(id int, input model.Analisa) error{
 	for _, data := range list{
 		if data.Year == id{
 			input.Year = id
+			if len(data.Masalah) < len(input.Masalah){
+				diff := len(input.Masalah) - len(data.Masalah)
+				for i := 0; i < diff; i++{
+					if err := cs.AddMasalah(&input.Masalah[len(data.Masalah) + i]); err != nil {return err}
+				}
+			}
+			for i, data2 := range data.Masalah{
+				if i <= len(input.Masalah) - 1{
+					input.Masalah[i].Masalah_ID = data2.Masalah_ID
+				}else{
+					if err := cs.DeleteMasalah(data2.Masalah_ID); err != nil {return err}
+				}
+			}
 			return cs.analisaRepo.Saves(input)
 		}
 	}
@@ -146,6 +169,19 @@ func (cs *crudService) UpdateSummary(id int, input model.Summary) error{
 	for _, data := range list{
 		if data.Summary_ID == id{
 			input.Summary_ID = id
+			if len(data.Projects) < len(input.Projects){
+				diff := len(input.Projects) - len(data.Projects)
+				for i := 0; i < diff; i++{
+					if err := cs.AddProject(&input.Projects[len(data.Projects) + i]); err != nil {return err}
+				}
+			}
+			for i, data2 := range data.Projects{
+				if i <= len(input.Projects) - 1{
+					input.Projects[i].Project_ID = data2.Project_ID
+				}else{
+					if err := cs.DeleteProject(data2.Project_ID); err != nil {return err}
+				}
+			}
 			return cs.summaryRepo.Saves(input)
 		}
 	}
