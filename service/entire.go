@@ -332,7 +332,7 @@ func (cs *crudService) UpdateEntireYearly(id int, input model.YearlyResponse) er
 	for i, data := range before.Items{
 		if i <= len(newYearly.Items) - 1{
 			newYearly.Items[i].Item_ID = data.Item_ID
-			if err := cs.UpdateEntireItem(data.Item_ID, newYearly.Items[len(before.Items) + i].ToResponse()); err != nil {return err}
+			if err := cs.UpdateEntireItem(data.Item_ID, newYearly.Items[len(before.Items) + i - 1].ToResponse()); err != nil {return err}
 		}else{
 			wg.Add(1)
 			go cs.DeleteEntireItem(&wg, data.Item_ID, errs)
@@ -350,16 +350,17 @@ func (cs *crudService) UpdateEntireItem(id int, input model.ItemResponse) error{
 	if len(newItem.Results) > len(before.Results){
 		diff := len(newItem.Results) - len(before.Results)
 		for i := 0; i < diff; i++{
-			result := newItem.Results[len(before.Results) + i].ToResponse()
+			result := newItem.Results[len(before.Results) + i - 1].ToResponse()
 			if err := cs.AddEntireResult(&result, &id); err != nil {return err}
 		}
 	}
 	for i, data := range before.Results{
 		if i <= len(newItem.Results) - 1{
 			newItem.Results[i].Result_ID = data.Result_ID
-			if err := cs.UpdateResult(data.Result_ID, newItem.Results[len(before.Results) + i]); err != nil {return err}
+			newItem.Results[i].ItemID = &id
+			if err := cs.UpdateEntireResult(data.Result_ID, newItem.Results[len(before.Results) + i - 1].ToResponse()); err != nil {return err}
 		}else{
-			if err := cs.DeleteResult(data.Result_ID); err != nil {return err}
+			if err := cs.DeleteEntireResult(data.Result_ID); err != nil {return err}
 		}
 	}
 	return cs.UpdateItem(id, newItem)
@@ -371,14 +372,15 @@ func (cs *crudService) UpdateEntireResult(id int, input model.ResultResponse) er
 	if len(newResult.Factors) > len(before.Factors){
 		diff := len(newResult.Factors) - len(before.Factors)
 		for i := 0; i < diff; i++{
-			factor := newResult.Factors[len(before.Factors) + i].ToResponse()
+			factor := newResult.Factors[len(before.Factors) + i - 1].ToResponse()
 			if err := cs.AddEntireFactor(&factor, &id); err != nil {return err}
 		}
 	}
 	for i, data := range before.Factors{
 		if i <= len(newResult.Factors) - 1{
 			newResult.Factors[i].Factor_ID = data.Factor_ID
-			if err := cs.UpdateEntireFactor(data.Factor_ID, newResult.Factors[len(before.Factors) + i].ToResponse()); err != nil {return err}
+			newResult.Factors[i].ResultID = &id
+			if err := cs.UpdateEntireFactor(data.Factor_ID, newResult.Factors[len(before.Factors) + i - 1].ToResponse()); err != nil {return err}
 		}else{
 			if err := cs.DeleteEntireFactor(data.Factor_ID); err != nil {return err}
 		}
@@ -397,13 +399,13 @@ func (cs *crudService) UpdateEntireFactor(id int, input model.FactorResponse) er
 		diff := len(newFactor.Plan.Monthly) - len(before.Plan.Monthly)
 		for i := 0; i < diff; i++{
 			newFactor.Plan.Monthly[len(before.Plan.Monthly) + i].MinipapID = before.PlanID
-			if err := cs.AddMonthly(&newFactor.Plan.Monthly[len(before.Plan.Monthly) + i]); err != nil {return err}
+			if err := cs.AddMonthly(&newFactor.Plan.Monthly[len(before.Plan.Monthly) + i - 1]); err != nil {return err}
 		}
 	}
 	for i, data := range before.Plan.Monthly{
 		if i <= len(newFactor.Plan.Monthly) - 1{
 			newFactor.Plan.Monthly[i].Monthly_ID = data.Monthly_ID
-			if err := cs.UpdateMonthly(data.Monthly_ID, newFactor.Plan.Monthly[len(before.Plan.Monthly) + i]); err != nil {return err}
+			if err := cs.UpdateMonthly(data.Monthly_ID, newFactor.Plan.Monthly[len(before.Plan.Monthly) + i - 1]); err != nil {return err}
 		}else{
 			if err := cs.DeleteMonthly(data.Monthly_ID); err != nil {return err}
 		}
@@ -414,13 +416,13 @@ func (cs *crudService) UpdateEntireFactor(id int, input model.FactorResponse) er
 	if len(newFactor.Actual.Monthly) > len(before.Actual.Monthly){
 		diff := len(newFactor.Actual.Monthly) - len(before.Actual.Monthly)
 		for i := 0; i < diff; i++{
-			if err := cs.AddMonthly(&input.Actual.Monthly[len(before.Actual.Monthly) + i]); err != nil {return err}
+			if err := cs.AddMonthly(&input.Actual.Monthly[len(before.Actual.Monthly) + i - 1]); err != nil {return err}
 		}
 	}
 	for i, data := range before.Actual.Monthly{
 		if i <= len(newFactor.Actual.Monthly) - 1{
 			newFactor.Actual.Monthly[i].Monthly_ID = data.Monthly_ID
-			if err := cs.UpdateMonthly(data.Monthly_ID, input.Actual.Monthly[len(before.Actual.Monthly) + i]); err != nil {return err}
+			if err := cs.UpdateMonthly(data.Monthly_ID, input.Actual.Monthly[len(before.Actual.Monthly) + i - 1]); err != nil {return err}
 		}else{
 			if err := cs.DeleteProject(data.Monthly_ID); err != nil {return err}
 		}
@@ -459,7 +461,7 @@ func (cs *crudService) UpdateEntireAnalisa(id int, input model.Analisa) error{
 			if len(data.Masalah) < len(input.Masalah){
 				diff := len(input.Masalah) - len(data.Masalah)
 				for i := 0; i < diff; i++{
-					if err := cs.AddMasalah(&input.Masalah[len(data.Masalah) + i]); err != nil {return err}
+					if err := cs.AddMasalah(&input.Masalah[len(data.Masalah) + i - 1]); err != nil {return err}
 				}
 			}
 			for i, data2 := range data.Masalah{
