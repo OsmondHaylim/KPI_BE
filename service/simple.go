@@ -162,6 +162,20 @@ func (cs *crudService) UpdateResult(id int, input model.Result) error{
 	for _, data := range list{
 		if data.Result_ID == id{
 			input.Result_ID = id
+			if len(data.Factors) < len(input.Factors){
+				diff := len(input.Factors) - len(data.Factors)
+				for i := 0; i < diff; i++{
+					input.Factors[len(data.Factors) + i].ResultID = &data.Result_ID
+					if err := cs.AddFactor(&input.Factors[len(data.Factors) + i]); err != nil{return err}
+				}
+			}
+			for i, data2 := range data.Factors{
+				if i < len(input.Factors){
+					input.Factors[i].Factor_ID = data2.Factor_ID
+				}else{
+					if err := cs.DeleteFactor(data2.Factor_ID); err != nil{return err}
+				}
+			}
 			return cs.resultRepo.Saves(input)
 		}
 	}
