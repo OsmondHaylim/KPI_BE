@@ -239,7 +239,7 @@ func main(){
 		Port:     "5432",
 		Password: "Technosport@2024",
 		User:     "postgres.kfwmmnkrcdvyysxgbame",
-		// User:     "postgres.mjmfiwrmndhoitdltbud",
+		// User:     "postgres.mjmfiwrmndhoitdltbud",-
 		SSLMode:  "disable",
 		DBName:   "postgres",
 	}
