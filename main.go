@@ -234,16 +234,25 @@ func main(){
 	// 	DBName:   os.Getenv("DB_NAME"),
 	// }
 
-	config := &db.Config{
-		Host:     "aws-0-ap-southeast-1.pooler.supabase.com",
-		Port:     "5432",
-		Password: "Technosport@2024",
-		User:     "postgres.kfwmmnkrcdvyysxgbame",
-		// User:     "postgres.mjmfiwrmndhoitdltbud",-
-		SSLMode:  "disable",
-		DBName:   "postgres",
-	}
+	// config := &db.Config{
+	// 	Host:     "aws-0-ap-southeast-1.pooler.supabase.com",
+	// 	Port:     "5432",
+	// 	Password: "Technosport@2024",
+	// 	// User:     "postgres.kfwmmnkrcdvyysxgbame",
+	// 	User:     "postgres.mjmfiwrmndhoitdltbud",
+	// 	SSLMode:  "disable",
+	// 	DBName:   "postgres",
+	// }
 
+	// For Deploy
+	config := &db.Config{
+		Host:     "localhost",
+		Port:     "5432",
+		Password: "administrator",
+		User:     "postgres",
+		SSLMode:  "disable",
+		DBName:   "kpiv",
+	}
 
 	wg := sync.WaitGroup{}
 

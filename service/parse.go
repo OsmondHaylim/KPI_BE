@@ -140,6 +140,24 @@ func (ps *parseService) ParseKpi (input multipart.File) (*model.YearlyResponse, 
 						if err != nil {monthly.Nov = 0}
 						monthly.Dec, err = row.Cells[20].Float()
 						if err != nil {monthly.Dec = 0}
+						switch tempFactor.Unit{
+						case "MRp.", "mRp.", "mrp.", "MRP.","MRp", "mRp", "mrp", "MRP":
+							monthly.Jan *= 1000000
+							monthly.Feb *= 1000000
+							monthly.Mar *= 1000000
+							monthly.Apr *= 1000000
+							monthly.May *= 1000000
+							monthly.Jun *= 1000000
+							monthly.Jul *= 1000000
+							monthly.Aug *= 1000000
+							monthly.Sep *= 1000000
+							monthly.Oct *= 1000000
+							monthly.Nov *= 1000000
+							monthly.Dec *= 1000000	
+							tempFactor.Unit = "Rp."
+						default:
+							continue
+						}
 						monthly.Remarks = &remarks
 						//Inputting MiniPAP & Monthly
 						if strings.Contains(row.Cells[6].String(), "vs") || strings.Contains(row.Cells[6].String(), "VS"){continue}
