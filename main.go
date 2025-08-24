@@ -221,37 +221,17 @@ func RunServer(db *gorm.DB, gin *gin.Engine) *gin.Engine {
 func main(){
 	gin.SetMode(gin.ReleaseMode)
 
-	// err := godotenv.Load(".env")
-	// if err != nil {
-	// 	log.Print("Missing .env file. Probably okay on dockerized environment")
-	// }
-	// config := &db.Config{
-	// 	Host:     os.Getenv("DB_HOST"),
-	// 	Port:     os.Getenv("DB_PORT"),
-	// 	Password: os.Getenv("DB_PASS"),
-	// 	User:     os.Getenv("DB_USER"),
-	// 	SSLMode:  os.Getenv("DB_SSLMODE"),
-	// 	DBName:   os.Getenv("DB_NAME"),
-	// }
-
-	// config := &db.Config{
-	// 	Host:     "aws-0-ap-southeast-1.pooler.supabase.com",
-	// 	Port:     "5432",
-	// 	Password: "Technosport@2024",
-	// 	// User:     "postgres.kfwmmnkrcdvyysxgbame",
-	// 	User:     "postgres.mjmfiwrmndhoitdltbud",
-	// 	SSLMode:  "disable",
-	// 	DBName:   "postgres",
-	// }
-
-	// For Deploy
+	err := godotenv.Load(".env")
+	if err != nil {
+	    log.Print("Missing .env file. Probably okay on dockerized environment")
+	}
 	config := &db.Config{
-		Host:     "localhost",
-		Port:     "5432",
-		Password: "administrator",
-		User:     "postgres",
-		SSLMode:  "disable",
-		DBName:   "kpiv",
+	    Host:     os.Getenv("DB_HOST"),
+	    Port:     os.Getenv("DB_PORT"),
+	    Password: os.Getenv("DB_PASS"),
+        User:     os.Getenv("DB_USER"),
+		SSLMode:  os.Getenv("DB_SSLMODE"),
+		DBName:   os.Getenv("DB_NAME"),
 	}
 
 	wg := sync.WaitGroup{}
